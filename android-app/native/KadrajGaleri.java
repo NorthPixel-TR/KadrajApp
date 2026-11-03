@@ -244,7 +244,7 @@ public class KadrajGaleri extends Plugin {
 
     /* Uygulamanın yerel sürümü: Java tarafı değişince SURUM'u artır, index.html'deki APK_NATIVE da aynı sayı olsun.
        Sayfa küçükse "Güncelleme var" penceresi çıkar. */
-    static final int SURUM = 6;
+    static final int SURUM = 7;
 
     @PluginMethod
     public void surum(PluginCall call) {
@@ -254,6 +254,7 @@ public class KadrajGaleri extends Plugin {
         r.put("yerel", true);
         r.put("eylem", true);
         r.put("paket", getContext().getPackageName());
+        r.put("guncelle", true);
         try { r.put("ad", getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0).versionName); } catch (Exception e) { r.put("ad", ""); }
         call.resolve(r);
     }
@@ -427,5 +428,67 @@ public class KadrajGaleri extends Plugin {
             getContext().startActivity(it);
             call.resolve();
         } catch (Exception e) { call.reject("acilamadi"); }
+    }
+
+    /* 6.8.26 uygulama içinden güncelleme: yeni APK'yı uygulamanın kendisi indirir ve Android'in "Güncelle" penceresini açar
+       (tarayıcıya, Dosyalar'a gitmek yok). Aynı paket ve aynı imza olduğu için eskisinin üstüne kurulur, veriler kalır.
+       İlk seferde Android "bu kaynaktan uygulama yükleme" iznini ister: izin yoksa o ayar açılır, {izin:false} döner.
+       İlerleme "guncelle" olayıyla ({p: 0-100}). Yalnızca GitHub'daki Kadraj sürümünden indirir. */
+    private static volatile boolean gIniyor = false;
+
+    @PluginMethod
+    public void guncelle(PluginCall call) {
+        final String u0 = call.getString("url", "");
+        if (!u0.startsWith("https://github.com/kadrajsosyalmedya/")) { call.reject("adres"); return; }
+        final android.content.Context c = getContext();
+        if (Build.VERSION.SDK_INT >= 26 && !c.getPackageManager().canRequestPackageInstalls()) {
+            try {
+                android.content.Intent it = new android.content.Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + c.getPackageName()));
+                it.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(it);
+            } catch (Exception e) { }
+            JSObject r = new JSObject(); r.put("izin", false); call.resolve(r); return;
+        }
+        if (gIniyor) { call.reject("suruyor"); return; }
+        gIniyor = true;
+        new Thread(() -> {
+            java.io.File dir = new java.io.File(c.getCacheDir(), "guncelle");
+            java.io.File f = new java.io.File(dir, "kadraj.apk");
+            try {
+                dir.mkdirs();
+                java.net.HttpURLConnection h = null; String u = u0;
+                for (int i = 0; i < 6; i++) {
+                    java.net.URL url = new java.net.URL(u);
+                    String host = url.getHost();
+                    if (!"https".equals(url.getProtocol()) || !(host.equals("github.com") || host.endsWith(".githubusercontent.com"))) throw new Exception("adres");
+                    h = (java.net.HttpURLConnection) url.openConnection();
+                    h.setInstanceFollowRedirects(false); h.setConnectTimeout(20000); h.setReadTimeout(30000);
+                    int code = h.getResponseCode();
+                    if (code >= 300 && code < 400) { u = new java.net.URL(url, h.getHeaderField("Location")).toString(); h.disconnect(); h = null; continue; }
+                    if (code != 200) throw new Exception("http " + code);
+                    break;
+                }
+                if (h == null) throw new Exception("yonlendirme");
+                long top = h.getContentLengthLong(), al = 0; int son = -1;
+                try (InputStream in = h.getInputStream(); java.io.FileOutputStream out = new java.io.FileOutputStream(f)) {
+                    byte[] b = new byte[65536]; int n;
+                    while ((n = in.read(b)) > 0) {
+                        out.write(b, 0, n); al += n;
+                        int p = top > 0 ? (int) (al * 100 / top) : -1;
+                        if (p != son && (p % 5 == 0)) { son = p; JSObject e = new JSObject(); e.put("p", p); notifyListeners("guncelle", e); }
+                    }
+                }
+                h.disconnect();
+                if (al < 100000) throw new Exception("kucuk");
+                Uri fu = androidx.core.content.FileProvider.getUriForFile(c, c.getPackageName() + ".fileprovider", f);
+                android.content.Intent it = new android.content.Intent(android.content.Intent.ACTION_VIEW);
+                it.setDataAndType(fu, "application/vnd.android.package-archive");
+                it.addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(it);
+                JSObject r = new JSObject(); r.put("ok", true); call.resolve(r);
+            } catch (Exception e) {
+                call.reject(String.valueOf(e.getMessage()));
+            } finally { gIniyor = false; }
+        }).start();
     }
 }

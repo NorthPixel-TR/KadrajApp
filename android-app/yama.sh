@@ -8,6 +8,8 @@ M=android/app/src/main/AndroidManifest.xml
 perl -0pi -e 's#</manifest>#    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />\n    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />\n    <uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n</manifest>#' "$M"
 # 6.8.20 bildirimler: POST_NOTIFICATIONS izni, beyaz K bildirim simgesi, renk ve varsayılan kanal (FCM). google-services.json yoksa bildirim yok, derleme yine olur.
 perl -0pi -e 's#</manifest>#    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>#' "$M"
+# 6.8.26 uygulama içinden güncelleme: APK kurma penceresini açma izni ve indirilen dosya için FileProvider'da cache-path.
+perl -0pi -e 's#</manifest>#    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />\n</manifest>#' "$M"
 perl -0pi -e 's#(<application[^>]*>)#$1\n        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="\@drawable/ic_stat_kadraj" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="\@color/kadraj_bildirim" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="kadraj" />\n        <receiver android:name=".KadrajYanit" android:exported="false" />#' "$M"
 R=android/app/src/main/res
 mkdir -p "$R/drawable" "$R/values"
@@ -23,6 +25,9 @@ cat > "$R/values/kadraj_bildirim.xml" <<'XML'
 </resources>
 XML
 if [ -f google-services.json ]; then cp google-services.json android/app/google-services.json; echo "google-services.json eklendi (bildirimler açık)"; else echo "UYARI: google-services.json yok, bildirimler kapalı derlenir"; fi
+FP="$R/xml/file_paths.xml"
+if [ -f "$FP" ]; then grep -q "cache-path" "$FP" || perl -0pi -e 's#</paths>#    <cache-path name="kadraj_cache" path="." />\n</paths>#' "$FP"; else mkdir -p "$R/xml"; printf '<?xml version="1.0" encoding="utf-8"?>\n<paths xmlns:android="http://schemas.android.com/apk/res/android">\n    <external-path name="my_images" path="." />\n    <cache-path name="kadraj_cache" path="." />\n</paths>\n' > "$FP"; fi
+cat "$FP"; grep -n "fileprovider\|REQUEST_INSTALL" "$M"
 rm -rf "$R"/mipmap-anydpi-v26
 for d in "$R"/mipmap-*; do
   cp ../icon-192.png "$d/ic_launcher.png"; cp ../icon-192.png "$d/ic_launcher_round.png"

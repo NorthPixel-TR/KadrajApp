@@ -1,16 +1,21 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.8.25",
+ "ver": "6.8.26",
  "at": 1793727074868,
- "note": "Android paket adı kadrajapp oldu: eski uygulamanın yanına kurulur, paket çakışması biter.",
+ "note": "Uygulama içinden güncelleme: Güncelle'ye basınca APK iner, Android Güncelle penceresi açılır, eskisinin üstüne kurulur.",
  "items": [
   {
-   "ad": "Eski pakette güncelleme penceresi yanına kur ve eskisini sil diyor",
+   "ad": "Uygulama içinden güncelleme (izin, dönünce yeniden, hata, tarayıcı yedeği)",
+   "ok": true,
+   "not": "gu.js 18/18 (sahte Capacitor; gerçek indirme ve kurulum yalnızca telefonda)"
+  },
+  {
+   "ad": "Eski pakette yanına kur penceresi",
    "ok": true,
    "not": "pk.js 6/6"
   },
   {
-   "ad": "Bildirim izni ve bildirim düğmeleri",
+   "ad": "Bildirim izni ve düğmeleri",
    "ok": true,
    "not": "kln.js 14/14, kln2.js 16/16"
   },
@@ -18,11 +23,6 @@
    "ad": "Rozet",
    "ok": true,
    "not": "rz.js 8/8"
-  },
-  {
-   "ad": "APK derlemesi yeni paket adıyla",
-   "ok": true,
-   "not": "GitHub apk işi"
   },
   {
    "ad": "Uygulama tamamen kapalıyken bildirim",

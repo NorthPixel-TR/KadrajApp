@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=60825,APP_VER="6.8.25";
+const APP_V=60826,APP_VER="6.8.26";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -7941,16 +7941,31 @@ HOOKS.after.push(r=>{if(r!=="settings"||S.guest)return;const m=$("#main");if(!m|
 /* 6.4.1 uygulama güncellemesi: APK'nın yerel sürümü (KadrajGaleri.surum, SURUM sabiti) APK_NATIVE'den küçükse ya da yöntem yoksa (eski APK)
    açılışta günde bir kez "Yeni sürüm var" penceresi (kadraj_apkask_<uid> = gün); İndir telefonun tarayıcısında APK_URL'yi açar (KadrajGaleri.ac).
    Ayarlar'daki #appInfo satırına da yazılır. Java tarafı değişince iki sayıyı birlikte artır. Site güncellemeleri APK'sız gelir, bunlar için gerekmez. */
-const APK_NATIVE=6;
+const APK_NATIVE=7;
 async function apkNative(){const G=kgal();if(!G)return null;try{if(typeof G.surum==="function"){const r=await G.surum();APK_PK=String(r&&r.paket||"");return r&&+r.surum||0}}catch{}return 0}
 /* 6.8.25: uygulamanın paket adı …kadrajapp oldu (eski …kadraj farklı imzalı kurulumlarda "paket çakışıyor" diyordu). Eski paketteki
    uygulamaya güncelleme penceresi yeni uygulamanın yanına kurulacağını ve eskisinin silinebileceğini söyler. */
 let APK_PK="";
 const apkOldPk=()=>!/\.kadrajapp$/.test(APK_PK);
-const apkMsg=()=>apkOldPk()?"İndir'e dokun, inen dosyayı aç ve kur. Yeni Kadraj bu uygulamanın yanına ayrı kurulur: yenisini aç, giriş yap, sonra bu eski Kadraj'ı sil. Hesabın ve paylaşımların yerinde kalır.":"İndir'e dokun, inen dosyayı aç ve kur. Eskisinin üstüne kurulur, hesabın ve paylaşımların yerinde kalır.";
-function apkOpen(){const G=kgal();try{if(G&&typeof G.ac==="function"){G.ac({url:APK_URL}).catch(()=>{location.href=APK_URL});return}}catch{}location.href=APK_URL}
+const apkMsg=()=>apkOldPk()?"İndir'e dokun, inen dosyayı aç ve kur. Yeni Kadraj bu uygulamanın yanına ayrı kurulur (bu son kez): yenisini aç, giriş yap, sonra bu eski Kadraj'ı sil. Bundan sonraki güncellemeler tek dokunuşla olur.":"Güncelle'ye dokun, Android sorunca bir daha Güncelle de. Eskisinin üstüne kurulur; giriş, hesap ve paylaşımların yerinde kalır.";
+function apkBrowser(){const G=kgal();try{if(G&&typeof G.ac==="function"){G.ac({url:APK_URL}).catch(()=>{location.href=APK_URL});return}}catch{}location.href=APK_URL}
+/* 6.8.26: uygulama içinden güncelleme. Yeni uygulama (KadrajGaleri.guncelle) APK'yı kendisi indirir ve Android'in Güncelle
+   penceresini açar; eskisinin üstüne kurulur, giriş ve veriler kalır. İlk seferde "bu kaynaktan yükleme" izni ayarı açılır,
+   izin verip Kadraj'a dönünce indirme kendiliğinden başlar (KUP.wait, kAppBg). Eski uygulamada tarayıcıdan indirir. */
+const KUP={on:false,wait:false,l:null};
+async function apkOpen(){const G=kgal();if(G&&!APK_PK)await apkNative();if(!G||typeof G.guncelle!=="function"||apkOldPk()){apkBrowser();return}
+ if(KUP.on){toast("Güncelleme indiriliyor…");return}
+ KUP.on=true;KUP.wait=false;
+ try{if(!KUP.l&&typeof G.addListener==="function")KUP.l=G.addListener("guncelle",e=>{const p=+(e&&e.p);if(p>=0&&p%25===0&&p<100)toast("Güncelleme indiriliyor %"+p)})}catch{}
+ toast("Güncelleme indiriliyor…");
+ try{const r=await G.guncelle({url:APK_URL});
+  if(r&&r.izin===false){KUP.wait=true;dialog("Bir kerelik izin","Açılan ekranda \"Bu kaynaktan izin ver\"i aç, sonra Kadraj'a geri dön. Güncelleme kendiliğinden başlar.",[{label:"Tamam"}]);return}
+  if(r&&r.ok)toast("Çıkan pencerede Güncelle'ye dokun")}
+ catch(e){const m=String(e&&e.message||e);if(/suruyor/.test(m))toast("Güncelleme indiriliyor…");else dialog("Güncelleme inmedi","İnternetini kontrol edip yeniden dene. Olmazsa tarayıcıdan indirebilirsin.",[{label:"Yeniden dene",fn:()=>apkOpen()},{label:"Tarayıcıdan indir",fn:apkBrowser},{label:"Kapat"}])}
+ finally{KUP.on=false}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&KUP.wait){KUP.wait=false;setTimeout(apkOpen,600)}});
 async function apkCheck(force){const v=await apkNative();if(v==null||v>=APK_NATIVE)return false;const k="kadraj_apkask_"+(S.uid||"");if(!force){if(LS.get(k)===tmDay())return true;if($$("#overlay .layer").length){setTimeout(()=>apkCheck(false),15000);return true}LS.set(k,tmDay())}
- dialog("Kadraj uygulamasının yeni sürümü var",apkMsg(),[{label:"İndir",fn:apkOpen},{label:"Sonra"}]);return true}
+ dialog("Kadraj uygulamasının yeni sürümü var",apkMsg(),[{label:apkOldPk()?"İndir":"Güncelle",fn:apkOpen},{label:"Sonra"}]);return true}
 HOOKS.enter.push(()=>setTimeout(()=>apkCheck(false),6000));
 HOOKS.after.push(r=>{if(r!=="settings"||!kgal())return;apkNative().then(v=>{const row=$("#appInfo");if(!row||v==null||v>=APK_NATIVE||row.querySelector(".apk-up"))return;const b=document.createElement("button");b.type="button";b.className="btn sm apk-up";b.textContent="Güncelle";b.onclick=apkOpen;const r0=row.querySelector(".row");(r0||row).appendChild(b);const s=row.querySelector(".s");if(s)s.textContent="Uygulamanın yeni sürümü var"})});
 /* 6.4.6: Ayarlar kısa ve gruplu (sahibinin isteği). Çizimden sonra (HOOKS.after, en son) 12 bölüm (.sxs) ve sonradan eklenen kutular
@@ -9470,7 +9485,7 @@ function klnPrompt(){if(!S.uid||S.guest||settings.notify===false)return;if(SS.ge
   dialog("Bildirimleri aç","Mesaj, beğeni ve yorum gelince telefonuna bildirim gelsin. Bildirimden yanıt yazabilir, kalp atabilirsin.",[{label:"İzin ver",fn:async()=>{const r=await klnAsk(true);if(r==="granted"){toast("Bildirimler açık");return}
    if(KLN.p&&typeof KLN.p.bildirimAyar==="function")dialog("Bildirim izni kapalı","Telefon bu uygulamaya bildirim izni vermiyor. Ayarlar'da Kadraj için bildirimleri aç.",[{label:"Ayarları aç",fn:()=>{KLN.p.bildirimAyar().catch(()=>{})}},{label:"Kapat"}]);else toast("Telefon Ayarları › Uygulamalar › Kadraj › Bildirimler'den açabilirsin.")}},{label:"Şimdi değil"}]);return}
  if(kgal()){SS.set("kadraj_kln_p",1);try{LS.set("kadraj_apkask_"+S.uid,tmDay())}catch{}
-  dialog("Bildirimler için güncelle","Telefon bildirimleri Kadraj uygulamasının yeni sürümüyle geliyor. "+apkMsg(),[{label:"İndir",fn:apkOpen},{label:"Sonra"}])}}
+  dialog("Bildirimler için güncelle","Telefon bildirimleri Kadraj uygulamasının yeni sürümüyle geliyor. "+apkMsg(),[{label:apkOldPk()?"İndir":"Güncelle",fn:apkOpen},{label:"Sonra"}])}}
 klnCheck().then(ok=>{if(ok&&KLN.p&&typeof KLN.p.addListener==="function"){try{KLN.p.addListener("bildirimEylem",d=>klnEylem(d))}catch(e){console.warn("kln dinle",e)}}
  HOOKS.enter.push(()=>setTimeout(klnPrompt,4000));if(S.uid)setTimeout(klnPrompt,4000)});
 /*}@js:77*/
