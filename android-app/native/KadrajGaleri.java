@@ -244,7 +244,7 @@ public class KadrajGaleri extends Plugin {
 
     /* Uygulamanın yerel sürümü: Java tarafı değişince SURUM'u artır, index.html'deki APK_NATIVE da aynı sayı olsun.
        Sayfa küçükse "Güncelleme var" penceresi çıkar. */
-    static final int SURUM = 4;
+    static final int SURUM = 5;
 
     @PluginMethod
     public void surum(PluginCall call) {
@@ -252,6 +252,7 @@ public class KadrajGaleri extends Plugin {
         r.put("surum", SURUM);
         r.put("fcm", fcmVar());
         r.put("yerel", true);
+        r.put("eylem", true);
         try { r.put("ad", getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0).versionName); } catch (Exception e) { r.put("ad", ""); }
         call.resolve(r);
     }
@@ -300,9 +301,9 @@ public class KadrajGaleri extends Plugin {
         call.resolve(r);
     }
 
-    private void kanal() {
+    static void kanal(android.content.Context c) {
         if (Build.VERSION.SDK_INT < 26) return;
-        android.app.NotificationManager nm = (android.app.NotificationManager) getContext().getSystemService(android.content.Context.NOTIFICATION_SERVICE);
+        android.app.NotificationManager nm = (android.app.NotificationManager) c.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
         if (nm == null || nm.getNotificationChannel("kadraj") != null) return;
         android.app.NotificationChannel ch = new android.app.NotificationChannel("kadraj", "Kadraj", android.app.NotificationManager.IMPORTANCE_HIGH);
         ch.setDescription("Mesajlar, beğeniler, yorumlar ve takipler");
@@ -314,37 +315,98 @@ public class KadrajGaleri extends Plugin {
     public void bildirim(PluginCall call) {
         try {
             if (!bildirimAcik()) { call.reject("izin"); return; }
-            kanal();
-            android.content.Context c = getContext();
-            String tag = call.getString("tag", "kadraj");
-            String key = call.getString("key", "");
-            String title = call.getString("title", "Kadraj");
-            String body = call.getString("body", "");
-            android.content.Intent it = new android.content.Intent(c, MainActivity.class);
-            it.addFlags(android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            if (key != null && !key.isEmpty()) it.putExtra("key", key);
-            android.app.PendingIntent pi = android.app.PendingIntent.getActivity(c, tag.hashCode(), it,
-                android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE);
-            int ic = c.getResources().getIdentifier("ic_stat_kadraj", "drawable", c.getPackageName());
-            if (ic == 0) ic = c.getApplicationInfo().icon;
-            androidx.core.app.NotificationCompat.Builder b = new androidx.core.app.NotificationCompat.Builder(c, "kadraj")
-                .setSmallIcon(ic)
-                .setColor(0xFF0C7A63)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setStyle(new androidx.core.app.NotificationCompat.BigTextStyle().bigText(body))
-                .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
-                .setCategory(androidx.core.app.NotificationCompat.CATEGORY_MESSAGE)
-                .setDefaults(androidx.core.app.NotificationCompat.DEFAULT_ALL)
-                .setAutoCancel(true)
-                .setContentIntent(pi);
-            androidx.core.app.NotificationManagerCompat.from(c).notify(tag, 1, b.build());
+            JSObject o = new JSObject();
+            for (String k : new String[] { "title", "body", "tag", "key", "kind", "mid", "cid", "from" }) o.put(k, call.getString(k, ""));
+            o.put("sessiz", call.getBoolean("sessiz", false));
+            goster(getContext(), o);
             call.resolve();
         } catch (SecurityException e) {
             call.reject("izin");
         } catch (Exception e) {
             call.reject("bildirim: " + e.getMessage());
         }
+    }
+
+    /* 6.8.24: bildirimi çizer. Mesaj bildiriminde (kind=msg) Yanıtla (bildirimden yazılır), Kalp at ve Görüldü düğmeleri;
+       düğmeler KadrajYanit'e gider, o da sayfaya "bildirimEylem" olayı yollar. sessiz: ses/titreşim yok, düğme yok (sonuç bildirimi). */
+    static void goster(android.content.Context c, JSObject o) {
+        kanal(c);
+        String tag = o.optString("tag", "kadraj"); if (tag.isEmpty()) tag = "kadraj";
+        String key = o.optString("key", "");
+        String title = o.optString("title", "Kadraj"); if (title.isEmpty()) title = "Kadraj";
+        String body = o.optString("body", "");
+        boolean sessiz = o.optBoolean("sessiz", false);
+        android.content.Intent it = new android.content.Intent(c, MainActivity.class);
+        it.addFlags(android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (!key.isEmpty()) it.putExtra("key", key);
+        android.app.PendingIntent pi = android.app.PendingIntent.getActivity(c, tag.hashCode(), it,
+            android.app.PendingIntent.FLAG_UPDATE_CURRENT | android.app.PendingIntent.FLAG_IMMUTABLE);
+        int ic = c.getResources().getIdentifier("ic_stat_kadraj", "drawable", c.getPackageName());
+        if (ic == 0) ic = c.getApplicationInfo().icon;
+        androidx.core.app.NotificationCompat.Builder b = new androidx.core.app.NotificationCompat.Builder(c, "kadraj")
+            .setSmallIcon(ic)
+            .setColor(0xFF0C7A63)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(new androidx.core.app.NotificationCompat.BigTextStyle().bigText(body))
+            .setCategory(androidx.core.app.NotificationCompat.CATEGORY_MESSAGE)
+            .setAutoCancel(true)
+            .setContentIntent(pi);
+        if (sessiz) b.setOnlyAlertOnce(true).setSilent(true).setPriority(androidx.core.app.NotificationCompat.PRIORITY_LOW);
+        else b.setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH).setDefaults(androidx.core.app.NotificationCompat.DEFAULT_ALL);
+        if (!sessiz && "msg".equals(o.optString("kind", "")) && (key.startsWith("u:") || key.startsWith("g:") || key.equals("meydan"))) {
+            androidx.core.app.RemoteInput ri = new androidx.core.app.RemoteInput.Builder(KadrajYanit.YAZI).setLabel("Yanıt yaz").build();
+            b.addAction(new androidx.core.app.NotificationCompat.Action.Builder(0, "Yanıtla", eylemPi(c, o, "reply", true)).addRemoteInput(ri).setAllowGeneratedReplies(false).build());
+            b.addAction(new androidx.core.app.NotificationCompat.Action.Builder(0, "Kalp at", eylemPi(c, o, "heart", false)).build());
+            b.addAction(new androidx.core.app.NotificationCompat.Action.Builder(0, "Görüldü", eylemPi(c, o, "seen", false)).build());
+        }
+        androidx.core.app.NotificationManagerCompat.from(c).notify(tag, 1, b.build());
+    }
+
+    private static android.app.PendingIntent eylemPi(android.content.Context c, JSObject o, String act, boolean yazi) {
+        android.content.Intent it = new android.content.Intent(c, KadrajYanit.class);
+        it.setAction("io.github.kadrajsosyalmedya.kadraj.EYLEM." + act);
+        it.putExtra("act", act);
+        for (String k : new String[] { "title", "body", "tag", "key", "kind", "mid", "cid", "from" }) it.putExtra(k, o.optString(k, ""));
+        int fl = android.app.PendingIntent.FLAG_UPDATE_CURRENT | (yazi && Build.VERSION.SDK_INT >= 31 ? android.app.PendingIntent.FLAG_MUTABLE : android.app.PendingIntent.FLAG_IMMUTABLE);
+        return android.app.PendingIntent.getBroadcast(c, (o.optString("tag", "") + act).hashCode(), it, fl);
+    }
+
+    /* Bildirim düğmesinden gelen eylemi sayfaya iletir; sayfa yoksa (uygulama kapalı) saklar, açılınca gönderilir. */
+    static volatile KadrajGaleri ben = null;
+
+    static void eylem(android.content.Context c, JSObject d) {
+        KadrajGaleri g = ben;
+        if (g != null && g.getBridge() != null) { g.notifyListeners("bildirimEylem", d, true); return; }
+        try {
+            android.content.SharedPreferences sp = c.getSharedPreferences("kadraj", 0);
+            org.json.JSONArray a = new org.json.JSONArray(sp.getString("eylem", "[]"));
+            a.put(d);
+            sp.edit().putString("eylem", a.toString()).apply();
+        } catch (Exception e) { }
+    }
+
+    @Override
+    public void load() {
+        ben = this;
+        try {
+            android.content.SharedPreferences sp = getContext().getSharedPreferences("kadraj", 0);
+            org.json.JSONArray a = new org.json.JSONArray(sp.getString("eylem", "[]"));
+            sp.edit().remove("eylem").apply();
+            for (int i = 0; i < a.length(); i++) notifyListeners("bildirimEylem", JSObject.fromJSONObject(a.getJSONObject(i)), true);
+        } catch (Exception e) { }
+    }
+
+    /* Telefonun bu uygulamaya ait bildirim ayarlarını açar (izin kalıcı reddedildiyse). */
+    @PluginMethod
+    public void bildirimAyar(PluginCall call) {
+        try {
+            android.content.Intent it = new android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+            it.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
+            it.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(it);
+            call.resolve();
+        } catch (Exception e) { call.reject("ayar"); }
     }
 
     @PluginMethod

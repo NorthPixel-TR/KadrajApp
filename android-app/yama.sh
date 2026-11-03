@@ -3,12 +3,12 @@
 set -euo pipefail
 P=android/app/src/main/java/io/github/kadrajsosyalmedya/kadraj
 mkdir -p "$P"
-cp native/KadrajGaleri.java native/MainActivity.java "$P/"
+cp native/KadrajGaleri.java native/MainActivity.java native/KadrajYanit.java "$P/"
 M=android/app/src/main/AndroidManifest.xml
 perl -0pi -e 's#</manifest>#    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />\n    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />\n    <uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n</manifest>#' "$M"
 # 6.8.20 bildirimler: POST_NOTIFICATIONS izni, beyaz K bildirim simgesi, renk ve varsayılan kanal (FCM). google-services.json yoksa bildirim yok, derleme yine olur.
 perl -0pi -e 's#</manifest>#    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n</manifest>#' "$M"
-perl -0pi -e 's#(<application[^>]*>)#$1\n        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="\@drawable/ic_stat_kadraj" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="\@color/kadraj_bildirim" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="kadraj" />#' "$M"
+perl -0pi -e 's#(<application[^>]*>)#$1\n        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="\@drawable/ic_stat_kadraj" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="\@color/kadraj_bildirim" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="kadraj" />\n        <receiver android:name=".KadrajYanit" android:exported="false" />#' "$M"
 R=android/app/src/main/res
 mkdir -p "$R/drawable" "$R/values"
 cat > "$R/drawable/ic_stat_kadraj.xml" <<'XML'

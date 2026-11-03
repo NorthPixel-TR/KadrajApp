@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=60823,APP_VER="6.8.23";
+const APP_V=60824,APP_VER="6.8.24";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -7941,7 +7941,7 @@ HOOKS.after.push(r=>{if(r!=="settings"||S.guest)return;const m=$("#main");if(!m|
 /* 6.4.1 uygulama güncellemesi: APK'nın yerel sürümü (KadrajGaleri.surum, SURUM sabiti) APK_NATIVE'den küçükse ya da yöntem yoksa (eski APK)
    açılışta günde bir kez "Yeni sürüm var" penceresi (kadraj_apkask_<uid> = gün); İndir telefonun tarayıcısında APK_URL'yi açar (KadrajGaleri.ac).
    Ayarlar'daki #appInfo satırına da yazılır. Java tarafı değişince iki sayıyı birlikte artır. Site güncellemeleri APK'sız gelir, bunlar için gerekmez. */
-const APK_NATIVE=4;
+const APK_NATIVE=5;
 async function apkNative(){const G=kgal();if(!G)return null;try{if(typeof G.surum==="function"){const r=await G.surum();return r&&+r.surum||0}}catch{}return 0}
 function apkOpen(){const G=kgal();try{if(G&&typeof G.ac==="function"){G.ac({url:APK_URL}).catch(()=>{location.href=APK_URL});return}}catch{}location.href=APK_URL}
 async function apkCheck(force){const v=await apkNative();if(v==null||v>=APK_NATIVE)return false;const k="kadraj_apkask_"+(S.uid||"");if(!force){if(LS.get(k)===tmDay())return true;if($$("#overlay .layer").length){setTimeout(()=>apkCheck(false),15000);return true}LS.set(k,tmDay())}
@@ -9415,7 +9415,7 @@ async function klnAsk1(silent){try{const x=await KLN.p.bildirimIzin({sor:true});
 {const f=askNotif;askNotif=function(silent){return KLN.on?klnAsk(silent):f.apply(this,arguments)}}
 {const f=sysNote;sysNote=function(title,body,tag,o={}){if(!KLN.on)return f.apply(this,arguments);
  try{if(!settings.notify||KLN.perm!=="granted")return;if(typeof quietOn==="function"&&quietOn())return;if(document.visibilityState==="visible"&&!(o&&o.force))return;
-  KLN.p.bildirim({title:String(title||"Kadraj").slice(0,80),body:String(body||"").slice(0,300),tag:String(tag||"kadraj").slice(0,80),key:String((o&&o.key)||"")}).catch(()=>{})}catch{}}}
+  const x=o||{};KLN.p.bildirim({title:String(title||"Kadraj").slice(0,80),body:String(body||"").slice(0,300),tag:String(tag||"kadraj").slice(0,80),key:String(x.key||""),kind:String(x.kind||""),mid:String(x.mid||""),cid:String(x.cid||""),from:String(x.from||"")}).catch(()=>{})}catch{}}}
 {const f=clearChatNotes;clearChatNotes=function(cid){if(KLN.on&&cid)try{KLN.p.bildirimSil({tag:"m-"+cid}).catch(()=>{})}catch{}return f.apply(this,arguments)}}
 /* açılışta: eklenti varsa yerel bildirimi aç; izin bir kez sorulur (Android 13+) */
 klnCheck().then(ok=>{if(!ok)return;const ask=()=>{if(!S.uid||S.guest||settings.notify===false||KLN.perm==="granted")return;if(LS.get("kadraj_kln_ask_"+S.uid))return;setTimeout(()=>{if(KLN.asked||KLN.perm==="granted")return;LS.set("kadraj_kln_ask_"+S.uid,1);klnAsk(true)},6000)};
@@ -9440,6 +9440,35 @@ async function rzToggle(uid,id){if(!rzMine()||!RZM[id])return false;const list={
   const b2=document.createElement("button");b2.className="opt";b2.id="pmRzE";b2.innerHTML=`${I("rzcrown")}Rozetleri düzenle`;b2.onclick=()=>{closeLayer("menu");setTimeout(()=>admRozetSheet(uid),280)};
   if(cl){cl.before(b1);cl.before(b2)}else{box.appendChild(b1);box.appendChild(b2)}}}}catch(e){console.warn("rz76",e)}return r}}
 /*}@js:76*/
+
+/*@js:77{*/
+/* 6.8.24 bildirim düğmeleri ve izin (sahibi "açarken bildirimi sorsun, yanıtla'ya basınca uygulamadan yanıtlayalım, kalp atalım" dedi).
+   KadrajGaleri SURUM 5: mesaj bildiriminde Yanıtla (bildirimin içinde yazılır), Kalp at, Görüldü; KadrajYanit alıcısı "bildirimEylem"
+   olayı yollar ({action,key,cid,mid,from,tag,title,body,text,at}); uygulama kapalıysa olay saklanır, açılınca gelir. klnEylem:
+   yanıt knReply (görüldü göndermez), kalp knHeart, görüldü knSeen; sonuç sessiz bildirimle yazılır. Bildirime dokununca o sohbete
+   gitme zaten vardı (MainActivity key → kPushOpen). İzin: her açılışta (oturumda bir kez) izin yoksa Kadraj penceresi sorar,
+   reddedildiyse telefonun bildirim ayarlarını açar (bildirimAyar). Eski uygulamada (yerel bildirim yok) her açılışta güncelleme penceresi. */
+const KLQ=[];
+async function klnEylem(d){try{if(!d||!d.action||!d.key)return;if(!S.authed||!S.uid){KLQ.push(d);return}
+ const o={key:String(d.key),cid:String(d.cid||""),mid:String(d.mid||""),uid:String(d.from||""),from:String(d.from||""),at:+d.at||0,text:String(d.body||"")};
+ try{if(!o.cid)o.cid=keyInfo(o.key).cid||""}catch{}
+ let ok=false,msg="";
+ if(d.action==="reply"){ok=await knReply(o,d.text);msg=ok?"Sen: "+String(d.text||"").slice(0,200):"Yanıt gönderilemedi. Kadraj'ı açıp tekrar dene."}
+ else if(d.action==="heart"){ok=await knHeart(o);msg=ok?"Kalp attın":"Kalp gönderilemedi."}
+ else if(d.action==="seen"){ok=await knSeen(o);if(ok){try{KLN.p.bildirimSil({tag:String(d.tag||"")}).catch(()=>{})}catch{}}return}
+ else return;
+ if(KLN.p&&d.tag)KLN.p.bildirim({title:String(d.title||"Kadraj"),body:msg,tag:String(d.tag),key:o.key,sessiz:true}).catch(()=>{})}catch(e){console.warn("kln eylem",e)}}
+HOOKS.enter.push(()=>{const q=KLQ.splice(0);for(const d of q)klnEylem(d)});
+function klnPrompt(){if(!S.uid||S.guest||settings.notify===false)return;if(SS.get("kadraj_kln_p"))return;
+ if($$("#overlay .layer").length){setTimeout(klnPrompt,8000);return}
+ if(KLN.on){if(KLN.perm==="granted")return;SS.set("kadraj_kln_p",1);
+  dialog("Bildirimleri aç","Mesaj, beğeni ve yorum gelince telefonuna bildirim gelsin. Bildirimden yanıt yazabilir, kalp atabilirsin.",[{label:"İzin ver",fn:async()=>{const r=await klnAsk(true);if(r==="granted"){toast("Bildirimler açık");return}
+   if(KLN.p&&typeof KLN.p.bildirimAyar==="function")dialog("Bildirim izni kapalı","Telefon bu uygulamaya bildirim izni vermiyor. Ayarlar'da Kadraj için bildirimleri aç.",[{label:"Ayarları aç",fn:()=>{KLN.p.bildirimAyar().catch(()=>{})}},{label:"Kapat"}]);else toast("Telefon Ayarları › Uygulamalar › Kadraj › Bildirimler'den açabilirsin.")}},{label:"Şimdi değil"}]);return}
+ if(kgal()){SS.set("kadraj_kln_p",1);try{LS.set("kadraj_apkask_"+S.uid,tmDay())}catch{}
+  dialog("Bildirimler için güncelle","Telefon bildirimleri Kadraj uygulamasının yeni sürümüyle geliyor. İndir'e dokun, inen dosyayı açıp kur; hesabın ve paylaşımların yerinde kalır.",[{label:"İndir",fn:apkOpen},{label:"Sonra"}])}}
+klnCheck().then(ok=>{if(ok&&KLN.p&&typeof KLN.p.addListener==="function"){try{KLN.p.addListener("bildirimEylem",d=>klnEylem(d))}catch(e){console.warn("kln dinle",e)}}
+ HOOKS.enter.push(()=>setTimeout(klnPrompt,4000));if(S.uid)setTimeout(klnPrompt,4000)});
+/*}@js:77*/
 
 boot();
 

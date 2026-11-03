@@ -1,33 +1,38 @@
 {
- "title": "6.8.23 Rozet kısayolu",
- "ver": "6.8.23",
- "at": 1793484784664,
- "note": "8 + 14 denetim geçti.",
+ "title": "6.8.24 Bildirim düğmeleri ve izin",
+ "ver": "6.8.24",
+ "at": 1793727074868,
+ "note": "Sahte Capacitor ile 16 + 14 + 8 denetim. Java tarafı GitHub derlemesinde.",
  "items": [
   {
-   "ad": "Kurucuya profil ⋯ menüsünde 'No.1 Hayran rozetini ver' (yönetici modu kapalıyken)",
+   "ad": "Açılışta izin yoksa 'Bildirimleri aç' penceresi",
    "ok": true,
    "not": ""
   },
   {
-   "ad": "Rozet veriliyor, profilde görünüyor, kaldırılabiliyor",
+   "ad": "Telefon reddederse 'Ayarları aç'",
    "ok": true,
    "not": ""
   },
   {
-   "ad": "Rozetleri düzenle penceresi açılıyor",
+   "ad": "Bildirimden yanıt (alıntılı, görüldü göndermez)",
    "ok": true,
    "not": ""
   },
   {
-   "ad": "Normal kullanıcıda rozet seçeneği yok",
+   "ad": "Bildirimden kalp ve görüldü",
    "ok": true,
    "not": ""
   },
   {
-   "ad": "6.8.22 yerel bildirim testleri",
+   "ad": "Eski uygulamada güncelleme penceresi",
    "ok": true,
-   "not": "14/14"
+   "not": ""
+  },
+  {
+   "ad": "Uygulama tamamen kapalıyken bildirim",
+   "ok": false,
+   "not": "google-services.json ve FCM_SA bekleniyor"
   }
  ]
 }
