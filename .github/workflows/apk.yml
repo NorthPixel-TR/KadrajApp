@@ -5,6 +5,11 @@
 name: Kadraj APK
 on:
   workflow_dispatch:
+    inputs:
+      yeni_imza:
+        description: "İmza anahtarı kaybolduysa yenisini oluştur (eski uygulama kaldırılıp yenisi kurulmalı)"
+        type: boolean
+        default: false
   push:
     paths: ["android-app/**", ".github/workflows/apk.yml"]
 permissions:
@@ -21,7 +26,9 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      # Her derlemede aynı imza: imza anahtarı önbellekte saklanır (yoksa ilk derlemede oluşur). İmza değişirse eski uygulama kaldırılıp yenisi kurulmalı.
+      # Her derlemede aynı imza: imza anahtarı önbellekte saklanır. GitHub 7 gün kullanılmayan önbelleği siler (29 Ekim 2026'da
+      # böyle oldu, imza değişti, telefonda "paket çakışıyor" hatası çıktı); apk-imza.yml önbelleği 3 günde bir okuyup canlı tutar.
+      # main'de anahtar bulunamazsa derleme durur (sessizce yeni imza çıkmasın); bilerek yenilemek için elle çalıştırıp yeni_imza seç.
       - name: İmza anahtarı
         uses: actions/cache@v4
         with:
@@ -30,6 +37,9 @@ jobs:
       - name: Anahtar yoksa oluştur
         run: |
           mkdir -p ~/.android
+          if [ ! -f ~/.android/kadraj.keystore ] && [ "${{ github.ref_name }}" = "main" ] && [ "${{ inputs.yeni_imza }}" != "true" ]; then
+            echo "::error::main imza anahtarı önbellekte yok. Yeni imza telefondaki uygulamayla çakışır. Bilerek yenilemek için iş akışını elle yeni_imza ile çalıştır."; exit 1
+          fi
           [ -f ~/.android/kadraj.keystore ] || keytool -genkeypair -v -keystore ~/.android/kadraj.keystore -storepass kadraj-android -keypass kadraj-android -alias kadraj -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Kadraj, O=Kadraj, C=TR"
           keytool -list -keystore ~/.android/kadraj.keystore -storepass kadraj-android | tail -2
       - name: Capacitor projesi

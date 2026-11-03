@@ -1,0 +1,23 @@
+# Kadraj APK imza anahtarını canlı tutar. GitHub 7 gün okunmayan önbelleği siler; silinirse yeni APK başka imzayla çıkar ve
+# telefonda "paket mevcut bir paketle çakışıyor" hatası verir. Bu iş main'in anahtarını 3 günde bir okur (okumak süreyi yeniler).
+name: APK imza anahtarını koru
+on:
+  schedule:
+    - cron: "17 3 */3 * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  koru:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Anahtarı oku
+        id: c
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.android/kadraj.keystore
+          key: kadraj-imza-main-v2
+      - name: Denetle
+        run: |
+          if [ "${{ steps.c.outputs.cache-hit }}" != "true" ]; then echo "::error::main imza anahtarı önbellekte yok"; exit 1; fi
+          keytool -list -keystore ~/.android/kadraj.keystore -storepass kadraj-android | tail -1
