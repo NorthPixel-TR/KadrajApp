@@ -30,8 +30,13 @@ for d in "$R"/mipmap-*; do
 done
 VER=$(grep -o 'APP_VER="[0-9.]*"' ../app.js | head -1 | cut -d'"' -f2)
 G=android/app/build.gradle
+# 6.8.25: paket adı io.github.kadrajsosyalmedya.kadrajapp. Eski paket (…kadraj) farklı imzayla kurulmuş telefonlarda kaldırınca bile
+# "paket çakışıyor" hatası veriyordu (veri saklanarak kaldırma, ikinci alan vb.); yeni ad eskisinin yanına sorunsuz kurulur.
+# Java paketi (namespace) aynı kalır, yalnızca applicationId değişir. FCM'de (google-services.json) bu ad kullanılır.
+sed -i 's/applicationId "io.github.kadrajsosyalmedya.kadraj"/applicationId "io.github.kadrajsosyalmedya.kadrajapp"/' "$G"
+grep -q 'applicationId "io.github.kadrajsosyalmedya.kadrajapp"' "$G"
 sed -i "s/versionCode 1$/versionCode ${GITHUB_RUN_NUMBER:-1}/; s/versionName \"1.0\"/versionName \"${VER:-1.0}\"/" "$G"
-grep -n "versionCode\|versionName" "$G"
+grep -n "applicationId\|versionCode\|versionName" "$G"
 grep -c READ_MEDIA_IMAGES "$M"
 grep -c "default_notification_icon\|POST_NOTIFICATIONS" "$M"
 # Sabit imza: anahtar GitHub önbelleğinde (~/.android/kadraj.keystore), iş akışı yoksa oluşturur. Depoda anahtar yok.

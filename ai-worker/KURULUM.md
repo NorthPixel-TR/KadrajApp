@@ -86,7 +86,7 @@ Bu adımdan sonra Kadraj kapalıyken de mesaj, beğeni, yorum, takip ve aramalar
    - iPhone'da bu yalnızca Kadraj **Ana ekrana eklenip** oradan açıldığında çalışır (iOS 16.4 ve sonrası).
 
 **Kadraj Android uygulaması (6.8.20)**: Uygulama Web Push alamaz; ona Firebase Cloud Messaging ile gider.
-1. Firebase konsolu › Proje ayarları (dişli) › Genel › **Uygulama ekle** › Android. Paket adı: `io.github.kadrajsosyalmedya.kadraj`. Kaydet, **google-services.json**'ı indir. Bu dosya gizli değil; depoda `android-app/google-services.json` olarak durur, APK onunla derlenir.
+1. Firebase konsolu › Proje ayarları (dişli) › Genel › **Uygulama ekle** › Android. Paket adı: `io.github.kadrajsosyalmedya.kadrajapp` (6.8.25'ten beri; eski `…kadraj` değil). Kaydet, **google-services.json**'ı indir. Bu dosya gizli değil; depoda `android-app/google-services.json` olarak durur, APK onunla derlenir.
 2. Firebase konsolu › Proje ayarları › **Hizmet hesapları** › **Yeni özel anahtar oluştur** › bir JSON dosyası iner. **Bu gizlidir**: kimseyle paylaşma, GitHub'a koyma.
 3. Cloudflare › Workers › kadraj-ai › Settings › Variables and Secrets › Add: Type **Secret**, Name `FCM_SA`, Value: indirilen JSON dosyasının **tamamı**.
 4. Cloudflare'de Edit code ile `hazir/kadraj-ai.js`'i yapıştır, Deploy. `/health` yanıtında `"fcm":true` görünmeli.

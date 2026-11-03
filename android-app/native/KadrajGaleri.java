@@ -244,7 +244,7 @@ public class KadrajGaleri extends Plugin {
 
     /* Uygulamanın yerel sürümü: Java tarafı değişince SURUM'u artır, index.html'deki APK_NATIVE da aynı sayı olsun.
        Sayfa küçükse "Güncelleme var" penceresi çıkar. */
-    static final int SURUM = 5;
+    static final int SURUM = 6;
 
     @PluginMethod
     public void surum(PluginCall call) {
@@ -253,6 +253,7 @@ public class KadrajGaleri extends Plugin {
         r.put("fcm", fcmVar());
         r.put("yerel", true);
         r.put("eylem", true);
+        r.put("paket", getContext().getPackageName());
         try { r.put("ad", getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0).versionName); } catch (Exception e) { r.put("ad", ""); }
         call.resolve(r);
     }
@@ -365,7 +366,7 @@ public class KadrajGaleri extends Plugin {
 
     private static android.app.PendingIntent eylemPi(android.content.Context c, JSObject o, String act, boolean yazi) {
         android.content.Intent it = new android.content.Intent(c, KadrajYanit.class);
-        it.setAction("io.github.kadrajsosyalmedya.kadraj.EYLEM." + act);
+        it.setAction(c.getPackageName() + ".EYLEM." + act);
         it.putExtra("act", act);
         for (String k : new String[] { "title", "body", "tag", "key", "kind", "mid", "cid", "from" }) it.putExtra(k, o.optString(k, ""));
         int fl = android.app.PendingIntent.FLAG_UPDATE_CURRENT | (yazi && Build.VERSION.SDK_INT >= 31 ? android.app.PendingIntent.FLAG_MUTABLE : android.app.PendingIntent.FLAG_IMMUTABLE);

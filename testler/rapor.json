@@ -1,33 +1,28 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.8.24",
+ "ver": "6.8.25",
  "at": 1793727074868,
- "note": "Sahte Capacitor ile 16 + 14 + 8 denetim. Java tarafı GitHub derlemesinde.",
+ "note": "Android paket adı kadrajapp oldu: eski uygulamanın yanına kurulur, paket çakışması biter.",
  "items": [
   {
-   "ad": "Açılışta izin yoksa 'Bildirimleri aç' penceresi",
+   "ad": "Eski pakette güncelleme penceresi yanına kur ve eskisini sil diyor",
    "ok": true,
-   "not": ""
+   "not": "pk.js 6/6"
   },
   {
-   "ad": "Telefon reddederse 'Ayarları aç'",
+   "ad": "Bildirim izni ve bildirim düğmeleri",
    "ok": true,
-   "not": ""
+   "not": "kln.js 14/14, kln2.js 16/16"
   },
   {
-   "ad": "Bildirimden yanıt (alıntılı, görüldü göndermez)",
+   "ad": "Rozet",
    "ok": true,
-   "not": ""
+   "not": "rz.js 8/8"
   },
   {
-   "ad": "Bildirimden kalp ve görüldü",
+   "ad": "APK derlemesi yeni paket adıyla",
    "ok": true,
-   "not": ""
-  },
-  {
-   "ad": "Eski uygulamada güncelleme penceresi",
-   "ok": true,
-   "not": ""
+   "not": "GitHub apk işi"
   },
   {
    "ad": "Uygulama tamamen kapalıyken bildirim",
