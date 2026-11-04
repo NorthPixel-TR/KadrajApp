@@ -1,9 +1,24 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.9.2",
+ "ver": "6.9.3",
  "at": 1793727074868,
- "note": "6.9.2: uygulama içi bildirim sağa kaydırınca kapanıyor.",
+ "note": "6.9.3: sohbet ekranı Instagram gibi: kamera, mikrofon, galeri, çıkartma ve ⊕ yazma çubuğunda; üstte (i) yok; ⊕ menüsü kısa liste.",
  "items": [
+  {
+   "ad": "Instagram gibi sohbet çubuğu (390 ve 800 px)",
+   "ok": true,
+   "not": "t69.js 30/30"
+  },
+  {
+   "ad": "Kadraj testi",
+   "ok": true,
+   "not": "49/49 adım"
+  },
+  {
+   "ad": "Sohbet kayması (meas.js)",
+   "ok": true,
+   "not": "hata yok"
+  },
   {
    "ad": "Bildirimi sağa kaydırarak kapatma",
    "ok": true,

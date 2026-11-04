@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=60902,APP_VER="6.9.2";
+const APP_V=60903,APP_VER="6.9.3";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -9781,6 +9781,30 @@ function ozetSheet(){const t0=new Date();t0.setDate(1);t0.setHours(0,0,0,0);cons
 ACT.k69oz=()=>ozetSheet();
 Object.assign(IP,{chart69:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'});
 /*}@js:690*/
+
+/*@js:693{*/
+/* 6.9.3 Instagram gibi sohbet ekranı (sahibi "çok fazla gereksiz tuş var" dedi):
+   - Yazma çubuğu: solda yuvarlak kamera (doğrudan telefon kamerası, capture), ortada "Mesaj…", sağda (kutu boşken) mikrofon,
+     galeri (attachPhoto, Kadraj seçicisi), çıkartma/GIF (gifPick) ve ⊕ (plusMenu). Yazınca bu düğmeler gizlenir, yalnızca gönder kalır.
+     DOM'da wireComposer sarmalayıcısıyla kurulur (vChat dizgesi birçok yerde sarıldığı için dokunulmadı). Botlarda eski hal.
+   - Üst çubuk: DM/grupta (i) düğmesi yok (başlığa dokununca ayrıntılar açılır); seri ateşi 0 iken başlıkta görünmez.
+   - ⊕ menüsü: çubukta olanlar (Fotoğraf, Sesli mesaj, GIF, Çıkartma) çıkarıldı; kalanlar ızgara değil, açıklamasız kısa liste. */
+async function k693SendImg(img){const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;const s=Math.min(1,900/Math.max(iw,ih));const c=document.createElement("canvas");c.width=Math.round(iw*s);c.height=Math.round(ih*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);S.forceBottom=true;const extra=S.replyTo?{reply:S.replyTo}:{};S.replyTo=null;drawReply();return sendMessage(S.route.params.key,{img:encode(c,150000),text:"",...extra})}
+function k693Cam(){if(!guard())return;const i=document.createElement("input");i.type="file";i.accept="image/*";i.setAttribute("capture","environment");i.style.display="none";document.body.appendChild(i);
+ i.onchange=async()=>{const f=i.files&&i.files[0];i.remove();if(!f)return;const u=URL.createObjectURL(f);const im=new Image();im.src=u;try{await im.decode()}catch{URL.revokeObjectURL(u);return toast("Fotoğraf açılamadı")}await k693SendImg(im);URL.revokeObjectURL(u)};
+ i.click();setTimeout(()=>{if(i.isConnected&&!i.files.length)i.remove()},120000)}
+{const f=wireComposer;wireComposer=function(...a){const r=f.apply(this,a);try{const fm=$("#composer"),inp=$("#msgIn");if(!fm||!inp||fm.dataset.k693)return r;const key=S.route.params.key;const k=keyInfo(key);if(k.type==="bot")return r;fm.dataset.k693="1";fm.classList.add("k693");
+ const pl=fm.querySelector(".cplus");if(pl){pl.removeAttribute("data-act");pl.classList.add("k693-cam");pl.setAttribute("aria-label","Kamera");pl.innerHTML=I("camera");pl.onclick=e=>{e.preventDefault();e.stopPropagation();k693Cam()}}
+ const t=document.createElement("span");t.className="k693-tools";const b=(ic,lb,fn)=>{const x=document.createElement("button");x.type="button";x.className="ib plain";x.setAttribute("aria-label",lb);x.innerHTML=I(ic);x.onclick=e=>{e.preventDefault();e.stopPropagation();fn()};t.appendChild(x)};
+ b("image","Galeri",()=>attachPhoto());b("stk69","GIF ve çıkartma",()=>gifPick(key,"gif"));b("add","Daha fazla",()=>plusMenu());
+ const sb=$("#sendBtn");if(sb)sb.after(t);else fm.appendChild(t);
+ const upd=()=>fm.classList.toggle("k693-has",!!inp.value.trim());inp.addEventListener("input",upd);fm.addEventListener("submit",()=>setTimeout(upd,0));upd();setTimeout(upd,50)}catch(e){console.warn("k693",e)}return r}}
+{const f=renderTop;renderTop=function(...a){const r=f.apply(this,a);try{if(S.route.name==="chat"){const tp=$("#top");const k=keyInfo(S.route.params.key);
+ if(k.type==="dm"||k.type==="group")tp.querySelectorAll('.ib[data-act="chatinfo"]').forEach(x=>x.remove());
+ tp.querySelectorAll(".stk-chip").forEach(x=>{const n=x.querySelector("b");if(!n||+n.textContent===0)x.remove()});tp.classList.add("k693-top")}else $("#top")?.classList.remove("k693-top")}catch(e){console.warn("k693t",e)}return r}}
+{const f=plusMenu;plusMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const k=keyInfo(S.route.params.key);
+ if(box&&k.type!=="bot"){["#pph","#pmi","#pgif","#pstk"].forEach(s=>{const e=box.querySelector(s);if(e)e.remove()});l.classList.remove("pl-grid");l.classList.add("k693-pl");const h=l.querySelector("h4>span");if(h&&/Gönder/.test(h.textContent))h.textContent="Daha fazla"}}catch(e){console.warn("k693p",e)}return r}}
+/*}@js:693*/
 
 boot();
 
