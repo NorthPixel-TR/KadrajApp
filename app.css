@@ -3928,8 +3928,8 @@ button.ht[data-mention],.ht[data-mention],.msg .mtag{color:var(--accent)!importa
 html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-in-"]{animation:none!important}
 @media (prefers-reduced-motion:reduce){#main[class*="k69-in-"],#top[class*="k69-in-"]{animation:none!important}}
 /* GIF ve çıkartma mesajları */
-.msg .k69-gif{display:block;width:auto;max-width:min(240px,60vw);height:auto;border-radius:14px;background:var(--surface-2)}
-.msg .k69-stk{display:block;width:150px;height:150px;object-fit:contain;cursor:pointer;filter:drop-shadow(0 2px 6px rgba(0,0,0,.18))}
+.msg .k69-gif{display:block;width:min(320px,72vw);max-width:100%;height:auto;border-radius:16px;background:var(--surface-2)}
+.msg .k69-stk{display:block;width:190px;height:190px;object-fit:contain;cursor:pointer;filter:drop-shadow(0 2px 6px rgba(0,0,0,.18))}
 .msg:has(>.k69-stk:only-child),.msg:has(>.k69-gif:only-child){background:none!important;border-color:transparent!important;padding:0!important;box-shadow:none!important}
 .k69g-tabs{display:flex;gap:6px;padding:0 14px 8px}
 .k69g-tabs button{flex:1;padding:9px 0;border-radius:12px;font-weight:700;font-size:.88rem;color:var(--muted);background:var(--surface-2)}

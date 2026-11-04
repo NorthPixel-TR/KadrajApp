@@ -1,9 +1,14 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.9.3",
+ "ver": "6.9.4",
  "at": 1793727074868,
- "note": "6.9.3: sohbet ekranı Instagram gibi: kamera, mikrofon, galeri, çıkartma ve ⊕ yazma çubuğunda; üstte (i) yok; ⊕ menüsü kısa liste.",
+ "note": "6.9.4: sohbette GIF'ler ve çıkartmalar büyüdü.",
  "items": [
+  {
+   "ad": "GIF ve çıkartma boyu",
+   "ok": true,
+   "not": "c694.js: GIF 281 px, çıkartma 190 px (390 px ekran)"
+  },
   {
    "ad": "Instagram gibi sohbet çubuğu (390 ve 800 px)",
    "ok": true,
