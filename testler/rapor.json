@@ -1,18 +1,23 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.9.0",
+ "ver": "6.9.1",
  "at": 1793727074868,
- "note": "6.9 Bora: çoklu hesap, GIF ve çıkartma, tablette sol menü, akıcı geçişler, Kadraj'a özel ayarlar, yönetici ekleri, bildirimde Kadraj logosu.",
+ "note": "6.9.1: sol menü kaldırıldı, Klakette küçük siyah çerçeve, bahsetme tema renginde, etiket mavi, alt menüde Sohbet ve Klaket yer değiştirdi, otomatik kırpan çıkartma, Klaket hızı, fotoğraftan çıkartma, bu ayın özeti.",
  "items": [
   {
-   "ad": "6.9 özellikleri (telefon 390 px)",
+   "ad": "6.9.1 özellikleri (telefon 390 px)",
    "ok": true,
-   "not": "t69.js 23/23"
+   "not": "t69.js 29/29"
   },
   {
-   "ad": "6.9 özellikleri (tablet 800 px, sol şerit)",
+   "ad": "6.9.1 özellikleri (tablet 800 px, menü altta)",
    "ok": true,
-   "not": "t69.js 24/24"
+   "not": "t69.js 29/29"
+  },
+  {
+   "ad": "Otomatik çıkartma kırpma (MediaPipe DeepLab v3)",
+   "ok": true,
+   "not": "stk.js 4/4: mavi arka planlı kedi kırpıldı, ilk yüklemeden sonra ~0,5 sn"
   },
   {
    "ad": "Çoklu hesap: ekle, geç, ana hesapla açılış, çıkar, çıkışta diğerine dön",
