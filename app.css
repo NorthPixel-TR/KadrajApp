@@ -3992,4 +3992,7 @@ html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-i
 .k69-ozh span{display:grid}.k69-ozh small{color:var(--muted)}
 .k69-ozb{display:flex;align-items:center;gap:12px;padding:8px;border-radius:16px;background:var(--surface-2);text-align:left}
 .k69-ozb img{width:64px;height:64px;border-radius:12px;object-fit:cover}.k69-ozb span{display:grid}.k69-ozb small{color:var(--muted)}
+/* 6.9.2: uygulama içi bildirim sağa kaydırınca kapanır */
+.kn{touch-action:none}
+.kn.kn-sx.out{transform:translateX(calc(100% + 40px)) rotate(8deg)!important;opacity:0!important}
 /*}@css:690*/

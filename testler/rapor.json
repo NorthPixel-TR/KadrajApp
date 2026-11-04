@@ -1,9 +1,14 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.9.1",
+ "ver": "6.9.2",
  "at": 1793727074868,
- "note": "6.9.1: sol menü kaldırıldı, Klakette küçük siyah çerçeve, bahsetme tema renginde, etiket mavi, alt menüde Sohbet ve Klaket yer değiştirdi, otomatik kırpan çıkartma, Klaket hızı, fotoğraftan çıkartma, bu ayın özeti.",
+ "note": "6.9.2: uygulama içi bildirim sağa kaydırınca kapanıyor.",
  "items": [
+  {
+   "ad": "Bildirimi sağa kaydırarak kapatma",
+   "ok": true,
+   "not": "kn.js 8/8 (sağa kapanır, kısa kaydırmada geri döner, sola kapanmaz, yukarı ve dokunma bozulmadı)"
+  },
   {
    "ad": "6.9.1 özellikleri (telefon 390 px)",
    "ok": true,

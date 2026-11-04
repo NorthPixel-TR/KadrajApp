@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=60901,APP_VER="6.9.1";
+const APP_V=60902,APP_VER="6.9.2";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -4978,14 +4978,19 @@ function knKill(el,instant,toQueue){if(!el||el._gone)return;el._gone=true;clearT
  const fin=()=>{el.remove();if(!toQueue){const n=KN.queue.shift();if(n)knCard(n)}};
  if(instant||kbReduce()){el.remove();if(!toQueue){const n=KN.queue.shift();if(n)knCard(n)}return}
  el.classList.add("out");setTimeout(fin,260)}
-function knWire(el){const o=()=>el._o;let sy=0,sx=0,dy=0,drag=false,pid=null,moved=false,inMain=false;
+function knWire(el){const o=()=>el._o;let sy=0,sx=0,dy=0,dx=0,ax="",drag=false,pid=null,moved=false,inMain=false;
  const main=$(".kn-m",el);
  const open=()=>{const x=o();knKill(el,true);if(typeof x.open==="function")x.open();else if(x.key)openTarget(x.key)};
  main.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});
- el.addEventListener("pointerdown",e=>{if(e.target.closest("button,input,form"))return;pid=e.pointerId;inMain=!!e.target.closest(".kn-m");sy=e.clientY;sx=e.clientX;dy=0;drag=true;moved=false;el._hold=true;clearTimeout(el._t);try{el.setPointerCapture(pid)}catch{}el.style.transition="none"});
- el.addEventListener("pointermove",e=>{if(!drag||e.pointerId!==pid)return;dy=e.clientY-sy;const dx=e.clientX-sx;if(Math.abs(dy)>6||Math.abs(dx)>6)moved=true;const y=dy<0?dy:dy*.25;el.style.transform=`translateY(${y}px)`;el.style.opacity=String(Math.max(.25,1+Math.min(0,dy)/140))});
+ el.addEventListener("pointerdown",e=>{if(e.target.closest("button,input,form"))return;pid=e.pointerId;inMain=!!e.target.closest(".kn-m");sy=e.clientY;sx=e.clientX;dy=0;dx=0;ax="";drag=true;moved=false;el._hold=true;clearTimeout(el._t);try{el.setPointerCapture(pid)}catch{}el.style.transition="none"});
+ el.addEventListener("pointermove",e=>{if(!drag||e.pointerId!==pid)return;dy=e.clientY-sy;dx=e.clientX-sx;if(Math.abs(dy)>6||Math.abs(dx)>6)moved=true;
+  /* 6.9.2: yön ilk belirgin harekette seçilir; sağa kaydırınca kapanır (sola biraz direnir), yukarı kaydırma eskisi gibi */
+  if(!ax&&(Math.abs(dx)>8||Math.abs(dy)>8))ax=Math.abs(dx)>Math.abs(dy)?"x":"y";
+  if(ax==="x"){const x=dx>0?dx:dx*.25;el.style.transform=`translateX(${x}px) rotate(${x/40}deg)`;el.style.opacity=String(Math.max(.2,1-Math.max(0,dx)/(el.offsetWidth*.9||300)));return}
+  dx=0;const y=dy<0?dy:dy*.25;el.style.transform=`translateY(${y}px)`;el.style.opacity=String(Math.max(.25,1+Math.min(0,dy)/140))});
  const end=e=>{if(!drag||(e&&e.pointerId!==pid))return;drag=false;el._hold=false;el.style.transition="";
-  if(dy<-36){el.style.transform=`translateY(${Math.min(dy,-60)}px)`;el.style.opacity="0";el._gone=false;knKill(el,false);return}
+  if(ax==="x"&&dx>Math.min(90,(el.offsetWidth||300)*.28)){el.classList.add("kn-sx");el.style.transition="transform .22s cubic-bezier(.3,.7,.4,1),opacity .2s";el.style.transform=`translateX(${(el.offsetWidth||400)+40}px) rotate(8deg)`;el.style.opacity="0";el._gone=false;vib(8);setTimeout(()=>knKill(el,false),200);return}
+  if(ax!=="x"&&dy<-36){el.style.transform=`translateY(${Math.min(dy,-60)}px)`;el.style.opacity="0";el._gone=false;knKill(el,false);return}
   el.style.transform="";el.style.opacity="";if(!moved&&e&&e.type==="pointerup"&&!el._replying&&inMain)return open();knArm(el,4000)};
  el.addEventListener("pointerup",end);el.addEventListener("pointercancel",end);
  el.addEventListener("focusin",()=>{el._hold=true;clearTimeout(el._t)});el.addEventListener("focusout",()=>{setTimeout(()=>{if(!el.contains(document.activeElement)){el._hold=false;knArm(el,4500)}},0)});
