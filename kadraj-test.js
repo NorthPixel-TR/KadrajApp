@@ -115,6 +115,8 @@ function runFn(){window.__ktRun=async function(){const out=[];const errs=[];cons
  await step("Kurgu düğmesi (6.8)",async()=>{closeAll&&closeAll();const f=new File([new Uint8Array(16)],"deneme.webm",{type:"video/webm"});S.cmp={kind:"reel",filter:0,ar:"1/1",slides:[],fx:"zoom",music:"lofi",text:"",bg:0,options:["",""],mode:"video",video:f,videoUrl:URL.createObjectURL(f)};drawComposer();await W(400)},has('#overlay #vKed[data-act="kurgu"]'));
  await step("Hikâyede müzik (6.4)",async()=>{const c=document.createElement("canvas");c.width=720;c.height=1280;S.cmp={kind:"story",filter:0,ar:"1/1",slides:[],fx:"zoom",music:"lofi",text:"",bg:0,options:["",""],mode:"slides",img:c,src:null};drawComposer();await W(400)},has("#cMus"));
  await step("Ayarlar 6.4 satırları",async()=>{tab("settings");await W(400);$("#k64T").click();await W(300)},has('#overlay [data-layer="tm"] .tm-c'));
+ await step("GIF ve çıkartma menüsü (6.9)",async()=>{closeAll();go("chat",{key:"u:u2"});await W(500);plusMenu();await W(300)},()=>$("#overlay #pgif")&&$("#overlay #pstk")?true:"yok");
+ await step("Kadraj'a özel ayarlar (6.9)",async()=>{closeAll();tab("settings");await W(400)},()=>$('.sg[data-g="k69"]')&&document.querySelectorAll('[data-k69s="anim"]').length===4?true:"yok");
  await step("Satranç",()=>go("chess"),()=>$("#main").children.length?true:"boş");
  await step("Rota",()=>go("chat",{key:"u:bot:rota"}),has("#msgs"));
  removeEventListener("error",onE);removeEventListener("unhandledrejection",onE);tab("feed");

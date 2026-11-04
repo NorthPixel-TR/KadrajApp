@@ -13,9 +13,12 @@ perl -0pi -e 's#</manifest>#    <uses-permission android:name="android.permissio
 perl -0pi -e 's#(<application[^>]*>)#$1\n        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="\@drawable/ic_stat_kadraj" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_color" android:resource="\@color/kadraj_bildirim" />\n        <meta-data android:name="com.google.firebase.messaging.default_notification_channel_id" android:value="kadraj" />\n        <receiver android:name=".KadrajYanit" android:exported="false" />#' "$M"
 R=android/app/src/main/res
 mkdir -p "$R/drawable" "$R/values"
+# 6.9.0: bildirim simgesi Kadraj logosu (vizör köşeleri + K + nokta), Android bunu beyaz gösterir; büyük simge renkli logo (KadrajGaleri.goster).
 cat > "$R/drawable/ic_stat_kadraj.xml" <<'XML'
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
-    <path android:fillColor="#FFFFFFFF" android:pathData="M6,3.5h3.2v7.3l6.3,-7.3h4l-6.6,7.5l7,9.5h-4l-5.2,-7.2l-1.5,1.6v5.6h-3.2z" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="M2.5,8V5a2.5,2.5 0,0 1,2.5 -2.5h3M16,2.5h3A2.5,2.5 0,0 1,21.5 5v3M21.5,16v3a2.5,2.5 0,0 1,-2.5 2.5h-3M8,21.5H5A2.5,2.5 0,0 1,2.5 19v-3" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="M9.7,8.1v7.8M9.7,12.3l4,-4.2M11.1,10.9l2.9,5" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M14.1,8.5a1.4,1.4 0,1 0,2.8 0a1.4,1.4 0,1 0,-2.8 0z" />
 </vector>
 XML
 cat > "$R/values/kadraj_bildirim.xml" <<'XML'

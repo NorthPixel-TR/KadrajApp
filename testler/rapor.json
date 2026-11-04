@@ -1,28 +1,48 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.8.26",
+ "ver": "6.9.0",
  "at": 1793727074868,
- "note": "Uygulama içinden güncelleme: Güncelle'ye basınca APK iner, Android Güncelle penceresi açılır, eskisinin üstüne kurulur.",
+ "note": "6.9 Bora: çoklu hesap, GIF ve çıkartma, tablette sol menü, akıcı geçişler, Kadraj'a özel ayarlar, yönetici ekleri, bildirimde Kadraj logosu.",
  "items": [
   {
-   "ad": "Uygulama içinden güncelleme (izin, dönünce yeniden, hata, tarayıcı yedeği)",
+   "ad": "6.9 özellikleri (telefon 390 px)",
    "ok": true,
-   "not": "gu.js 18/18 (sahte Capacitor; gerçek indirme ve kurulum yalnızca telefonda)"
+   "not": "t69.js 23/23"
   },
   {
-   "ad": "Eski pakette yanına kur penceresi",
+   "ad": "6.9 özellikleri (tablet 800 px, sol şerit)",
    "ok": true,
-   "not": "pk.js 6/6"
+   "not": "t69.js 24/24"
   },
   {
-   "ad": "Bildirim izni ve düğmeleri",
+   "ad": "Çoklu hesap: ekle, geç, ana hesapla açılış, çıkar, çıkışta diğerine dön",
    "ok": true,
-   "not": "kln.js 14/14, kln2.js 16/16"
+   "not": "acc.js 19/19, gerçek Firestore+Auth emülatörü"
   },
   {
-   "ad": "Rozet",
+   "ad": "Kadraj testi (uygulama içi)",
    "ok": true,
-   "not": "rz.js 8/8"
+   "not": "49/49 adım"
+  },
+  {
+   "ad": "Sohbet kayması",
+   "ok": true,
+   "not": "meas.js en büyük sıçrama 8 px"
+  },
+  {
+   "ad": "Bildirim, güncelleme, rozet",
+   "ok": true,
+   "not": "kln 14, kln2 16, gu 18, pk 6, rz 8"
+  },
+  {
+   "ad": "GIF araması gerçek GIPHY ile",
+   "ok": false,
+   "not": "Bu ortamdan GIPHY erişilemiyor; sahte yanıtla denendi. Yöneticinin GIPHY anahtarı kaydetmesi gerekiyor."
+  },
+  {
+   "ad": "Bildirim logosu ve uygulama içinden güncelleme gerçek telefonda",
+   "ok": false,
+   "not": "Android emülatörü yok; APK GitHub'da derleniyor, telefonda denenmeli."
   },
   {
    "ad": "Uygulama tamamen kapalıyken bildirim",

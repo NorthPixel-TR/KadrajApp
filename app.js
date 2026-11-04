@@ -15,13 +15,13 @@ const LS={get(k,d=null){try{const v=localStorage.getItem(k);return v==null?d:JSO
 const SS={get(k){try{return sessionStorage.getItem(k)}catch{return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch{}},del(k){try{sessionStorage.removeItem(k)}catch{}}};
 function hash32(str,seed){let h=seed>>>0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)}return(h>>>0).toString(16).padStart(8,"0")}
 async function sha(s){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch{return hash32(s,2166136261)+hash32(s,99991)+hash32(s,7)}}
-function richText(t){return esc(t).replace(/(#[\wçğıöşüÇĞİÖŞÜ]+)/g,'<span class="ht">$1</span>').replace(/(^|\s)@([a-z0-9._]+)/gi,'$1<button class="ht" data-mention="$2">@$2</button>')}
+function richText(t){return esc(t).replace(/(#[\wçğıöşüÇĞİÖŞÜ]+)/g,'<span class="ht">$1</span>').replace(/(^|[^A-Za-z0-9_@.&])@([a-z0-9._]+)/gi,'$1<button class="ht" data-mention="$2">@$2</button>')}
 const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigator.vibrate(ms)}catch{}};
 /* ============ 4.0 kancalar ============ */
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=60826,APP_VER="6.8.26";
+const APP_V=60900,APP_VER="6.9.0";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -177,7 +177,7 @@ const FBV="10.12.2";let FB=null;const FB_UNSUBS=new Set();
 async function loadFirebase(cfg){const base=`https://www.gstatic.com/firebasejs/${FBV}/`;const[appM,A,F]=await Promise.all([import(base+"firebase-app.js"),import(base+"firebase-auth.js"),import(base+"firebase-firestore.js")]);
  const app=appM.initializeApp(cfg);const auth=A.getAuth(app);try{auth.languageCode="tr"}catch{}
  let db;try{db=F.initializeFirestore(app,{ignoreUndefinedProperties:true,localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){try{db=F.initializeFirestore(app,{ignoreUndefinedProperties:true})}catch{db=F.getFirestore(app)}}
- FB={app,auth,db,A,F};return FB}
+ FB={app,auth,db,A,F,M:appM,cfg};return FB}
 /* 6.8.4: KU = bu cihazın Firestore işlem sayacı (okuma r, yazma w, silme d; 6.8.5: gönderilen mesaj ms, silinen mesaj md; bölge 70 günlük toplamı games/ku-<gün>'e ekler) */
 const KU_MSG=/^chats\/[^/]+\/msgs\/[^/]+$/;
 const KU={r:0,w:0,d:0,ms:0,md:0,wc:{},log:[]};
@@ -201,11 +201,11 @@ function FirebaseDB(){const{F,db}=FB;
 function unsubAll(){[...FB_UNSUBS].forEach(f=>f())}
 let rulesWarned=false;function rulesWarn(){if(rulesWarned)return;rulesWarned=true;toast("Firebase veritabanı kuralları izin vermiyor. Kurulumdaki kuralları Firestore > Kurallar'a yapıştırıp Yayınla'ya bas.")}
 /* çevrimiçi durumu ve dürtme: Firestore ile */
-function FsRoom(){const{F,db}=FB;let state={typing:null},hb=null,docs=[],cb=null,pokeH=null;const handled=new Set();
- const push=()=>S.uid&&S.authed&&!S.guest&&document.visibilityState!=="hidden"?(KU.w++,kuW("presence","w"),F.setDoc(F.doc(db,"presence/"+S.uid),{uid:S.uid,typing:state.typing||null,at:Date.now(),seen:Date.now(),hide:settings.showActive===false}).catch(()=>{})):Promise.resolve();
+function FsRoom(){const{F}=FB;let state={typing:null},hb=null,docs=[],cb=null,pokeH=null;const handled=new Set();
+ const push=()=>S.uid&&S.authed&&!S.guest&&document.visibilityState!=="hidden"?(KU.w++,kuW("presence","w"),F.setDoc(F.doc(FB.db,"presence/"+S.uid),{uid:S.uid,typing:state.typing||null,at:Date.now(),seen:Date.now(),hide:settings.showActive===false,v:APP_V,nv:+window.__knv||0}).catch(()=>{})):Promise.resolve();
  const fire=()=>{const vis=docs.filter(d=>!d.hide||d.uid===S.uid);S.lastSeen=Object.fromEntries(vis.map(d=>[d.uid,Math.max(d.seen||0,d.at||0)]));if(!cb)return;const lim=Date.now()-200e3;cb({peers:vis.filter(d=>d.at>lim).map(d=>({presence:{uid:d.uid,typing:d.typing},isMe:d.uid===S.uid}))})};
  setInterval(fire,30e3);
- const off=()=>{if(S.uid&&S.authed&&!S.guest)KU.w++,kuW("presence","w"),F.setDoc(F.doc(db,"presence/"+S.uid),{uid:S.uid,typing:null,at:0,seen:Date.now()}).catch(()=>{})};
+ const off=()=>{if(S.uid&&S.authed&&!S.guest)KU.w++,kuW("presence","w"),F.setDoc(F.doc(FB.db,"presence/"+S.uid),{uid:S.uid,typing:null,at:0,seen:Date.now()}).catch(()=>{})};
  addEventListener("pagehide",off);
  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")push();else off()});
  return{
@@ -214,9 +214,9 @@ function FsRoom(){const{F,db}=FB;let state={typing:null},hb=null,docs=[],cb=null
   listen(){const u1=DB.watchCol("presence",d=>{docs=d;fire()},{limit:300});
    const u2=DB.watchCol("pokes",ds=>{for(const d of ds){if(handled.has(d.id))continue;handled.add(d.id);if(d.at>S.bootAt-5000&&pokeH)pokeH({data:d});DB.del("pokes/"+d.id).catch(()=>{})}},{where:["to","==",S.uid],limit:50});
    return()=>{u1();u2()}},
-  async emit(topic,data){KU.w++;kuW("pokes","w");await F.addDoc(F.collection(db,"pokes"),{...data,topic,at:Date.now()})},
+  async emit(topic,data){KU.w++;kuW("pokes","w");await F.addDoc(F.collection(FB.db,"pokes"),{...data,topic,at:Date.now()})},
   on(t,h){pokeH=h},
-  async leave(){if(hb){clearInterval(hb);hb=null}if(S.uid)await F.setDoc(F.doc(db,"presence/"+S.uid),{uid:S.uid,typing:null,at:0,seen:Date.now()}).catch(()=>{})}}}
+  async leave(){if(hb){clearInterval(hb);hb=null}if(S.uid)await F.setDoc(F.doc(FB.db,"presence/"+S.uid),{uid:S.uid,typing:null,at:0,seen:Date.now()}).catch(()=>{})}}}
 /* kurulum yardımcıları */
 function parseCfg(t){t=(t||"").trim();let o=null;try{o=JSON.parse(t)}catch{}if(!o||typeof o!=="object"){o={};for(const k of["apiKey","authDomain","projectId","storageBucket","messagingSenderId","appId"]){const m=t.match(new RegExp(k+"[\"']?\\s*[:=]\\s*[\"'`]([^\"'`]+)[\"'`]"));if(m)o[k]=m[1]}}
  if(!o.apiKey||!o.projectId||!o.appId)return null;return{apiKey:o.apiKey,authDomain:o.authDomain||o.projectId+".firebaseapp.com",projectId:o.projectId,storageBucket:o.storageBucket||"",messagingSenderId:o.messagingSenderId||"",appId:o.appId}}
@@ -296,7 +296,7 @@ const isActive=uid=>settings.showActive!==false&&!!uid&&!BOT[uid]&&S.online.has(
 function activeLabel(uid){if(settings.showActive===false||!uid||BOT[uid])return"";if(S.online.has(uid))return"Şu an aktif";const t=lastSeenAt(uid);if(!t)return"";const m=(now()-t)/60e3;if(m<1)return"Az önce aktifti";if(m<60)return`${Math.round(m)} dk önce aktifti`;if(m<1440)return`${Math.round(m/60)} sa önce aktifti`;if(m<10080)return`${Math.round(m/1440)} gün önce aktifti`;return""}
 const activeUsers=()=>humans().filter(isActive);
 function seenText(uid){if(settings.showActive===false)return"";if(S.online.has(uid))return"Çevrimiçi";const t=(S.lastSeen||{})[uid];if(!t)return"Çevrimdışı";const a=ago(t);return"Son görülme "+(a==="şimdi"?"az önce":a+" önce")}
-const msgPreview=m=>m?(m.text||(m.mus?"Şarkı: "+String(m.mus.t||""):m.gpoll?"Anket: "+String(m.gpoll.q||""):m.once?"Tek seferlik fotoğraf":m.post?"Bir paylaşım gönderdi":m.img?"Fotoğraf":m.video?"Video":m.audio?"Sesli mesaj":m.call?"Arama":m.game?"Satranç daveti":"")):"";
+const msgPreview=m=>m?(m.text||(m.mus?"Şarkı: "+String(m.mus.t||""):m.gpoll?"Anket: "+String(m.gpoll.q||""):m.once?"Tek seferlik fotoğraf":m.post?"Bir paylaşım gönderdi":m.gif?"GIF":m.stk?"Çıkartma":m.img?"Fotoğraf":m.video?"Video":m.audio?"Sesli mesaj":m.call?"Arama":m.game?"Satranç daveti":"")):"";
 const noteOf=u=>{const n=S.profiles[u]&&S.profiles[u].note;return n&&n.text&&n.at>now()-24*H?n.text:""};
 function saveHidden(){const h=S.hidden||{};return write(()=>DB.set(`data/users/${S.uid}/hidden`,{msgs:h.msgs||{},chats:h.chats||{}}),{quiet:true})}
 function chatHead(key){const k=keyInfo(key);
@@ -344,6 +344,7 @@ function renderMsgs(){const box=$("#msgs");if(!box||S.route.name!=="chat")return
    if(m.post){const p0=postById(m.post);const p=p0&&canSee(p0)?p0:null;body+=p?`<button class="mp" data-open="${esc(p.id)}">${postThumb(p)?`<img src="${esc(postThumb(p))}" alt="">`:`<div class="note" style="margin:0;min-height:6rem;font-size:.85rem;border-radius:0;background:${p.kind==="poll"?"#0c7a63":NOTE_BG[p.bg||0]}">${esc(p.text||p.question||"")}</div>`}<span>@${esc(P(p.uid).username)}</span></button>`:"<i>Paylaşım kaldırılmış</i>"}
    if(m.game)body+=gameMsgHtml(m);
    if(m.once)body+=onceHtml(m);else if(m.img)body+=`<img class="att" src="${esc(m.img)}" alt="Fotoğraf" data-view="1">`;
+   if(m.gif)body+=gifHtml(m.gif);if(m.stk)body+=stkHtml(m.stk);
    if(m.text)body+=isAI&&!mine?md(m.text):esc(m.text);
    if(m.edited)body+=`<span class="edl">düzenlendi</span>`;if(m.sch&&m.at>now())body+=`<span class="edl schl">${I("bell")}Zamanlandı · ${esc(schLabel(m.at))}</span>`}
   const hearts=Object.keys(msgReacts(m)).length;
@@ -1225,7 +1226,7 @@ async function dmEnsure(k,meta){if(k.type!=="dm"||S.chats[k.cid])return true;let
 async function sendMessage(key,payload){const k=keyInfo(key);if(k.type==="dm"&&!childGate(k.uid))return;if(isChild(S.uid)&&payload&&payload.text)payload={...payload,text:cleanText(payload.text)};if(k.type==="bot"){if(S.guest&&!BOT[k.uid].ai)return sendToBot(k.uid,payload);Promise.resolve(sendToBot(k.uid,payload)).catch(()=>{});return true}if(!guard())return;
  const at=now();const mid=at.toString(36)+Math.random().toString(36).slice(2,6);const msg={from:S.uid,at,...payload};if(!msg.text)delete msg.text;
  if(S.route.name==="chat"&&chatKey===k.cid){S.msgs=[...S.msgs,{id:mid,...msg}];renderMsgs()}
- const preview=payload.text||(payload.mus?"Şarkı: "+String(payload.mus.t||""):payload.gpoll?"Anket: "+String(payload.gpoll.q||""):payload.once?"Tek seferlik fotoğraf":payload.post?"Bir paylaşım gönderdi":payload.img?"Fotoğraf":payload.video?"Video":payload.audio?"Sesli mesaj":payload.call?callLabel(payload.call,false):"");
+ const preview=payload.text||(payload.mus?"Şarkı: "+String(payload.mus.t||""):payload.gpoll?"Anket: "+String(payload.gpoll.q||""):payload.once?"Tek seferlik fotoğraf":payload.post?"Bir paylaşım gönderdi":payload.gif?"GIF":payload.stk?"Çıkartma":payload.img?"Fotoğraf":payload.video?"Video":payload.audio?"Sesli mesaj":payload.call?callLabel(payload.call,false):"");
  const unsent=()=>{if(S.msgs.some(x=>x.id===mid)){S.msgs=S.msgs.filter(x=>x.id!==mid);renderMsgs()}return false};
  const rd=S._noRead?{}:{reads:{[S.uid]:at}};
  if(k.type==="dm"&&!S.chats[k.cid]&&!await dmEnsure(k,{members:[S.uid,k.uid].sort(),last:{text:preview,from:S.uid,at},updatedAt:at,...rd}))return unsent();
@@ -1885,7 +1886,7 @@ verBar=function(v,force){verBarBase(v,force);if(v!=null&&v>APP_V&&!VER.blocked)v
 function verSafe(){const ov=$("#overlay");if(ov&&ov.children.length)return false;if(CALL)return false;if(S.route&&S.route.name==="chessgame")return false;
  if(document.visibilityState==="hidden")return true;const a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)&&a.value)return false;return true}
 function verAuto(v){if(VER.reloading||SS.get("kadraj_auto_"+v))return;clearTimeout(VER.autoT);if(!verSafe()){VER.autoT=setTimeout(()=>verAuto(v),15000);return}
- SS.set("kadraj_auto_"+v,"1");const hid=document.visibilityState==="hidden";if(!hid)toast(`Kadraj ${verStr(v)} yükleniyor…`);setTimeout(()=>hardReload(),hid?0:1200)}
+ SS.set("kadraj_auto_"+v,"1");const hid=document.visibilityState==="hidden";setTimeout(()=>hardReload(),0)}
 function verRemoteCheck(){if(VER.blocked||VER.reloading)return;VER.lastRemote=now();fetchRemoteVersion().then(r=>{if(r&&r>APP_V)verBar(r,true)}).catch(()=>{})}
 HOOKS.enter.push(()=>setTimeout(verRemoteCheck,5000));
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&S.authed&&now()-(VER.lastRemote||0)>2*60e3)verRemoteCheck()});
@@ -2181,6 +2182,7 @@ const APP_GUIDE=`Kadraj bir sosyal uygulamadır (Firebase üzerinde çalışır,
 - 6.7 29 Ekim: millî bayram günlerinde Akış'ın üst çubuğunda bayrak; sohbette "29 Ekim", "Cumhuriyet" ya da "bayramımız kutlu" geçen yeni mesajda ekrana kırmızı-beyaz konfeti yağar.
 - 6.8.2 Supabase yedeği: Firebase bağlantısı koparsa Kadraj "Firebase bağlantısı koptu, Supabase ile devam ediliyor" der ve Supabase ile devam eder; sohbetler ve Meydan çalışır, eski mesajlar görünmez, orada yazılanlar Firebase dönünce Kadraj'a taşınır. Ayarlar › Uygulama › Supabase yedeği: hazır mı, değilse şifreni bir kez yazarsın.
 - Keşif Klaketleri: Klaketler sayfasında arkadaşların Klaketlerinin arasına her gün kendiliğinden sesli, kısa Türkçe meme videoları (ağırlıkta) ve insanların çektiği kısa videolar (dans, sokak, spor, yemek, hayvanlar…) gelir. Kimsenin yüklemesi gerekmez. Videoya dokununca durur/oynar, ses üstteki hoparlörden. Çocuk Modu'nda memeler gelmez. Yönetici bunu bir kez Yönetici › Keşif Klaketleri'nden açar. Akış'ta ve profillerde görünmez.
+- 6.9 Bora: Birden çok hesap (en çok 5): profilinde adının yanındaki oka ya da alttaki Ben'e basılı tut ya da Ayarlar › Kadraj'a özel › Hesaplar › Hesap ekle; listeden birine dokununca o hesaba geçer, ⋯ › Ana hesap yap (Kadraj açılınca o açılır) ya da Bu cihazdan çıkar. Sohbette + › GIF (GIF ara, yönetici GIPHY anahtarını kaydettiyse; telefondan hareketli GIF de gönderilir, en çok 600 KB) ve + › Çıkartma (Benim çıkartmalarım; Çıkartma oluştur: fotoğraf seç, şekil daire/yuvarlak/kalp/yıldız/serbest, beyaz kenar, yazı, yakınlaştır, kaydır; Kaydet ve gönder). Sohbette birinin çıkartmasına dokununca "Çıkartmalarıma ekle". Ayarlar › Kadraj'a özel: Animasyonlar (Kapalı, Hızlı, Normal, Akıcı), Sohbet balonu (Yuvarlak, Köşeli), Çift dokunma tepkisi, Gönderme sesi, Hesaplar, Çıkartmalarım. Sohbet ve Klaket sayfaları kayarak açılır. Tablette menü solda dikey durur. @bahsetmeler mavi. Bildirimde Kadraj logosu.
 - 6.8 Kurgu (video düzenleyici): + › Kurgu kutucuğu (video seçince düzenleyici kendiliğinden açılır) ya da Klaket oluştur › Video seç ya da çek › "Kurgu: kes, hızlandır, yazı ekle". Altta zaman şeridi: iki sarı ucu sürükleyerek videonun başını ve sonunu kes (Kes sekmesinde "Başı buradan / Sonu burada"). Hız: 0,5x, 1x, 1,5x, 2x, 3x (hızlanınca video kısalır, sesi de hızlanır). Yazı: Yazı ekle, renk, stil (Gölgeli, Kutulu, Çerçeveli), boyut, animasyon (Belir, Zıpla, Daktilo, Kay), "Buradan başlasın / Burada bitsin" ile ne zaman görüneceği; önizlemede yazıyı sürükleyerek taşırsın. Filtre, Format (Orijinal, 9:16, 4:5, 1:1), Ses (videonun kendi sesini kapat), Kapak (oynatma çizgisindeki kareyi kapak yap). Bitti'ye basınca düzenleme videoya işlenir (video süresi kadar sürebilir); tekrar Kurgu'ya basınca asıl videodan, önceki ayarlarla devam edersin. En uzun Klaket yine 2 dakika.
 - 6.0 görünüm: arayüz yenilendi (Vizör ve Klasik ikisinde de): daha ferah kartlar, sayfa geçişleri yönlü (ileri sağdan, geri soldan, sekme alttan), alttan açılan pencerelerde seçenekler sırayla gelir. Profilde kişinin fotoğrafından bulanık kapak şeridi, Keşfet'te ara ara büyük karelerle mozaik ızgara, Bildirimler'de her satırda beğeni/yorum/takip rozeti, Ayarlar'da renkli ikonlar, yüklenirken iskelet ve ışıltı. Hareket azaltılmışsa animasyonlar kapanır.
 - 6.0 satranç: varsayılan taş seti Modern, tahta yeşil Turnuva (lobideki Görünüm'den değişir; daha önce seçim yapan kendi seçimini korur). Lobi: Botlara karşı, Arkadaşınla, Bulmacalar, Aynı telefonda. Oyun ekranı: telefonda hamleler üstte, tahta geniş, düğmeler altta; bilgisayarda hamle tablosu sağda. Ön hamle: rakip düşünürken taşını oynarsın, sıra gelince yapılır (kırmızı). Sağ tık kareyi işaretler, sağ tıkla sürükleyince ok çizer (shift yeşil, ctrl/alt mavi). Arkadaşınla çevrim içi oyunda da oyun incelemesi çalışır: Kitap, En iyi, Hata rozetleri, canlı doğruluk, değerlendirme çubuğu (satranç menüsünde Oyun incelemesi: canlı, oyun bitince ya da kapalı). Oyun sonunda yeni sonuç kartı.
@@ -2197,7 +2199,10 @@ const APP_GUIDE=`Kadraj bir sosyal uygulamadır (Firebase üzerinde çalışır,
 - Sürüm: yeni sürüm çıkınca "Yeni sürüm hazır" yazar; iki sürüm geride kalan eski sürüm kapanır ve güncellemen istenir.
 - Mesajlar uygulamanın Firebase veritabanında durur, uygulamaya giren herkes teknik olarak erişebilir; şifre ya da kişisel bilgi paylaşılmamalı.`;
 const ROTA_SYS=`Sen "Rota"sın: Kadraj uygulamasının yapay zekâ rehberisin. Türkçe, samimi, akıllı ve doğal konuş; karşındakinin sorusunu gerçekten anla ve düşünerek yanıtla. Uzunluğu soruya göre ayarla: selamlaşma ve kısa sohbette birkaç cümle; bir şey açıklaman, anlatman, tavsiye vermen, ödev ya da ders sorusu çözmen, bir şeyi karşılaştırman istenirse ayrıntılı, adım adım, örnekli ve gerektiğinde başlıklı/maddeli anlat. Soruyu tek cümleyle geçiştirme; bilmediğin şeyi uydurma, emin değilsen söyle. Önceki mesajları hatırla ve sohbetin akışına uy. Uygulama sorularında aşağıdaki rehbere dayan, olmayan özellik uydurma. Fotoğrafçılık, sosyal medya ve yazılım/kod konularında da bilgilisin; kod istenirse kısa, çalışır örnekleri üç ters tırnaklı kod bloğunda ver. Emoji kullanma.\n\nUYGULAMA REHBERİ:\n${APP_GUIDE}`;
-const FAQ=[[/(edit|kurgu|video düzenle|videoyu (kes|hızlandır)|videoya yazı)/i,"Video düzenlemek için **+ › Kurgu**: videonu seç ya da çek, düzenleyici kendiliğinden açılır. Kes (zaman şeridindeki iki sarı uç), hız (0,5x-3x), yazı (renk, stil, animasyon), filtre, format (9:16, 4:5, 1:1), sesi kapat ve kapak karesi. Bitince **Kullan**, sonra paylaş."],[/keşif klaket|meme|(klaket|reels?|video)[^.?!]*(otomatik|kendiliğinden|nereden geli|kim yükl)/i,"Klaketler sayfasında arkadaşlarının Klaketlerinin arasına her gün kendiliğinden **meme videoları** (sesli, kısa, Türkçe) ve insanların çektiği kısa videolar gelir. Kimsenin yüklemesi gerekmez; dokununca durur/oynar, ses üstteki hoparlörden. Çocuk Modu'nda memeler gelmez."],[/acil mod|supabase|bağlantı(sı)? kop|sunucu (çök|kopar|kapan)|firebase (çök|kopar)|kadraj (çöktü|açılmıyor)/i,"Firebase bağlantısı koparsa Kadraj kendiliğinden **Supabase ile devam eder**: sohbetlerin ve Meydan çalışır, eski mesajlar orada görünmez. Firebase dönünce Supabase'deyken yazdığın mesajlar Kadraj'a taşınır. Hazır olup olmadığını **Ayarlar › Uygulama › Supabase yedeği**'nden görürsün."],[/video düzen|videoyu kes|kurgu|hızlandır|yavaşlat|videoya yazı|videoya metin/i,"Klaket oluştururken videoyu seç, sonra **Kurgu**'ya dokun: Kes (iki ucu sürükle), Hız (0,5x-3x), Yazı (renk, stil, animasyon), Filtre, Format, Ses ve Kapak. **Bitti** deyince düzenleme videoya işlenir."],[/yeniden paylaş|repost/i,"Paylaşımın altındaki iki oklu düğmeye dokun (ya da ⋯ › **Yeniden paylaş**). Takipçilerinin Akış'ında üstte görünür, profilinde **Yeniden** sekmesinde durur. Aynı düğmeyle geri alırsın."],[/koleksiyon/i,"Paylaşımın ⋯ menüsü › **Koleksiyona kaydet**. Profil › Kaydedilenler'de üstteki çiplerden koleksiyon seçersin."],[/favori/i,"Profilin ⋯ menüsü › **Favorilere ekle**. Akış'taki **Favoriler** sekmesinde yalnızca onların paylaşımları görünür."],[/kadraj kodu|qr|karekod/i,"Kendi profilindeki kod düğmesine dokun: **Kadraj kodu**. Arkadaşın telefon kamerasıyla okutunca profilin açılır."],[/sessiz mod|rahatsız etme/i,"Ayarlar › Bildirimler ve sohbet › **Sessiz mod**: seçtiğin süre boyunca bildirim gelmez."],[/gizli kelime|kelime gizle/i,"Ayarlar › Hesap ve gizlilik › **Gizli kelimeler**: bu kelimeleri içeren yorum ve mesajlar örtülür."],[/zaman kapsül|kapsül/i,"Fotoğraf ya da not paylaşırken **Zaman kapsülü**nü aç ve tarih seç. O tarihe kadar kimse içeriği göremez, sonra herkese açılır."],[/günün sorusu/i,"Akış'ta her gün bir **Günün sorusu** çıkar. Yanıtlayınca takip ettiklerinin yanıtlarını görürsün."],[/etiketle|kişi etiket/i,"Fotoğraf paylaşırken **Kişi etiketle**'ye dokun, en çok 10 kişi seç."],[/29 ekim|bayram|özel gün|cumhuriyet|kutlama/i,"Kadraj özel günleri bilir: 29 Ekim'den 7 gün önce Akış'ta geri sayım kartı çıkar, bayram günü bayrak ve konfetiyle kutlar. Karttaki **Hikâyende paylaş** hazır bir kutlama hikâyesi yapar. Kartı kapatırsan o gün bir daha çıkmaz."],[/tanıtım|tanit/i,"**Davet et › Kadraj tanıtımını aç**: uygulamanın ekranlarıyla animasyonlu bir tanıtım sayfası. Davet mesajında da bağlantısı var, arkadaşına gönderebilirsin."],[/sohbette şarkı|şarkı gönder|mesajla şarkı/i,"Sohbette **+ › Şarkı**: şarkıyı ara, başlangıcını seç, gönder. Arkadaşın mesajdaki oynatıcıya dokununca 30 saniyesini dinler."],[/klakete şarkı|klaket(e|te)? müzik/i,"Klaket oluştururken **Şarkı ekle**'ye dokun, şarkıyı ve başlangıç saniyesini seç. Klaket açılınca o şarkı çalar."],[/grupta anket|gruba anket|sohbette anket/i,"Grup sohbetinde **+ › Anket**: soruyu ve 2-4 seçeneği yaz. Herkes seçeneğe dokunarak oy verir; aynı seçeneğe tekrar dokununca oy geri alınır."],[/doğum gün/i,"**Profilini düzenle › Doğum günü**: gün ve ayı seç. O gün arkadaşlarına Akış'ta hatırlatma çıkar ve profilinde \"Bugün doğum günü\" yazar."],[/yoruma yanıt|yorum(u)? sabitle|yanıtla/i,"Yorumun altındaki **Yanıtla**'ya dokun; yanıt o yorumun altında görünür. Kendi paylaşımında bir yoruma **Sabitle** diyerek en üste koyabilirsin."],[/hikâye(ye|de)? (müzik|şarkı)/i,"Hikâye oluştururken **Müzik ekle**'ye dokun, şarkı ya da sanatçı adını yazıp seç. Şarkılar Apple Music ve Deezer'ın 30 saniyelik önizlemeleri, video ve reklam yok. İzleyen şarkı adına dokununca dinler."],[/sessize al|mute/i,"Profilin üç nokta menüsü › **Sessize al**: paylaşımlarını ya da hikâyelerini Akış'ta görmezsin, kişiye haber gitmez. Liste Ayarlar › Sessize alınanlar'da."],[/arşivle|paylaşım(ı)? gizle/i,"Kendi paylaşımında üç nokta › **Arşivle**: silinmez, yalnızca sen görürsün. Ayarlar › Paylaşım arşivi'nden geri getirirsin."],[/ne kadar (zaman|süre)|geçirdiğim süre|ekran süresi/i,"**Ayarlar › Kadraj'da geçirdiğin süre**: bugün, ortalama ve son 7 gün. İstersen günlük mola hatırlatması kur."],[/not(a|uma|una)? şarkı|şarkılı not|notta şarkı|nota müzik/i,"Sohbet ekranında **Notun › Şarkı ekle**: şarkı ya da sanatçı adını yaz, dinle, şarkıya dokun, kaydırıcıyla başlangıç saniyesini ayarla (30 saniyelik önizlemenin içinden), Seç. Video ve reklam yok, Apple Music ya da Deezer'ın 30 saniyelik önizlemesi çalar. Arkadaşın notuna dokununca şarkı çalar."],[/oyunlar? nerede|xox|4'?lü bağla|kelime oyunu|cephe nerede|satranç nerede/i,"**Sohbet › oyun kolu**: Satranç, Cephe ve XOX · 4'lü Bağla · Kelime. Sohbette de **+ › Oyunlar**."],[/okul(un)? (kapan|bit|tatil)|lgs|kaç gün kaldı|karne/i,"Keşfet'in üstündeki sayaçta sıradaki tatile, okulun kapanmasına (25 Haziran 2027) ve LGS'ye (tahmini 12 Haziran 2027) kaç gün kaldığı yazar."],[/hikâyende paylaş|hikayeye paylaş|gönderiyi hikâye/i,"Paylaşımın **gönder** düğmesine dokun › **Hikâyende paylaş**. Fotoğraf ya da not hikâyende kart olarak görünür."],[/taslak/i,"Paylaşmadan kapattığın fotoğraf, not ve anketler kendiliğinden **taslak** olur. + › **Taslaklar**'dan ya da **Ayarlar › Paylaşım taslakları**'ndan açıp devam et. Taslaklar yalnızca bu cihazda durur."],[/arşiv|eski hikâye|hikâyelerim nerede/i,"**Ayarlar › Hikâye arşivi**: paylaştığın hikâyeler 24 saat geçince de burada kalır (bu cihazda). Birine dokunup yeniden paylaşabilir, öne çıkarabilir ya da silebilirsin."],[/okunmad[ıi]/i,"Sohbet listesinde sohbete **basılı tut › Okunmadı olarak işaretle**. Sohbeti açınca işaret kalkar."],[/çıkartma|sticker|hikâye(ye|de)? anket|hikâye(ye|de)? soru/i,"Hikâye oluştururken **Çıkartma ekle**: saat, tarih, konum, bahsetme, simge, anket ve soru. Çıkartmayı sürükleyerek taşı, dokunarak büyüt; anket ve soruya dokununca düzenlenir. Oylar ve yanıtlar sana gelir."],[/yakın arkadaş|close friend/i,"**Ayarlar › Yakın Arkadaşlar**'dan ya da profilin üç nokta menüsünden kişi ekle. Hikâye oluştururken **Yakın Arkadaşlar** anahtarını açarsan hikâyeni yalnızca onlar görür; halkası yeşil olur."],[/oyun oyna|xox|4'?lü bağla|kelime oyun|mini oyun/i,"Birebir ya da grup sohbetinde **+ › Oyun oyna**: XOX, 4'lü Bağla ya da Kelime. Davetteki **Oyuna git** ile açılır; bitince **Rövanş** isteyebilirsin."],[/anılar|geçen yıl bugün|yıl önce bugün/i,"Eski paylaşımlarının ay ve yıl dönümünde Akış'ta **Anılar** kartı çıkar. Fotoğrafı **Hikâyende paylaş** ile tek dokunuşla hikâye yapabilirsin."],[/profil müzi|profil şarkı|profile şarkı|profile müzik/i,"**Profilini düzenle › Profil müziği**: şarkı ya da sanatçı adını yaz, şarkıya dokun, kaydedilir. Profiline girenler şarkı çipine dokununca 30 saniye dinler (Apple Music ya da Deezer önizlemesi, video ve reklam yok)."],[/resim çiz|çizer misin|görsel oluştur/i,"Bana \"kedi çiz\" ya da \"çiz: deniz kenarında gün batımı\" yaz, resmi çizip göndereyim. Bunun için yapay zekâ bağlantım açık olmalı; günde 10 resim çizebilirim."],[/sohbette ara|mesaj(ı|ları)? ara|eski mesaj|mesaj(ı)? ilet|iletme|sohbet(i)? sabitle|taslak/i,"Sohbette:\n- Eski mesajı bulmak için sohbetteki **+** menüsünden **Sohbette ara**.\n- Mesajı başka sohbete göndermek için mesaja basılı tut › **İlet**.\n- Sohbeti listede en üste almak için satıra basılı tut › **Sabitle** (en fazla 3).\n- Yazıp gönderemediğin mesaj **taslak** olarak kalır, listede \"Taslak:\" diye görünür."],[/aktif|çevrimiçi|online|son görülme/i,"Kimin aktif olduğunu fotoğrafındaki **yeşil noktadan** ve sohbetin üstündeki durum yazısından görürsün. Kendi durumunu gizlemek için **Ayarlar > Gizlilik > Aktiflik durumu**'nu kapat; o zaman sen de başkalarınınkini göremezsin."],
+const FAQ=[[/(birden (çok|fazla) hesap|hesap (ekle|değiştir|geç)|ikinci hesap|çoklu (hesap|profil))/i,"En çok **5 hesap** ekleyebilirsin: profilinde adının yanındaki **oka** dokun (ya da alttaki **Ben**'e basılı tut) › **Hesap ekle**. Listeden bir hesaba dokununca ona geçersin. ⋯ › **Ana hesap yap** dersen Kadraj açılınca o hesap açılır."],
+ [/(gif|çıkartma|sticker)/i,"Sohbette **+ › GIF** ile GIF arar ya da telefondan hareketli GIF gönderirsin. **+ › Çıkartma** › **Çıkartma oluştur**: fotoğraf seç, şekli (daire, kalp, yıldız…) ve yazıyı seç, **Kaydet ve gönder**. Birinin çıkartmasına dokunup kendine ekleyebilirsin."],
+ [/(animasyon|geçiş|kayarak|balon şekli|çift dokun)/i,"**Ayarlar › Kadraj'a özel**: Animasyonlar (Kapalı, Hızlı, Normal, Akıcı), sohbet balonu (Yuvarlak, Köşeli), çift dokununca hangi tepki gitsin ve gönderme sesi."],
+ [/(edit|kurgu|video düzenle|videoyu (kes|hızlandır)|videoya yazı)/i,"Video düzenlemek için **+ › Kurgu**: videonu seç ya da çek, düzenleyici kendiliğinden açılır. Kes (zaman şeridindeki iki sarı uç), hız (0,5x-3x), yazı (renk, stil, animasyon), filtre, format (9:16, 4:5, 1:1), sesi kapat ve kapak karesi. Bitince **Kullan**, sonra paylaş."],[/keşif klaket|meme|(klaket|reels?|video)[^.?!]*(otomatik|kendiliğinden|nereden geli|kim yükl)/i,"Klaketler sayfasında arkadaşlarının Klaketlerinin arasına her gün kendiliğinden **meme videoları** (sesli, kısa, Türkçe) ve insanların çektiği kısa videolar gelir. Kimsenin yüklemesi gerekmez; dokununca durur/oynar, ses üstteki hoparlörden. Çocuk Modu'nda memeler gelmez."],[/acil mod|supabase|bağlantı(sı)? kop|sunucu (çök|kopar|kapan)|firebase (çök|kopar)|kadraj (çöktü|açılmıyor)/i,"Firebase bağlantısı koparsa Kadraj kendiliğinden **Supabase ile devam eder**: sohbetlerin ve Meydan çalışır, eski mesajlar orada görünmez. Firebase dönünce Supabase'deyken yazdığın mesajlar Kadraj'a taşınır. Hazır olup olmadığını **Ayarlar › Uygulama › Supabase yedeği**'nden görürsün."],[/video düzen|videoyu kes|kurgu|hızlandır|yavaşlat|videoya yazı|videoya metin/i,"Klaket oluştururken videoyu seç, sonra **Kurgu**'ya dokun: Kes (iki ucu sürükle), Hız (0,5x-3x), Yazı (renk, stil, animasyon), Filtre, Format, Ses ve Kapak. **Bitti** deyince düzenleme videoya işlenir."],[/yeniden paylaş|repost/i,"Paylaşımın altındaki iki oklu düğmeye dokun (ya da ⋯ › **Yeniden paylaş**). Takipçilerinin Akış'ında üstte görünür, profilinde **Yeniden** sekmesinde durur. Aynı düğmeyle geri alırsın."],[/koleksiyon/i,"Paylaşımın ⋯ menüsü › **Koleksiyona kaydet**. Profil › Kaydedilenler'de üstteki çiplerden koleksiyon seçersin."],[/favori/i,"Profilin ⋯ menüsü › **Favorilere ekle**. Akış'taki **Favoriler** sekmesinde yalnızca onların paylaşımları görünür."],[/kadraj kodu|qr|karekod/i,"Kendi profilindeki kod düğmesine dokun: **Kadraj kodu**. Arkadaşın telefon kamerasıyla okutunca profilin açılır."],[/sessiz mod|rahatsız etme/i,"Ayarlar › Bildirimler ve sohbet › **Sessiz mod**: seçtiğin süre boyunca bildirim gelmez."],[/gizli kelime|kelime gizle/i,"Ayarlar › Hesap ve gizlilik › **Gizli kelimeler**: bu kelimeleri içeren yorum ve mesajlar örtülür."],[/zaman kapsül|kapsül/i,"Fotoğraf ya da not paylaşırken **Zaman kapsülü**nü aç ve tarih seç. O tarihe kadar kimse içeriği göremez, sonra herkese açılır."],[/günün sorusu/i,"Akış'ta her gün bir **Günün sorusu** çıkar. Yanıtlayınca takip ettiklerinin yanıtlarını görürsün."],[/etiketle|kişi etiket/i,"Fotoğraf paylaşırken **Kişi etiketle**'ye dokun, en çok 10 kişi seç."],[/29 ekim|bayram|özel gün|cumhuriyet|kutlama/i,"Kadraj özel günleri bilir: 29 Ekim'den 7 gün önce Akış'ta geri sayım kartı çıkar, bayram günü bayrak ve konfetiyle kutlar. Karttaki **Hikâyende paylaş** hazır bir kutlama hikâyesi yapar. Kartı kapatırsan o gün bir daha çıkmaz."],[/tanıtım|tanit/i,"**Davet et › Kadraj tanıtımını aç**: uygulamanın ekranlarıyla animasyonlu bir tanıtım sayfası. Davet mesajında da bağlantısı var, arkadaşına gönderebilirsin."],[/sohbette şarkı|şarkı gönder|mesajla şarkı/i,"Sohbette **+ › Şarkı**: şarkıyı ara, başlangıcını seç, gönder. Arkadaşın mesajdaki oynatıcıya dokununca 30 saniyesini dinler."],[/klakete şarkı|klaket(e|te)? müzik/i,"Klaket oluştururken **Şarkı ekle**'ye dokun, şarkıyı ve başlangıç saniyesini seç. Klaket açılınca o şarkı çalar."],[/grupta anket|gruba anket|sohbette anket/i,"Grup sohbetinde **+ › Anket**: soruyu ve 2-4 seçeneği yaz. Herkes seçeneğe dokunarak oy verir; aynı seçeneğe tekrar dokununca oy geri alınır."],[/doğum gün/i,"**Profilini düzenle › Doğum günü**: gün ve ayı seç. O gün arkadaşlarına Akış'ta hatırlatma çıkar ve profilinde \"Bugün doğum günü\" yazar."],[/yoruma yanıt|yorum(u)? sabitle|yanıtla/i,"Yorumun altındaki **Yanıtla**'ya dokun; yanıt o yorumun altında görünür. Kendi paylaşımında bir yoruma **Sabitle** diyerek en üste koyabilirsin."],[/hikâye(ye|de)? (müzik|şarkı)/i,"Hikâye oluştururken **Müzik ekle**'ye dokun, şarkı ya da sanatçı adını yazıp seç. Şarkılar Apple Music ve Deezer'ın 30 saniyelik önizlemeleri, video ve reklam yok. İzleyen şarkı adına dokununca dinler."],[/sessize al|mute/i,"Profilin üç nokta menüsü › **Sessize al**: paylaşımlarını ya da hikâyelerini Akış'ta görmezsin, kişiye haber gitmez. Liste Ayarlar › Sessize alınanlar'da."],[/arşivle|paylaşım(ı)? gizle/i,"Kendi paylaşımında üç nokta › **Arşivle**: silinmez, yalnızca sen görürsün. Ayarlar › Paylaşım arşivi'nden geri getirirsin."],[/ne kadar (zaman|süre)|geçirdiğim süre|ekran süresi/i,"**Ayarlar › Kadraj'da geçirdiğin süre**: bugün, ortalama ve son 7 gün. İstersen günlük mola hatırlatması kur."],[/not(a|uma|una)? şarkı|şarkılı not|notta şarkı|nota müzik/i,"Sohbet ekranında **Notun › Şarkı ekle**: şarkı ya da sanatçı adını yaz, dinle, şarkıya dokun, kaydırıcıyla başlangıç saniyesini ayarla (30 saniyelik önizlemenin içinden), Seç. Video ve reklam yok, Apple Music ya da Deezer'ın 30 saniyelik önizlemesi çalar. Arkadaşın notuna dokununca şarkı çalar."],[/oyunlar? nerede|xox|4'?lü bağla|kelime oyunu|cephe nerede|satranç nerede/i,"**Sohbet › oyun kolu**: Satranç, Cephe ve XOX · 4'lü Bağla · Kelime. Sohbette de **+ › Oyunlar**."],[/okul(un)? (kapan|bit|tatil)|lgs|kaç gün kaldı|karne/i,"Keşfet'in üstündeki sayaçta sıradaki tatile, okulun kapanmasına (25 Haziran 2027) ve LGS'ye (tahmini 12 Haziran 2027) kaç gün kaldığı yazar."],[/hikâyende paylaş|hikayeye paylaş|gönderiyi hikâye/i,"Paylaşımın **gönder** düğmesine dokun › **Hikâyende paylaş**. Fotoğraf ya da not hikâyende kart olarak görünür."],[/taslak/i,"Paylaşmadan kapattığın fotoğraf, not ve anketler kendiliğinden **taslak** olur. + › **Taslaklar**'dan ya da **Ayarlar › Paylaşım taslakları**'ndan açıp devam et. Taslaklar yalnızca bu cihazda durur."],[/arşiv|eski hikâye|hikâyelerim nerede/i,"**Ayarlar › Hikâye arşivi**: paylaştığın hikâyeler 24 saat geçince de burada kalır (bu cihazda). Birine dokunup yeniden paylaşabilir, öne çıkarabilir ya da silebilirsin."],[/okunmad[ıi]/i,"Sohbet listesinde sohbete **basılı tut › Okunmadı olarak işaretle**. Sohbeti açınca işaret kalkar."],[/çıkartma|sticker|hikâye(ye|de)? anket|hikâye(ye|de)? soru/i,"Hikâye oluştururken **Çıkartma ekle**: saat, tarih, konum, bahsetme, simge, anket ve soru. Çıkartmayı sürükleyerek taşı, dokunarak büyüt; anket ve soruya dokununca düzenlenir. Oylar ve yanıtlar sana gelir."],[/yakın arkadaş|close friend/i,"**Ayarlar › Yakın Arkadaşlar**'dan ya da profilin üç nokta menüsünden kişi ekle. Hikâye oluştururken **Yakın Arkadaşlar** anahtarını açarsan hikâyeni yalnızca onlar görür; halkası yeşil olur."],[/oyun oyna|xox|4'?lü bağla|kelime oyun|mini oyun/i,"Birebir ya da grup sohbetinde **+ › Oyun oyna**: XOX, 4'lü Bağla ya da Kelime. Davetteki **Oyuna git** ile açılır; bitince **Rövanş** isteyebilirsin."],[/anılar|geçen yıl bugün|yıl önce bugün/i,"Eski paylaşımlarının ay ve yıl dönümünde Akış'ta **Anılar** kartı çıkar. Fotoğrafı **Hikâyende paylaş** ile tek dokunuşla hikâye yapabilirsin."],[/profil müzi|profil şarkı|profile şarkı|profile müzik/i,"**Profilini düzenle › Profil müziği**: şarkı ya da sanatçı adını yaz, şarkıya dokun, kaydedilir. Profiline girenler şarkı çipine dokununca 30 saniye dinler (Apple Music ya da Deezer önizlemesi, video ve reklam yok)."],[/resim çiz|çizer misin|görsel oluştur/i,"Bana \"kedi çiz\" ya da \"çiz: deniz kenarında gün batımı\" yaz, resmi çizip göndereyim. Bunun için yapay zekâ bağlantım açık olmalı; günde 10 resim çizebilirim."],[/sohbette ara|mesaj(ı|ları)? ara|eski mesaj|mesaj(ı)? ilet|iletme|sohbet(i)? sabitle|taslak/i,"Sohbette:\n- Eski mesajı bulmak için sohbetteki **+** menüsünden **Sohbette ara**.\n- Mesajı başka sohbete göndermek için mesaja basılı tut › **İlet**.\n- Sohbeti listede en üste almak için satıra basılı tut › **Sabitle** (en fazla 3).\n- Yazıp gönderemediğin mesaj **taslak** olarak kalır, listede \"Taslak:\" diye görünür."],[/aktif|çevrimiçi|online|son görülme/i,"Kimin aktif olduğunu fotoğrafındaki **yeşil noktadan** ve sohbetin üstündeki durum yazısından görürsün. Kendi durumunu gizlemek için **Ayarlar > Gizlilik > Aktiflik durumu**'nu kapat; o zaman sen de başkalarınınkini göremezsin."],
  [/tema|duvar ka|balon renk/i,"Sohbet teması için sohbetin üstündeki **resim** simgesine dokun.\n- **Herkes için** seçersen tema sohbetteki herkeste aynı anda değişir.\n- **Yalnızca bende** sadece senin cihazını etkiler.\n\nUygulamanın rengini **Ayarlar > Görünüm**'den seçersin: Açık/Koyu/Sistem ve vurgu rengi. İstersen tema tüm cihazlarında aynı kalır."],
  [/tepki|emoji/i,"Mesaja uzun bas: üstte 6 resimli tepki çıkar (kalp, gülme, şaşırma, üzülme, ateş, alkış). Çift dokunuş kalp bırakır. Tepkiye dokununca kimin ne bıraktığını görürsün."],
  [/sürüm|güncelle|yeni sürüm/i,"Kadraj kendini güncel tutar: yeni sürüm çıkınca uygun bir anda (yazı yazmıyorken, aramada değilken) kendiliğinden yenilenir; olmazsa üstte **Yeni sürüm hazır** yazar, **Yenile**'ye dokunman yeter. İki sürüm geride kalan eski sürüm kapanır ve **Şimdi güncelle** düğmesi çıkar. Elle denetlemek için **Ayarlar > Hakkında > Güncellemeleri denetle**."],
@@ -2324,10 +2329,10 @@ async function boot(){verCleanUrl();runHooks("boot");
  if(!cfg){if(LS.get("kadraj_demo"))return bootLocal();return showSetup()}
  const m=$("#splashMsg");if(m)m.textContent="Sunucuya bağlanılıyor…";
  try{await withTimeout(loadFirebase(cfg),20000);if(!FB)throw new Error("zaman aşımı")}catch(e){console.warn(e);if(await acTry("fb"))return;return showSetup("Firebase'e bağlanılamadı. İnternetini kontrol et ya da kodu yeniden yapıştır. ("+((e&&e.message)||e)+")")}
- S.mode="cloud";DB=FirebaseDB();const room=FsRoom();S.caps.room=room;wireRoom(room);
+ await accBoot();S.mode="cloud";DB=FirebaseDB();const room=FsRoom();S.caps.room=room;wireRoom(room);
  if(AUTH_ACT)handleAuthAction(AUTH_ACT);
- FB.A.onAuthStateChanged(FB.auth,async u=>{if(S.registering||S.inReset)return;
-  if(!u){if(S.authed)endSession();S.uid=null;return fbWelcome()}
+ const bootAuth=FB.auth;FB.A.onAuthStateChanged(bootAuth,async u=>{if(S.registering||S.inReset||FB.auth!==bootAuth)return;
+  if(!u){if(accGone(FB.app.name))return;if(S.authed)endSession();S.uid=null;return fbWelcome()}
   if(S.authed&&S.uid===u.uid)return;
   S.uid=u.uid;S.email=u.email;let prof=null;
   try{prof=await DB.get("profiles/"+u.uid)}catch(e){console.warn(e);if(e&&e.code==="permission-denied")return showSetup("Veritabanı kuralları izin vermiyor. 4. adımdaki kuralları Firestore > Kurallar'a yapıştırıp Yayınla'ya bas, sonra Bağlan'a dokun.");if(await acTry("db"))return;return showSetup("Kadraj sunucusuna ulaşılamadı. İnternetini kontrol edip yeniden dene. ("+((e&&(e.code||e.message))||e)+")")}
@@ -2483,9 +2488,10 @@ setTimeout(verTidyCache,9000);
 /* ---- A · Neler yeni ---- */
 /* Yalnızca şu anki ara sürümün maddeleri gösterilir (v: o sürümün APP_V'si); yeni sürümde eski maddeleri silip yenilerini yaz. */
 const WN_ITEMS=[
-  {v:60800,ic:"film",g:"linear-gradient(135deg,#111827,#4338ca)",t:"Kurgu: video düzenleyici",d:"Klaket oluştururken Kurgu'ya dokun: videonun başını ve sonunu kes, 0,5x ile 3x arası hızlandır ya da yavaşlat",go:"reels"},
-  {v:60800,ic:"type",g:"linear-gradient(135deg,#f59e0b,#ef4444)",t:"Videona yazı ekle",d:"Renkli, kutulu ya da gölgeli yazılar; belir, zıpla, daktilo animasyonları ve ne zaman görüneceği",go:"reels"},
-  {v:60800,ic:"spark",g:"linear-gradient(135deg,#0c7a63,#22c55e)",t:"Filtre, format, ses ve kapak",d:"Videoya filtre uygula, 9:16 ya da kare yap, sesini kapat, kapak karesini kendin seç",go:"reels"}];
+  {v:60900,ic:"users",g:"linear-gradient(135deg,#0A84FF,#5E5CE6)",t:"Birden çok hesap",d:"En çok 5 hesap ekle, birine dokunup geç. Ana hesap Kadraj açılınca açılır. Profilindeki adının yanındaki oka ya da Ben'e basılı tut",go:"profile"},
+  {v:60900,ic:"spark",g:"linear-gradient(135deg,#f59e0b,#ef4444)",t:"GIF ve çıkartma",d:"Sohbette + › GIF ya da Çıkartma. Fotoğrafından kalp, yıldız, daire çıkartma yap, yazı ekle, sakla",go:"chats"},
+  {v:60900,ic:"motion",g:"linear-gradient(135deg,#AF52DE,#FF2D55)",t:"Akıcı geçişler",d:"Sohbet sağdan kayarak açılır, hesaplar arasında yumuşak geçiş. Hızını Ayarlar › Kadraj'a özel'den seç",go:"settings"},
+  {v:60900,ic:"gear",g:"linear-gradient(135deg,#0c7a63,#22c55e)",t:"Kadraj'a özel ayarlar",d:"Köşeli sohbet balonu, çift dokunmada hangi tepki gitsin, gönderme sesi. Tablette Instagram gibi sol menü",go:"settings"}];
 const WN_MARK=`<svg class="wn-mark" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M2.5 8V5a2.5 2.5 0 0 1 2.5-2.5h3"/><path pathLength="1" d="M16 2.5h3A2.5 2.5 0 0 1 21.5 5v3"/><path pathLength="1" d="M21.5 16v3a2.5 2.5 0 0 1-2.5 2.5h-3"/><path pathLength="1" d="M8 21.5H5A2.5 2.5 0 0 1 2.5 19v-3"/><circle cx="12" cy="12" r="3.4"/></svg>`;
 function showWhatsNew(force){if($('#overlay [data-layer="whatsnew"]'))return;if(!force&&verLvl(LS.get("kadraj_seen_ver",0)||0)>=verLvl(APP_V))return;
  const items=WN_ITEMS.filter(x=>verLvl(x.v)===verLvl(APP_V)).map((x,i)=>`<button type="button" class="wn-item" data-act="wnGo" data-r="${x.go}" style="--i:${i};--g:${x.g}"><span class="wn-ic">${I(x.ic)}</span><span class="wn-t"><b>${esc(x.t)}</b><span>${esc(x.d)}</span></span>${I("next")}</button>`).join("");
@@ -3546,7 +3552,7 @@ function srSnip(text,terms,max=120,lead=28){text=String(text??"").replace(/\s+/g
 const richTextBase50S=richText;
 richText=function(t){try{const s=String(t??"").replace(/[\u0001\u0002]/g,"");const tags=[];
  const marked=s.replace(SR_TAG,(m,w)=>{tags.push(w);return"\u0001"+(tags.length-1)+"\u0002"});
- return esc(marked).replace(/(^|\s)@([a-z0-9._]+)/gi,'$1<button class="ht" data-mention="$2">@$2</button>')
+ return esc(marked).replace(/(^|[^A-Za-z0-9_@.&])@([a-z0-9._]+)/gi,'$1<button class="ht" data-mention="$2">@$2</button>')
   .replace(/\u0001(\d+)\u0002/g,(m,i)=>{const w=tags[+i]||"";return`<button class="ht" data-htag="${esc(srLow(w))}">#${esc(w)}</button>`})}
  catch(e){console.warn("sr",e);return richTextBase50S(t)}};
 function srTagsOf(p){const s=[p.caption,p.text].filter(x=>typeof x==="string").join(" ");const out=new Set();for(const m of s.matchAll(SR_TAG))out.add(srLow(m[1]));return[...out]}
@@ -7941,7 +7947,7 @@ HOOKS.after.push(r=>{if(r!=="settings"||S.guest)return;const m=$("#main");if(!m|
 /* 6.4.1 uygulama güncellemesi: APK'nın yerel sürümü (KadrajGaleri.surum, SURUM sabiti) APK_NATIVE'den küçükse ya da yöntem yoksa (eski APK)
    açılışta günde bir kez "Yeni sürüm var" penceresi (kadraj_apkask_<uid> = gün); İndir telefonun tarayıcısında APK_URL'yi açar (KadrajGaleri.ac).
    Ayarlar'daki #appInfo satırına da yazılır. Java tarafı değişince iki sayıyı birlikte artır. Site güncellemeleri APK'sız gelir, bunlar için gerekmez. */
-const APK_NATIVE=7;
+const APK_NATIVE=8;
 async function apkNative(){const G=kgal();if(!G)return null;try{if(typeof G.surum==="function"){const r=await G.surum();APK_PK=String(r&&r.paket||"");return r&&+r.surum||0}}catch{}return 0}
 /* 6.8.25: uygulamanın paket adı …kadrajapp oldu (eski …kadraj farklı imzalı kurulumlarda "paket çakışıyor" diyordu). Eski paketteki
    uygulamaya güncelleme penceresi yeni uygulamanın yanına kurulacağını ve eskisinin silinebileceğini söyler. */
@@ -9489,6 +9495,245 @@ function klnPrompt(){if(!S.uid||S.guest||settings.notify===false)return;if(SS.ge
 klnCheck().then(ok=>{if(ok&&KLN.p&&typeof KLN.p.addListener==="function"){try{KLN.p.addListener("bildirimEylem",d=>klnEylem(d))}catch(e){console.warn("kln dinle",e)}}
  HOOKS.enter.push(()=>setTimeout(klnPrompt,4000));if(S.uid)setTimeout(klnPrompt,4000)});
 /*}@js:77*/
+
+/*@js:690{*/
+/* 6.9.0 Bora (sahibi: "bildirimde Kadraj logosu, açılışta yalnızca logo, GIF ve çıkartma, Instagram'daki gibi kenar şeridi, bahsetmeler mavi,
+   yöneticiye daha çok şey, en çok 5 hesap ve ana hesap, 0,5 sn'lik animasyonlar, sohbet sağdan kayarak gelsin, daha çok ayar").
+   - Tablet/geniş ekran (≥720 px): alt menü sol dikey şerit olur (#shell[data-rail], k69Rail; HOOKS.after ve renderDock sarmalayıcısı), sohbette ve
+     Klakette de görünür, en üstte Kadraj logosu; Klaket yuvarlak köşeli çerçevede.
+   - Animasyonlar: settings.anim (off|hizli|normal|akici, varsayılan akici=0,5 sn) → --k69-d. Sohbet/Klaket/satranç sayfası artık "ışınlanmaz":
+     render sarıldı, tam çizimde main (+ sohbette #top) yönüne göre sağdan/soldan kayar (k69-in-r/l). Kapalı = eski "Animasyonları azalt".
+   - GIF: + menüsü › GIF (gifPick): GIPHY araması (anahtar admin/gif.k, Yönetici › GIF), Çıkartmalar (GIPHY stickers), Benim çıkartmalarım,
+     telefondan hareketli GIF (en çok 600 KB, data URL). Mesaj {gif:{u,w,h}} / {stk:{u,w,h}}; adresler gifOk ile süzülür (media*.giphy.com ya da data:image).
+   - Çıkartma oluştur (stkMake): fotoğraf › şekil (daire, yuvarlak kare, kalp, yıldız, serbest), beyaz kenar, yazı, yakınlaştır/kaydır → 320 px webp;
+     data/users/{uid}/stk = {list:[{id,u,at}]} (en çok STK_MAX), sohbetteki çıkartmaya dokununca "Çıkartmalarıma ekle".
+   - Çoklu hesap (ACC, yalnızca bulutta): her hesap ayrı Firebase uygulaması ("[DEFAULT]", k2..k5), oturumu kendi IndexedDB'sinde kalır; geçiş
+     endSession → FB.app/auth/db değişir → DB=FirebaseDB() → aynı FsRoom (FB.db'yi çağrı anında okur) → accAdopt. Liste LS kadraj_accs
+     {main,list:[{a,uid,un,name,av}]}; ana hesap açılışta açılır (boot içinde accBoot). Profil başlığındaki ok, "Ben"e basılı tutmak ve Ayarlar › Hesaplar.
+   - Yönetici: Canlı durum (sayılar, çevrimiçi, kim hangi sürümde: presence.v / nv), Herkese bildirim (KP.send), Uygulama güncellemesi iste (admin/apk.min),
+     GIF anahtarı.
+   - Ayarlar › Kadraj'a özel: Animasyonlar, Sohbet balonu (yuvarlak/köşeli), Çift dokunma tepkisi, Gönderme sesi, Çıkartmalarım, Hesaplar. */
+const K69={r:"",rt:0};
+const K69_AN={off:0,hizli:.2,normal:.35,akici:.5};
+const k69AnimV=()=>K69_AN[settings.anim]!=null?settings.anim:(settings.reduceMotion===true?"off":"akici");
+const k69Dur=()=>kbReduce()?0:K69_AN[k69AnimV()];
+function k69Apply(){const r=document.documentElement;r.style.setProperty("--k69-d",(k69Dur()||.01)+"s");r.setAttribute("data-bub69",settings.bub69==="k"?"k":"r")}
+k69Apply();
+/* --- geniş ekranda sol şerit --- */
+function k69Wide(){return innerWidth>=720}
+function k69Rail(){const sh=$("#shell"),d=$("#dock");if(!sh||!d)return;const on=!!(S.authed&&k69Wide()&&S.route&&S.route.name!=="chessgame");
+ if(on!==sh.hasAttribute("data-rail"))sh.toggleAttribute("data-rail",on);if(!on)return;d.hidden=false;const nav=d.querySelector("nav");
+ if(nav&&!nav.querySelector(".k69-lg"))nav.insertAdjacentHTML("afterbegin",`<button type="button" class="k69-lg" data-tab="feed" aria-label="Kadraj">${VF}</button>`)}
+HOOKS.after.push(()=>k69Rail());
+{const f=renderDock;renderDock=function(...a){const r=f.apply(this,a);try{k69Rail()}catch{}return r}}
+addEventListener("resize",()=>{clearTimeout(K69.rt);K69.rt=setTimeout(k69Rail,150)});
+/* --- ışınlanmasın: sohbet, Klaket ve satranç da kayarak gelir --- */
+{const f=render;render=function(full,...a){const nav=(typeof K6!=="undefined"&&K6.nav)||"tab";const prev=K69.r;const r=f.call(this,full,...a);
+ try{const n=S.route&&S.route.name;K69.r=n;const d=k69Dur();if(full&&d>0&&["chat","reels","chessgame"].includes(n)&&prev!==n){const dir=nav==="back"?"l":nav==="tab"?"u":"r";
+  for(const el of [$("#main"),n==="chat"?$("#top"):null]){if(!el)continue;el.classList.remove("k69-in-r","k69-in-l","k69-in-u");void el.offsetWidth;el.classList.add("k69-in-"+dir);clearTimeout(el._k69);el._k69=setTimeout(()=>el.classList.remove("k69-in-"+dir),d*1000+80)}}}catch(e){console.warn("k69",e)}return r}}
+/* --- @bahsetmeler: sohbette .mtag da mavi (CSS); burada yalnızca çift dokunma tepkisi --- */
+{const f=reactMsg;reactMsg=function(mid,...a){const t=settings.dblRx;if(t&&t!=="heart"&&typeof setReact==="function"&&typeof RX!=="undefined"&&RX[t])return setReact(mid,t);return f.call(this,mid,...a)}}
+/* --- gönderme sesi --- */
+let K69A=null;function k69Pop(){if(settings.sendSnd!==true)return;try{K69A=K69A||new(window.AudioContext||window.webkitAudioContext)();const c=K69A,t=c.currentTime,o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(980,t+.09);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+.16);o.connect(g).connect(c.destination);o.start(t);o.stop(t+.18)}catch{}}
+{const f=sendMessage;sendMessage=async function(...a){const r=await f.apply(this,a);if(r===true)k69Pop();return r}}
+
+/* ================= GIF ve çıkartma ================= */
+const GIF_RE=/^https:\/\/media\d*\.giphy\.com\/[A-Za-z0-9/_.\-]+\.(gif|webp)(\?[A-Za-z0-9=&_.\-]*)?$/;
+const STK_MAX=24;
+function gifOk(g){return!!(g&&typeof g.u==="string"&&(GIF_RE.test(g.u)||/^data:image\/(gif|webp|png);base64,[A-Za-z0-9+/=]+$/.test(g.u))&&g.u.length<900000)}
+function gifDim(g){const w=Math.max(40,Math.min(400,+g.w||200)),h=Math.max(40,Math.min(400,+g.h||200));return{w,h}}
+function gifHtml(g){if(!gifOk(g))return`<i class="muted">GIF gösterilemiyor</i>`;const{w,h}=gifDim(g);return`<img class="k69-gif" src="${esc(g.u)}" alt="GIF" width="${w}" height="${h}" loading="lazy" decoding="async" style="aspect-ratio:${w}/${h}">`}
+function stkHtml(g){if(!gifOk(g))return`<i class="muted">Çıkartma gösterilemiyor</i>`;const{w,h}=gifDim(g);return`<img class="k69-stk" data-stk="1" src="${esc(g.u)}" alt="Çıkartma" width="${w}" height="${h}" loading="lazy" decoding="async" style="aspect-ratio:${w}/${h}">`}
+const gifKey=()=>{const a=S.adm&&S.adm.gif;const k=a&&typeof a.k==="string"?a.k.trim():"";return /^[A-Za-z0-9]{16,64}$/.test(k)?k:""};
+const GIFC={};
+async function gifSearch(kind,q){const k=gifKey();if(!k)return null;const rt=isChild()?"g":"pg-13";const ep=kind==="stk"?"stickers":"gifs";
+ const u=q?`https://api.giphy.com/v1/${ep}/search?api_key=${k}&q=${encodeURIComponent(q.slice(0,50))}&limit=30&rating=${rt}&lang=tr`:`https://api.giphy.com/v1/${ep}/trending?api_key=${k}&limit=30&rating=${rt}`;
+ if(GIFC[u])return GIFC[u];const ac=new AbortController();const t=setTimeout(()=>ac.abort(),12000);
+ try{const r=await fetch(u,{signal:ac.signal});const j=await r.json().catch(()=>null);if(!r.ok)throw new Error((j&&j.meta&&j.meta.msg)||("http "+r.status));
+  const out=[];for(const x of (j&&j.data)||[]){const im=x&&x.images&&(x.images.fixed_width||x.images.downsized);if(!im||!im.url)continue;const url=String(im.url).replace(/^http:/,"https:");if(!GIF_RE.test(url))continue;out.push({u:url,w:+im.width||200,h:+im.height||200})}
+  GIFC[u]=out;return out}finally{clearTimeout(t)}}
+async function stkGet(){try{const d=await DB.get(`data/users/${S.uid}/stk`);return(d&&Array.isArray(d.list)?d.list:[]).filter(x=>x&&gifOk(x)).slice(0,STK_MAX)}catch{return[]}}
+async function stkSave(list){return write(()=>DB.set(`data/users/${S.uid}/stk`,{list:list.slice(0,STK_MAX),at:now()}),{quiet:false})}
+async function stk69Add(g){if(!gifOk(g))return false;const list=await stkGet();if(list.some(x=>x.u===g.u)){toast("Bu çıkartma zaten sende");return true}
+ if(list.length>=STK_MAX){toast(`En çok ${STK_MAX} çıkartma saklanır; önce birini sil`);return false}list.unshift({id:rid(),u:g.u,w:+g.w||320,h:+g.h||320,at:now()});const ok=await stkSave(list);if(ok)toast("Çıkartmalarına eklendi");return ok}
+function gifPick(key,tab){if(!guard())return;const l=sheet("k69gif","GIF ve çıkartma",`<div class="k69g-tabs" role="tablist">${[["gif","GIF"],["stk","Çıkartmalar"],["mine","Benim"]].map(([k,n])=>`<button type="button" role="tab" data-k69t="${k}">${n}</button>`).join("")}</div>
+ <div class="search k69g-q"><input class="in" id="k69Q" type="search" placeholder="Ara" autocomplete="off" aria-label="GIF ara"></div>
+ <div class="k69g-grid" id="k69G" aria-live="polite"></div>
+ <div class="k69g-foot"><button type="button" class="btn sm ghost" id="k69Ph">${I("image")}Telefondan GIF</button><button type="button" class="btn sm ghost" id="k69Mk">${I("spark")}Çıkartma oluştur</button><small id="k69By"></small></div>`,{tall:true});
+ let cur=tab||(gifKey()?"gif":"mine"),seq=0,tm=0;const G=$("#k69G",l),Q=$("#k69Q",l);
+ const send=g=>{closeLayer("k69gif");if(cur==="gif")sendMessage(key,{gif:{u:g.u,w:g.w,h:g.h}});else sendMessage(key,{stk:{u:g.u,w:g.w,h:g.h}})};
+ const grid=(list,mine)=>{if(!list.length){G.innerHTML=`<div class="empty" style="grid-column:1/-1;padding:24px 8px"><b>${mine?"Henüz çıkartman yok":"Sonuç yok"}</b><p class="muted">${mine?"Çıkartma oluştur'a dokun ya da sohbette bir çıkartmaya dokunup kendine ekle.":"Başka bir kelime dene."}</p></div>`;return}
+  G.innerHTML=list.map((g,i)=>`<div class="k69g-c"><button type="button" class="k69g-it" data-i="${i}" aria-label="Gönder"><img src="${esc(g.u)}" alt="" loading="lazy" decoding="async"></button>${mine?`<button type="button" class="k69g-x" data-x="${i}" aria-label="Sil">${I("close")}</button>`:""}</div>`).join("");
+  for(const b of $$("[data-i]",G))b.onclick=()=>send(list[+b.dataset.i]);
+  for(const b of $$("[data-x]",G))b.onclick=async e=>{e.stopPropagation();const all=await stkGet();const g=list[+b.dataset.x];const ok=await stkSave(all.filter(x=>x.u!==g.u));if(ok){toast("Çıkartma silindi");load()}}};
+ const load=async()=>{const my=++seq;for(const b of $$("[data-k69t]",l))b.setAttribute("aria-selected",b.dataset.k69t===cur);
+  $(".k69g-q",l).hidden=cur==="mine";$("#k69By",l).textContent=cur==="mine"?"":"GIPHY ile";
+  if(cur==="mine"){G.innerHTML=`<div class="spin" style="margin:30px auto;grid-column:1/-1"></div>`;const list=await stkGet();if(my===seq)grid(list,true);return}
+  if(!gifKey()){G.innerHTML=`<div class="empty" style="grid-column:1/-1;padding:24px 8px"><b>GIF araması kapalı</b><p class="muted">${S.admin?"Yönetici › GIF'ten ücretsiz GIPHY anahtarını kaydet.":"Yönetici GIF aramasını açınca burada GIF'ler çıkar."} Şimdilik telefondan GIF gönderebilir ya da çıkartma oluşturabilirsin.</p></div>`;return}
+  G.innerHTML=`<div class="spin" style="margin:30px auto;grid-column:1/-1"></div>`;
+  try{const list=await gifSearch(cur,Q.value.trim());if(my===seq)grid(list||[],false)}catch(e){if(my===seq)G.innerHTML=`<div class="empty" style="grid-column:1/-1"><b>GIF'ler gelmedi</b><p class="muted">${esc(String(e&&e.message||e).slice(0,120))}</p></div>`}};
+ for(const b of $$("[data-k69t]",l))b.onclick=()=>{cur=b.dataset.k69t;load()};
+ Q.oninput=()=>{clearTimeout(tm);tm=setTimeout(load,450)};
+ $("#k69Ph",l).onclick=()=>{const inp=document.createElement("input");inp.type="file";inp.accept="image/gif,image/webp";inp.onchange=async()=>{const f=inp.files&&inp.files[0];if(!f)return;
+  if(f.size>600*1024)return toast("GIF çok büyük (en çok 600 KB). Daha kısa bir GIF seç.");const u=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r("");fr.readAsDataURL(f)});
+  const im=new Image();im.src=u;try{await im.decode()}catch{}const g={u:String(u).replace(/^data:image\/[a-z]+;/,m=>/gif/.test(f.type)?"data:image/gif;":"data:image/webp;"),w:im.naturalWidth||200,h:im.naturalHeight||200};
+  if(!gifOk(g))return toast("Bu dosya gönderilemiyor");closeLayer("k69gif");sendMessage(key,{gif:g})};inp.click()};
+ $("#k69Mk",l).onclick=()=>{closeLayer("k69gif");stkMake(key)};
+ load()}
+/* çıkartma oluşturucu */
+const STK_SH=[["circle","Daire"],["round","Yuvarlak"],["heart","Kalp"],["star","Yıldız"],["free","Serbest"]];
+function stkPath(c,sh,s){c.beginPath();const m=s/2;
+ if(sh==="circle")c.arc(m,m,s*.46,0,Math.PI*2);
+ else if(sh==="round"){const r=s*.16,p=s*.05,w=s-2*p;c.moveTo(p+r,p);c.arcTo(p+w,p,p+w,p+w,r);c.arcTo(p+w,p+w,p,p+w,r);c.arcTo(p,p+w,p,p,r);c.arcTo(p,p,p+w,p,r)}
+ else if(sh==="heart"){const x=m,y=s*.28;c.moveTo(x,y+s*.05);c.bezierCurveTo(x,y-s*.08,x-s*.42,y-s*.12,x-s*.42,y+s*.16);c.bezierCurveTo(x-s*.42,y+s*.38,x-s*.12,y+s*.5,x,s*.9);c.bezierCurveTo(x+s*.12,y+s*.5,x+s*.42,y+s*.38,x+s*.42,y+s*.16);c.bezierCurveTo(x+s*.42,y-s*.12,x,y-s*.08,x,y+s*.05)}
+ else if(sh==="star"){for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?s*.21:s*.47;c[i?"lineTo":"moveTo"](m+Math.cos(a)*r,m+s*.03+Math.sin(a)*r)}}
+ else c.rect(s*.04,s*.04,s*.92,s*.92);c.closePath()}
+async function stkMake(key){if(!guard())return;const r=await pickImage({title:"Çıkartma için fotoğraf"});if(!r||!r.img)return;const img=r.img;
+ const st={sh:"circle",bd:true,tx:"",z:1,x:0,y:0};const S0=320;
+ const l=sheet("k69stk","Çıkartma oluştur",`<div class="k69s-wrap"><canvas id="k69Cv" width="${S0}" height="${S0}" aria-label="Çıkartma önizlemesi"></canvas></div>
+  <div class="seg k69s-sh" role="group" aria-label="Şekil">${STK_SH.map(([k,n])=>`<button type="button" data-sh="${k}" aria-pressed="${k===st.sh}">${n}</button>`).join("")}</div>
+  <label class="k69s-row"><span>Yakınlaştır</span><input type="range" id="k69Z" min="1" max="3" step="0.01" value="1"></label>
+  <label class="k69s-row"><span>Beyaz kenar</span><input type="checkbox" id="k69Bd" checked></label>
+  <div class="k69s-pad"><div class="field"><textarea class="in k1l" rows="1" id="k69Tx" maxlength="24" placeholder="Yazı (isteğe bağlı)"></textarea></div>
+  <p class="muted" style="font-size:.8rem;margin:2px 0 10px">Fotoğrafı parmağınla kaydırabilirsin.</p></div>
+  <div class="k69s-btns"><button type="button" class="btn ghost" id="k69Sv">Yalnızca kaydet</button><button type="button" class="btn" id="k69Go">Kaydet ve gönder</button></div>`,{tall:true});
+ const cv=$("#k69Cv",l),c=cv.getContext("2d");
+ const draw=()=>{const s=S0;c.clearRect(0,0,s,s);const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;const sc=Math.max(s/iw,s/ih)*st.z;const w=iw*sc,h=ih*sc;
+  const pad=st.bd&&st.sh!=="free"?s*.035:0;
+  if(st.bd&&st.sh!=="free"){c.save();stkPath(c,st.sh,s);c.fillStyle="#fff";c.shadowColor="rgba(0,0,0,.28)";c.shadowBlur=s*.025;c.fill();c.restore()}
+  c.save();c.translate(s/2,s/2);c.scale(1-2*pad/s,1-2*pad/s);c.translate(-s/2,-s/2);stkPath(c,st.sh,s);c.clip();c.drawImage(img,(s-w)/2+st.x,(s-h)/2+st.y,w,h);c.restore();
+  const t=st.tx.trim();if(t){c.save();const fs=Math.round(s*(t.length>12?.085:.11));c.font=`800 ${fs}px Unbounded, Figtree, sans-serif`;c.textAlign="center";c.textBaseline="middle";c.lineJoin="round";c.lineWidth=fs*.28;c.strokeStyle="#fff";c.strokeText(t,s/2,s*.82);c.fillStyle="#111";c.fillText(t,s/2,s*.82);c.restore()}};
+ draw();
+ for(const b of $$("[data-sh]",l))b.onclick=()=>{st.sh=b.dataset.sh;for(const o of $$("[data-sh]",l))o.setAttribute("aria-pressed",o===b);draw()};
+ $("#k69Z",l).oninput=e=>{st.z=+e.target.value;draw()};$("#k69Bd",l).onchange=e=>{st.bd=e.target.checked;draw()};$("#k69Tx",l).oninput=e=>{st.tx=e.target.value.replace(/\s+/g," ").slice(0,24);draw()};
+ let drag=null;cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,ox:st.x,oy:st.y};cv.setPointerCapture(e.pointerId)});
+ cv.addEventListener("pointermove",e=>{if(!drag)return;const k=S0/cv.getBoundingClientRect().width;st.x=drag.ox+(e.clientX-drag.x)*k;st.y=drag.oy+(e.clientY-drag.y)*k;draw()});
+ cv.addEventListener("pointerup",()=>{drag=null});cv.addEventListener("pointercancel",()=>{drag=null});
+ const out=()=>{let u=cv.toDataURL("image/webp",.86);if(!/^data:image\/webp/.test(u))u=cv.toDataURL("image/png");if(u.length>120000){const t=document.createElement("canvas");t.width=t.height=220;t.getContext("2d").drawImage(cv,0,0,220,220);u=t.toDataURL("image/webp",.8);if(!/^data:image\/webp/.test(u))u=t.toDataURL("image/png")}return{u,w:220,h:220}};
+ $("#k69Sv",l).onclick=async()=>{const g=out();if(await stk69Add(g))closeLayer("k69stk")};
+ $("#k69Go",l).onclick=async()=>{const g=out();stk69Add(g);closeLayer("k69stk");if(key)sendMessage(key,{stk:g})}}
+/* sohbetteki çıkartmaya dokununca: kendine ekle */
+document.addEventListener("click",e=>{const im=e.target.closest&&e.target.closest("img.k69-stk[data-stk]");if(!im||!S.authed)return;e.preventDefault();e.stopPropagation();const g={u:im.getAttribute("src"),w:220,h:220};
+ const l=sheet("k69sa","Çıkartma",`<div class="k69s-wrap"><img src="${esc(g.u)}" alt="" style="width:160px;height:160px;object-fit:contain"></div><button class="opt" id="k69Add">${I("add")}Çıkartmalarıma ekle</button>`);$("#k69Add",l).onclick=async()=>{if(await stk69Add(g))closeLayer("k69sa")}},true);
+/* + menüsü: GIF ve Çıkartma */
+{const f=plusMenu;plusMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const key=S.route.params.key;const k=keyInfo(key);
+ if(box&&k&&k.type!=="bot"&&!box.querySelector("#pgif")){const mk=(id,ic,b,sm,fn)=>{const e=document.createElement("button");e.className="src";e.id=id;e.type="button";e.innerHTML=`<span class="ic">${I(ic)}</span><span><b>${b}</b><small>${sm}</small></span>`;e.onclick=()=>{closeLayer("plus");fn()};box.appendChild(e)};
+  mk("pgif","gif69","GIF","GIF ara ya da telefondan gönder",()=>gifPick(key,"gif"));mk("pstk","stk69","Çıkartma","Çıkartmaların ve yeni çıkartma",()=>gifPick(key,"mine"))}}catch(e){console.warn(e)}return r}}
+Object.assign(IP,{gif69:'<rect x="3" y="5" width="18" height="14" rx="3.5"/><path d="M10 10.2H8.6a1.6 1.6 0 0 0-1.6 1.6v.4a1.6 1.6 0 0 0 1.6 1.6H10v-1.6H9M12.6 10v4M15.2 14v-4h2.3M15.2 12h1.8"/>',
+ stk69:'<path d="M20.5 12.5V7a3.5 3.5 0 0 0-3.5-3.5H7A3.5 3.5 0 0 0 3.5 7v10A3.5 3.5 0 0 0 7 20.5h5.5"/><path d="M20.5 12.5 12.5 20.5v-4.5a3.5 3.5 0 0 1 3.5-3.5z"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M9 14.3c.8.6 1.8.9 3 .9"/>',
+ acc69:'<circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M17 8h5M19.5 5.5v5"/>'});
+
+/* ================= Çoklu hesap ================= */
+const ACC={max:5,inst:{},busy:false,adding:"",prev:"",bootA:"[DEFAULT]",def:null};
+const accData=()=>{const d=LS.get("kadraj_accs");const list=(d&&Array.isArray(d.list)?d.list:[]).filter(x=>x&&x.a&&x.uid).slice(0,ACC.max);return{main:d&&d.main||"[DEFAULT]",list}};
+const accSave=d=>LS.set("kadraj_accs",{main:d.main,list:d.list.slice(0,ACC.max)});
+const accCur=()=>FB&&FB.app?FB.app.name:"[DEFAULT]";
+function accGone(a){if(S.mode!=="cloud"||ACC.adding===a)return false;const d=accData();const had=d.list.some(x=>x.a===a);d.list=d.list.filter(x=>x.a!==a);if(d.main===a)d.main=(d.list[0]||{}).a||"[DEFAULT]";accSave(d);
+ if(!ACC.live||!had)return false;const nx=d.list[0];if(!nx)return false;if(S.authed)endSession();S.uid=null;setTimeout(()=>accSwitch(nx.a,true),0);return true}
+function accOnAuth(a,auth){FB.A.onAuthStateChanged(auth,async u=>{if(a===ACC.bootA||FB.auth!==auth||S.registering||S.inReset)return;
+ if(!u){if(!accGone(a)&&S.authed&&ACC.adding!==a){endSession();S.uid=null;fbWelcome()}return}
+ if(S.authed&&S.uid===u.uid)return;accAdopt(u)})}
+function accInst(a){if(a==="[DEFAULT]")return ACC.def;if(ACC.inst[a])return ACC.inst[a];const{M,A,F,cfg}=FB;let app;try{app=M.getApp(a)}catch{app=M.initializeApp(cfg,a)}
+ const auth=A.getAuth(app);try{auth.languageCode="tr"}catch{}let db;try{db=F.initializeFirestore(app,{ignoreUndefinedProperties:true,localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){try{db=F.initializeFirestore(app,{ignoreUndefinedProperties:true})}catch{db=F.getFirestore(app)}}
+ const t={app,auth,db,a};ACC.inst[a]=t;accOnAuth(a,auth);return t}
+function accUse(t){FB.app=t.app;FB.auth=t.auth;FB.db=t.db;DB=FirebaseDB()}
+/* boot: ana hesap varsayılan değilse onun oturumuyla aç (boot içinden, onAuthStateChanged kurulmadan önce çağrılır) */
+async function accBoot(){try{ACC.def={app:FB.app,auth:FB.auth,db:FB.db,a:"[DEFAULT]"};const d=accData();if(!d.list.length)return;
+ const order=[d.main,...d.list.map(x=>x.a)].filter((x,i,arr)=>x&&arr.indexOf(x)===i);
+ for(const a of order){if(a!=="[DEFAULT]"&&!d.list.some(x=>x.a===a))continue;const t=a==="[DEFAULT]"?ACC.def:accInst(a);let ok=false;
+  try{await withTimeout(t.auth.authStateReady(),a==="[DEFAULT]"?5000:2500);ok=!!t.auth.currentUser}catch{}
+  if(ok){if(a!=="[DEFAULT]"){ACC.bootA=a;FB.app=t.app;FB.auth=t.auth;FB.db=t.db;accOnAuth("[DEFAULT]",ACC.def.auth)}return}}}catch(e){console.warn("accBoot",e)}}
+async function accAdopt(u){S.uid=u.uid;S.email=u.email;let prof=null;try{prof=await DB.get("profiles/"+u.uid)}catch(e){console.warn(e);toast("Hesap açılamadı: "+((e&&(e.code||e.message))||e));return}
+ if(!prof)return completeProfile({});S.profiles={...S.profiles,[u.uid]:prof};ACC.adding="";await startSession(false)}
+function accRecord(){if(S.mode!=="cloud"||!S.uid||!FB||!FB.app)return;const p=me();const a=accCur();const d=accData();const i=d.list.findIndex(x=>x.a===a||x.uid===S.uid);
+ const row={a,uid:S.uid,un:p.username||"",name:p.name||"",av:typeof p.avatar==="string"&&p.avatar.length<200000?p.avatar:"",at:now()};
+ if(i>=0)d.list[i]=row;else if(d.list.length<ACC.max)d.list.push(row);if(!d.list.some(x=>x.a===d.main))d.main=a;accSave(d)}
+HOOKS.enter.push(()=>{ACC.live=true;ACC.adding="";setTimeout(accRecord,800)});
+async function k69Veil(row,fn){const d=Math.max(.12,k69Dur()||0);const v=document.createElement("div");v.className="k69-sw";v.style.setProperty("--d",(d/2)+"s");
+ v.innerHTML=`<div class="k69-swc"><span class="k69-swa">${row&&row.av?`<img src="${esc(row.av)}" alt="">`:I("acc69")}</span><b>${esc(row&&row.name||"Hesap")}</b><small>${row&&row.un?"@"+esc(row.un):""}</small></div>`;
+ document.body.appendChild(v);requestAnimationFrame(()=>v.classList.add("on"));await new Promise(r=>setTimeout(r,d*500+20));
+ try{await fn()}finally{await new Promise(r=>setTimeout(r,120));v.classList.remove("on");v.classList.add("out");setTimeout(()=>v.remove(),d*500+60)}}
+async function accSwitch(a,silent){if(S.mode!=="cloud"||ACC.busy)return;if(a===accCur()&&S.authed)return;const d=accData();const row=d.list.find(x=>x.a===a);
+ const t=accInst(a);ACC.busy=true;closeAll();
+ try{await withTimeout(t.auth.authStateReady(),6000);const u=t.auth.currentUser;
+  if(!u){ACC.busy=false;toast("Bu hesabın oturumu kapanmış, yeniden giriş yap");d.list=d.list.filter(x=>x.a!==a);accSave(d);return accAdd(a)}
+  await k69Veil(row,async()=>{try{await S.caps.room?.leave()}catch{}ACC.prev=S.authed?accCur():ACC.prev;endSession();accUse(t);S.uid=null;await accAdopt(u)});
+  if(!silent)toast(`@${me().username} hesabına geçildi`)}catch(e){console.warn("acc",e);toast("Hesap değiştirilemedi")}finally{ACC.busy=false}}
+async function accAdd(slot){if(S.mode!=="cloud")return toast("Birden çok hesap yalnızca Kadraj sunucusuyla çalışır");const d=accData();
+ if(!slot&&d.list.length>=ACC.max)return toast(`En çok ${ACC.max} hesap eklenebilir`);
+ const used=new Set([...d.list.map(x=>x.a),accCur(),"[DEFAULT]"]);const a=slot||["k2","k3","k4","k5","k6"].find(x=>!used.has(x));if(!a)return toast(`En çok ${ACC.max} hesap eklenebilir`);
+ const t=accInst(a);await withTimeout(t.auth.authStateReady(),6000);
+ if(t.auth.currentUser&&t.auth.currentUser.uid!==S.uid)return accSwitch(a);
+ await k69Veil({name:"Hesap ekle",un:""},async()=>{try{await S.caps.room?.leave()}catch{}ACC.prev=S.authed?accCur():ACC.prev;endSession();S.uid=null;ACC.adding=a;accUse(t);fbWelcome()})}
+{const f=authShell;authShell=function(...a){const r=f.apply(this,a);try{if(ACC.adding&&ACC.prev){const box=$("#main .auth");if(box&&!box.querySelector(".k69-cancel"))box.insertAdjacentHTML("afterbegin",`<button type="button" class="k69-cancel" data-act="k69cancel">${I("back")}Vazgeç, önceki hesaba dön</button>`)}}catch{}return r}}
+ACT.k69cancel=()=>{const p=ACC.prev;ACC.adding="";if(p)accSwitch(p,true)};
+async function accRemove(a){const d=accData();const row=d.list.find(x=>x.a===a);if(!row)return;
+ dialog("Hesap listeden çıkarılsın mı?",`@${esc(row.un)} bu cihazda oturumu kapatılır. Hesabın silinmez, istediğinde yeniden ekleyebilirsin.`,[{label:"Çıkar",cls:"danger",fn:async()=>{
+  const t=accInst(a);d.list=d.list.filter(x=>x.a!==a);if(d.main===a)d.main=accCur();accSave(d);try{if(t&&t.auth!==FB.auth)await FB.A.signOut(t.auth)}catch{}toast("Hesap çıkarıldı");accSheet()}},{label:"Vazgeç"}])}
+function accSheet(){if(S.mode!=="cloud")return toast("Birden çok hesap yalnızca Kadraj sunucusuyla çalışır");accRecord();const d=accData();const cur=accCur();
+ const rows=d.list.map(x=>`<div class="k69-acr${x.a===cur?" on":""}"><button type="button" class="k69-acb" data-acc="${esc(x.a)}"><span class="k69-acv">${x.av?`<img src="${esc(x.av)}" alt="">`:I("acc69")}</span><span class="t"><b>${esc(x.name||x.un)}</b><small>@${esc(x.un)}${d.main===x.a?" · Ana hesap":""}</small></span>${x.a===cur?I("check"):""}</button><button type="button" class="ib plain" data-accm="${esc(x.a)}" aria-label="Seçenekler">${I("more")}</button></div>`).join("");
+ const l=sheet("k69acc","Hesaplar",`<div class="k69-acl">${rows}</div>${d.list.length<ACC.max?`<button class="opt" id="k69AccAdd">${I("add")}Hesap ekle <small class="muted">(${d.list.length}/${ACC.max})</small></button>`:`<p class="muted" style="padding:8px 14px">En çok ${ACC.max} hesap.</p>`}<p class="muted" style="font-size:.8rem;padding:4px 14px 10px">Ana hesap Kadraj açılınca açılır. Her hesabın bildirimleri bu telefona gelir.</p>`);
+ for(const b of $$("[data-acc]",l))b.onclick=()=>{const a=b.dataset.acc;closeLayer("k69acc");if(a!==cur)accSwitch(a)};
+ for(const b of $$("[data-accm]",l))b.onclick=()=>{const a=b.dataset.accm;const s2=sheet("k69accm","Hesap",`${d.main!==a?`<button class="opt" id="k69Main">${I("check")}Ana hesap yap</button>`:""}${a!==cur?`<button class="opt red" id="k69Rm">${I("logout")}Bu cihazdan çıkar</button>`:`<p class="muted" style="padding:10px 14px">Açık hesaptan çıkmak için Ayarlar › Çıkış yap.</p>`}`);
+  const m=$("#k69Main",s2);if(m)m.onclick=()=>{const dd=accData();dd.main=a;accSave(dd);closeLayer("k69accm");toast("Ana hesap değişti");accSheet()};
+  const rm=$("#k69Rm",s2);if(rm)rm.onclick=()=>{closeLayer("k69accm");accRemove(a)}};
+ const ad=$("#k69AccAdd",l);if(ad)ad.onclick=()=>{closeLayer("k69acc");accAdd()}}
+ACT.k69acc=()=>accSheet();
+/* profil başlığında hesap oku, "Ben"e basılı tutunca hesaplar */
+HOOKS.after.push(r=>{try{if(r!=="profile"||S.route.params.uid!==S.uid||S.mode!=="cloud")return;const h=$("#top h1");if(h&&!h.querySelector(".k69-accb"))h.insertAdjacentHTML("beforeend",`<button type="button" class="k69-accb" data-act="k69acc" aria-label="Hesaplar">${I("next")}</button>`)}catch{}});
+{let lt=0,lx=null;document.addEventListener("pointerdown",e=>{const b=e.target.closest&&e.target.closest('#dock [data-tab="profile"]');if(!b||S.mode!=="cloud")return;lx=b;clearTimeout(lt);lt=setTimeout(()=>{if(lx){lx._k69=1;vib(15);accSheet()}},550)},true);
+ for(const ev of ["pointerup","pointercancel","pointerleave"])document.addEventListener(ev,()=>{clearTimeout(lt);setTimeout(()=>{if(lx)lx._k69=0;lx=null},50)},true);
+ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest('#dock [data-tab="profile"]');if(b&&b._k69){e.preventDefault();e.stopPropagation();b._k69=0}},true)}
+
+/* ================= Ayarlar › Kadraj'a özel ================= */
+SG.splice(2,0,{k:"k69",t:"Kadraj'a özel",ic:"spark",s:["Kadraj'a özel"],d:"Animasyonlar, sohbet balonu, çift dokunma, hesaplar, çıkartmalar"});
+{const f=vSettings;vSettings=function(...a){let h=f.apply(this,a);try{
+ h=h.replace(/<label class="srow [^"]*" data-k="[^"]*">(?:(?!<\/label>).)*data-set="reduceMotion"(?:(?!<\/label>).)*<\/label>/s,"");
+ const ic=(n,c)=>`<span class="sic" style="--c:${c}">${I(n)}</span>`;const seg=(lbl,ics,c,key,opts,cur,kw)=>`<div class="srow sblk" data-k="${esc(kbFold(lbl+" "+kw+" "+opts.map(o=>o[1]).join(" ")))}"><div class="sbh">${ic(ics,c)}<span class="t">${lbl}</span></div><div class="seg" role="group" aria-label="${esc(lbl)}">${opts.map(([v,n])=>`<button type="button" data-k69s="${key}" data-v="${v}" aria-pressed="${cur===v}">${n}</button>`).join("")}</div></div>`;
+ const rx=typeof REACTS!=="undefined"?REACTS.map(x=>x[0]):["heart"];const rxs=settings.dblRx&&rx.includes(settings.dblRx)?settings.dblRx:"heart";
+ const body=seg("Animasyonlar","motion","#AF52DE","anim",[["off","Kapalı"],["hizli","Hızlı"],["normal","Normal"],["akici","Akıcı"]],k69AnimV(),"geçiş hareket kayma hız 0,5")+
+  seg("Sohbet balonu","chat","#34C759","bub69",[["r","Yuvarlak"],["k","Köşeli"]],settings.bub69==="k"?"k":"r","mesaj şekil köşe")+
+  `<div class="srow sblk" data-k="${esc(kbFold("çift dokunma tepkisi mesaj kalp emoji"))}"><div class="sbh">${ic("heart","#FF2D55")}<span class="t">Çift dokunma tepkisi<small>Mesaja iki kez dokununca bu tepki gider</small></span></div><div class="k69-rx" role="group" aria-label="Çift dokunma tepkisi">${rx.map(k=>`<button type="button" data-k69s="dblRx" data-v="${k}" aria-pressed="${rxs===k}" aria-label="${esc(k)}">${typeof rxSvg==="function"?rxSvg(k):esc(k)}</button>`).join("")}</div></div>`+
+  `<label class="srow" data-k="${esc(kbFold("gönderme sesi mesaj ses pop"))}">${ic("vol","#FF9500")}<span class="t">Gönderme sesi<small>Mesaj gidince kısa bir ses</small></span><span class="sw"><input type="checkbox" data-set="sendSnd" ${settings.sendSnd===true?"checked":""} aria-label="Gönderme sesi"><span></span></span></label>`+
+  (S.mode==="cloud"?`<button class="srow" data-act="k69acc" data-k="${esc(kbFold("hesaplar hesap ekle değiştir çoklu profil ana hesap"))}">${ic("acc69","#0A84FF")}<span class="t">Hesaplar<small>En çok 5 hesap, ana hesap</small></span><span class="val">${accData().list.length||1}/5</span>${I("next","chev")}</button>`:"")+
+  `<button class="srow" data-act="k69stkm" data-k="${esc(kbFold("çıkartmalar çıkartma oluştur sticker gif"))}">${ic("stk69","#FFCC00")}<span class="t">Çıkartmalarım<small>Oluştur, sil</small></span>${I("next","chev")}</button>`;
+ const sec=`<section class="sxs" data-sec="k69" data-t="${esc(kbFold("Kadraj'a özel"))}"><h3 class="sxh">Kadraj'a özel</h3><div class="set">${body}</div></section>`;
+ const i=h.indexOf('<section class="sxs" data-sec="hesap"');h=i>=0?h.slice(0,i)+sec+h.slice(i):h+sec}catch(e){console.warn("k69 set",e)}return h}}
+document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-k69s]");if(!b)return;const k=b.dataset.k69s,v=b.dataset.v;
+ if(k==="anim"){settings.anim=v;settings.reduceMotion=v==="off";document.documentElement.classList.toggle("reduce-motion",v==="off")}else if(k==="bub69")settings.bub69=v;else if(k==="dblRx")settings.dblRx=v;else return;
+ saveSettings();k69Apply();for(const o of $$(`[data-k69s="${k}"]`))o.setAttribute("aria-pressed",o===b);vib(6)});
+ACT.k69stkm=()=>{const l=sheet("k69stkm","Çıkartmalarım",`<div class="k69g-grid" id="k69SG"><div class="spin" style="margin:30px auto;grid-column:1/-1"></div></div><button class="opt" id="k69SM">${I("spark")}Çıkartma oluştur</button>`,{tall:true});
+ const G=$("#k69SG",l);const load=async()=>{const list=await stkGet();G.innerHTML=list.length?list.map((g,i)=>`<div class="k69g-c"><span class="k69g-it"><img src="${esc(g.u)}" alt=""></span><button type="button" class="k69g-x" data-x="${i}" aria-label="Sil">${I("close")}</button></div>`).join(""):`<p class="muted" style="grid-column:1/-1;padding:12px">Henüz çıkartman yok.</p>`;
+  for(const b of $$("[data-x]",G))b.onclick=async()=>{const g=list[+b.dataset.x];if(await stkSave(list.filter(x=>x!==g)))load()}};load();
+ $("#k69SM",l).onclick=()=>{closeLayer("k69stkm");stkMake(null)}};
+
+/* ================= Yönetici ekleri ================= */
+window.__knv=0;try{apkNative().then(v=>{window.__knv=+v||0}).catch(()=>{})}catch{}
+HOOKS.enter.push(()=>{try{apkNative().then(v=>{window.__knv=+v||0;const m=S.adm&&S.adm.apk&&+S.adm.apk.min;if(v!=null&&m&&v<m&&!SS.get("kadraj_apkforce"))setTimeout(()=>{SS.set("kadraj_apkforce",1);apkCheck(true)},7000)}).catch(()=>{})}catch{}});
+const K69L={pres:null,at:0};
+async function k69Pres(){if(now()-K69L.at<20000&&K69L.pres)return K69L.pres;return new Promise(res=>{let done=false;let un=null;const fin=d=>{if(done)return;done=true;K69L.pres=d||[];K69L.at=now();try{un&&un()}catch{}res(K69L.pres)};
+ try{un=DB.watchCol("presence",d=>fin(d),{limit:300,onError:()=>fin([])})}catch{fin([])}setTimeout(()=>fin(K69L.pres||[]),6000)})}
+function k69LiveHtml(){const hs=admUsers();const t0=new Date();t0.setHours(0,0,0,0);const T=+t0;const posts=Object.values(S.posts||{}).filter(p=>p&&p.at>=T&&!String(p.uid).startsWith("bot:")).length;const stories=Object.values(S.stories||{}).filter(s=>s&&s.at>=T).length;
+ const on=[...S.online].filter(u=>S.profiles[u]);if(S.uid)on.unshift(S.uid);
+ return`<div class="k69-st"><span><b>${hs.length}</b><small>kullanıcı</small></span><span><b>${on.length}</b><small>şu an açık</small></span><span><b>${posts}</b><small>bugün paylaşım</small></span><span><b>${stories}</b><small>aktif hikâye</small></span></div>
+ <div class="k69-onl">${on.slice(0,30).map(u=>`<button type="button" data-prof="${esc(u)}">${avatar(u,34,{click:false,ring:false})}<small>${esc(P(u).username)}</small></button>`).join("")||'<p class="muted">Şu an kimse açık değil.</p>'}</div>
+ <h4 class="k69-h4">Kim hangi sürümde</h4><div id="k69Ver" class="k69-ver"><div class="spin" style="margin:12px auto"></div></div>`}
+function k69LiveWire(el){k69Pres().then(list=>{const box=$("#k69Ver",el);if(!box)return;const rows=list.filter(d=>d&&d.uid&&S.profiles[d.uid]).sort((a,b)=>(b.seen||b.at||0)-(a.seen||a.at||0));
+ box.innerHTML=rows.length?rows.map(d=>`<div class="k69-vr">${avatar(d.uid,26,{click:false,ring:false})}<span><b>${esc(P(d.uid).username)}</b><small>${esc(ago(d.seen||d.at||0))}</small></span><em>${d.v?esc(verStr(d.v)):"eski sürüm"}${d.nv?` · uygulama ${+d.nv}${+d.nv<APK_NATIVE?" (güncel değil)":""}`:d.v?" · tarayıcı":""}</em></div>`).join(""):'<p class="muted">Bilgi yok.</p>'})}
+function k69PushHtml(){return`<p class="adm5-note">Herkese telefon bildirimi gider (bildirimleri açık olanlara). Kötüye kullanma, arkadaşlarını yorma.</p>
+ <div class="field"><input class="in" id="k69PT" maxlength="60" placeholder="Başlık (ör. Kadraj)"></div><div class="field"><textarea class="in" id="k69PB" maxlength="200" rows="2" placeholder="Mesaj"></textarea></div><button type="button" class="btn sm" id="k69PS">${I("send")}Herkese gönder</button>
+ <h4 class="k69-h4">Uygulama güncellemesi</h4><p class="adm5-note">Telefon uygulaması eski olan herkese açılışta "yeni sürüm var" penceresi zorla çıkar (şu anki uygulama sürümü ${APK_NATIVE}).</p>
+ <button type="button" class="btn sm ghost" id="k69Apk">${I("rotate")}Herkesten güncelleme iste</button>${S.adm&&S.adm.apk&&S.adm.apk.min?` <small class="muted">Açık: sürüm ${+S.adm.apk.min} isteniyor</small>`:""}`}
+function k69PushWire(el){const s=$("#k69PS",el);if(s)s.onclick=async()=>{const t=$("#k69PT",el).value.trim()||"Kadraj",b=$("#k69PB",el).value.trim();if(!b)return toast("Mesaj yaz");if(!KP.can||!KP.can())return toast("Bildirim köprüsü kapalı");
+ s.disabled=true;try{await KP.send(admUsers().map(p=>p.uid),{title:t.slice(0,60),body:b.slice(0,200),tag:"duyuru",key:""});toast("Bildirim gönderildi");$("#k69PB",el).value=""}catch{toast("Gönderilemedi")}finally{s.disabled=false}};
+ const a=$("#k69Apk",el);if(a)a.onclick=async()=>{if(await admSet("apk",{min:APK_NATIVE}))toast("Eski uygulaması olanlara güncelleme penceresi çıkacak")}}
+function k69GifHtml(){const k=gifKey();return`<p class="adm5-note">GIF araması GIPHY ile. Ücretsiz anahtar: developers.giphy.com › Create an App › API › anahtarı kopyala. (Tenor Haziran 2026'da kapandı.)</p>
+ <div class="field"><input class="in" id="k69GK" placeholder="GIPHY API anahtarı" value="${esc(k)}" autocomplete="off"></div><button type="button" class="btn sm" id="k69GS">Kaydet</button> ${k?'<small class="muted">Açık</small>':""}`}
+function k69GifWire(el){const b=$("#k69GS",el);if(b)b.onclick=async()=>{const k=$("#k69GK",el).value.trim();if(k&&!/^[A-Za-z0-9]{16,64}$/.test(k))return toast("Anahtar biçimi tanınmadı");if(await admSet("gif",{k}))toast(k?"GIF araması açık":"GIF araması kapalı")}}
+try{ADM_EXTRA.push({id:"k69live",title:"Canlı durum",desc:"Kaç kişi açık, bugün ne paylaşıldı, kim hangi sürümde",icon:"users",order:38,count:()=>({t:(S.online.size+1)+" açık",c:"on"}),html:k69LiveHtml,wire:k69LiveWire},
+ {id:"k69push",title:"Herkese bildirim",desc:"Bütün kullanıcılara telefon bildirimi, güncelleme iste",icon:"bell",order:39,count:()=>({t:"Gönder",c:"dim"}),html:k69PushHtml,wire:k69PushWire},
+ {id:"k69gif",title:"GIF",desc:"GIF ve çıkartma araması (GIPHY)",icon:"gif69",order:43,count:()=>gifKey()?{t:"Açık",c:"on"}:{t:"Kapalı",c:"dim"},html:k69GifHtml,wire:k69GifWire})}catch(e){console.warn("k69 adm",e)}
+/*}@js:690*/
 
 boot();
 

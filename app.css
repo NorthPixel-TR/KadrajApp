@@ -3899,3 +3899,106 @@ html.reduce-motion .gnc .gfw .gflag,html.reduce-motion .gnc.dini .gic svg{animat
 .reel .kyt .kyt-ic.show{opacity:1}.reel .kyt .kyt-ic .i{width:30px;height:30px}
 .reel .kyt.man .kyt-p{opacity:0}.reel .kyt.man iframe{pointer-events:auto;z-index:1}
 /*}@css:72*/
+/*@css:690{*/
+/* 6.9 Bora: açılışta yalnızca logo, mavi @bahsetmeler, geniş ekranda sol şerit, kayan sayfalar, GIF/çıkartma, hesaplar, yönetici ekleri */
+#intro .in-wm,#intro .in-tag,#intro .in-bar{display:none!important}
+#intro .in-c{margin-top:0}
+#intro .in-vf{width:6.6rem;height:6.6rem}
+:root{--k69-men:#3B5BF5}
+:root[data-mode="dark"]{--k69-men:#93A9FF}
+button.ht[data-mention],.ht[data-mention],.msg .mtag,.cmt .ht[data-mention]{color:var(--k69-men)!important;font-weight:600}
+.mrow.me .msg .mtag,.mrow.me .msg .ht[data-mention]{color:inherit!important}
+.reel .info .ht[data-mention]{color:#fff!important}
+/* sohbet balonu köşeli */
+:root[data-bub69="k"] #msgs .msg{border-radius:7px!important}
+/* sayfa geçişleri: süre ayardan (--k69-d) */
+:root[data-ui] main.enter>*,:root[data-ui] main.enter :is(.box>.row,.hrow>*,.notes>.nt,.hlr>*,.sr-flg>*,.sr-flr>*):nth-child(-n+12){animation-duration:var(--k69-d,.42s)!important}
+@keyframes k69InR{from{transform:translate3d(min(100%,520px),0,0);opacity:.55}}
+@keyframes k69InL{from{transform:translate3d(max(-100%,-520px),0,0);opacity:.55}}
+@keyframes k69InU{from{transform:translate3d(0,26px,0);opacity:0}}
+#main.k69-in-r,#top.k69-in-r{animation:k69InR var(--k69-d,.5s) cubic-bezier(.16,.84,.24,1) both}
+#main.k69-in-l,#top.k69-in-l{animation:k69InL var(--k69-d,.5s) cubic-bezier(.16,.84,.24,1) both}
+#main.k69-in-u,#top.k69-in-u{animation:k69InU var(--k69-d,.5s) cubic-bezier(.16,.84,.24,1) both}
+html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-in-"]{animation:none!important}
+@media (prefers-reduced-motion:reduce){#main[class*="k69-in-"],#top[class*="k69-in-"]{animation:none!important}}
+/* geniş ekran: sol şerit (Instagram tablet gibi) */
+@media (min-width:720px){
+ #shell[data-rail]{margin-left:76px;max-width:none;--vz-dh:0px!important}
+ #shell[data-rail] .dock{position:fixed!important;left:0!important;top:0;bottom:0!important;right:auto!important;width:76px;padding:12px 0 calc(12px + env(safe-area-inset-bottom,0px))!important;background:var(--bg)!important;border-right:1px solid var(--line);z-index:30;display:flex!important;flex-direction:column;pointer-events:auto!important}
+ #shell[data-rail] .dock::before,#shell[data-rail] .vz-focus{display:none!important}
+ #shell[data-rail] .dock nav{position:static!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:8px;flex:1;width:100%;max-width:none!important;margin:0!important;padding:0!important;background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:0!important}
+ #shell[data-rail] .dock nav>button{position:relative;width:54px;height:50px;padding:0!important;display:grid;place-items:center;border-radius:14px;color:var(--fg);transition:background .2s,transform .2s}
+ #shell[data-rail] .dock nav>button:hover{background:var(--surface-2)}
+ #shell[data-rail] .dock nav>button:active{transform:scale(.92)}
+ #shell[data-rail] .dock nav>button svg.i{width:1.6rem;height:1.6rem}
+ #shell[data-rail] .dock .dl{display:none!important}
+ #shell[data-rail] .dock .create{margin:0!important;width:46px;height:46px;border-radius:15px}
+ #shell[data-rail] .dock .create svg.i{width:1.5rem;height:1.5rem}
+ #shell[data-rail] .dock .me{width:1.75rem;height:1.75rem}
+ #shell[data-rail] .dock .cnt-badge{top:3px;right:5px}
+ #shell[data-rail] .dock .k69-lg{position:absolute!important;top:calc(16px + env(safe-area-inset-top,0px));left:11px;color:var(--accent)}
+ #shell[data-rail] .dock .k69-lg .vfmark{width:30px;height:30px}
+ #shell[data-rail][data-r="reels"] main.snap{margin:10px 10px 10px 4px;border-radius:20px;box-shadow:0 0 0 1px var(--line)}
+ #shell[data-rail][data-r="reels"]{background:var(--bg)}
+}
+#shell:not([data-rail]) .dock .k69-lg{display:none}
+/* GIF ve çıkartma mesajları */
+.msg .k69-gif{display:block;width:auto;max-width:min(240px,60vw);height:auto;border-radius:14px;background:var(--surface-2)}
+.msg .k69-stk{display:block;width:150px;height:150px;object-fit:contain;cursor:pointer;filter:drop-shadow(0 2px 6px rgba(0,0,0,.18))}
+.msg:has(>.k69-stk:only-child),.msg:has(>.k69-gif:only-child){background:none!important;border-color:transparent!important;padding:0!important;box-shadow:none!important}
+.k69g-tabs{display:flex;gap:6px;padding:0 14px 8px}
+.k69g-tabs button{flex:1;padding:9px 0;border-radius:12px;font-weight:700;font-size:.88rem;color:var(--muted);background:var(--surface-2)}
+.k69g-tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.k69g-q{padding:0 14px 8px}
+.k69g-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;padding:0 14px 10px;overflow:auto;position:relative}
+.k69g-it{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--surface-2);display:grid;place-items:center}
+.k69g-it img{width:100%;height:100%;object-fit:cover}
+.k69g-c{position:relative;min-width:0}.k69g-c .k69g-it{width:100%}
+.k69g-x{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;display:grid;place-items:center;z-index:2}
+.k69g-x svg.i{width:14px;height:14px}
+.k69g-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 14px 14px;border-top:1px solid var(--line)}
+.k69g-foot small{margin-left:auto;color:var(--muted);font-size:.72rem}
+.k69g-foot .btn svg.i{width:1rem;height:1rem;vertical-align:-3px;margin-right:4px}
+.k69s-wrap{display:grid;place-items:center;padding:6px 0 12px;background:repeating-conic-gradient(var(--surface-2) 0 25%,transparent 0 50%) 50%/22px 22px;border-radius:16px;margin:0 14px 10px}
+.k69s-wrap canvas{width:min(260px,70vw);height:auto;aspect-ratio:1;touch-action:none;cursor:grab}
+.k69s-sh{margin:0 14px 10px}
+.k69s-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 16px;font-weight:600;font-size:.9rem}
+.k69s-row input[type=range]{flex:1;max-width:60%}
+.k69s-pad{padding:0 16px}
+.k69s-btns{display:flex;gap:8px;padding:0 14px 14px}.k69s-btns .btn{flex:1}
+/* hesaplar */
+.k69-accb{display:inline-grid;place-items:center;width:26px;height:26px;margin-left:4px;border-radius:50%;vertical-align:middle;color:var(--muted)}
+.k69-accb svg.i{width:16px;height:16px;transform:rotate(90deg)}
+.k69-acl{display:grid;gap:2px;padding:0 8px}
+.k69-acr{display:flex;align-items:center;gap:4px;border-radius:14px}
+.k69-acr.on{background:var(--surface-2)}
+.k69-acb{flex:1;display:flex;align-items:center;gap:12px;padding:10px 8px;text-align:left;min-width:0}
+.k69-acb .t{display:grid;min-width:0;flex:1}.k69-acb .t b,.k69-acb .t small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.k69-acb .t small{color:var(--muted)}
+.k69-acb>svg.i{color:var(--accent)}
+.k69-acv{width:44px;height:44px;border-radius:50%;overflow:hidden;flex:none;display:grid;place-items:center;background:var(--surface-2)}
+.k69-acv img{width:100%;height:100%;object-fit:cover}
+.k69-sw{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 96%,transparent);opacity:0;transition:opacity var(--d,.25s) ease}
+.k69-sw.on{opacity:1}.k69-sw.out{opacity:0}
+.k69-swc{display:grid;justify-items:center;gap:6px;transform:scale(.86);transition:transform var(--d,.25s) cubic-bezier(.2,1.2,.4,1)}
+.k69-sw.on .k69-swc{transform:scale(1)}.k69-sw.out .k69-swc{transform:scale(1.06)}
+.k69-swa{width:84px;height:84px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:var(--surface-2);box-shadow:0 0 0 3px var(--accent)}
+.k69-swa img{width:100%;height:100%;object-fit:cover}.k69-swa svg.i{width:40px;height:40px}
+.k69-swc small{color:var(--muted)}
+.k69-cancel{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin:0 0 8px;padding:8px 12px;border-radius:12px;background:var(--surface-2);font-weight:700;font-size:.85rem}
+.k69-cancel svg.i{width:16px;height:16px}
+/* ayarlar */
+.k69-rx{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.k69-rx button{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:2px solid transparent;transition:transform .2s}
+.k69-rx button[aria-pressed="true"]{border-color:var(--accent);transform:scale(1.06)}
+.k69-rx svg.rx{width:26px;height:26px}
+/* yönetici */
+.k69-st{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:10px}
+.k69-st span{display:grid;justify-items:center;padding:10px 4px;border-radius:14px;background:var(--surface-2)}
+.k69-st b{font:700 1.25rem/1.1 var(--f-display)}.k69-st small{color:var(--muted);font-size:.72rem;text-align:center}
+.k69-onl{display:flex;gap:10px;overflow-x:auto;padding:4px 0 8px}
+.k69-onl button{display:grid;justify-items:center;gap:3px;flex:none;font-size:.7rem;color:var(--muted)}
+.k69-h4{margin:12px 0 6px;font-size:.9rem}
+.k69-vr{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+.k69-vr span{display:grid;flex:1;min-width:0}.k69-vr small{color:var(--muted);font-size:.72rem}
+.k69-vr em{font-style:normal;font-size:.76rem;color:var(--muted);text-align:right}
+/*}@css:690*/

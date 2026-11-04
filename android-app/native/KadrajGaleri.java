@@ -244,7 +244,7 @@ public class KadrajGaleri extends Plugin {
 
     /* Uygulamanın yerel sürümü: Java tarafı değişince SURUM'u artır, index.html'deki APK_NATIVE da aynı sayı olsun.
        Sayfa küçükse "Güncelleme var" penceresi çıkar. */
-    static final int SURUM = 7;
+    static final int SURUM = 8;
 
     @PluginMethod
     public void surum(PluginCall call) {
@@ -354,6 +354,11 @@ public class KadrajGaleri extends Plugin {
             .setCategory(androidx.core.app.NotificationCompat.CATEGORY_MESSAGE)
             .setAutoCancel(true)
             .setContentIntent(pi);
+        try {
+            int li = c.getResources().getIdentifier("ic_launcher", "mipmap", c.getPackageName());
+            android.graphics.Bitmap bm = li != 0 ? BitmapFactory.decodeResource(c.getResources(), li) : null;
+            if (bm != null) b.setLargeIcon(bm);
+        } catch (Exception e) { }
         if (sessiz) b.setOnlyAlertOnce(true).setSilent(true).setPriority(androidx.core.app.NotificationCompat.PRIORITY_LOW);
         else b.setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH).setDefaults(androidx.core.app.NotificationCompat.DEFAULT_ALL);
         if (!sessiz && "msg".equals(o.optString("kind", "")) && (key.startsWith("u:") || key.startsWith("g:") || key.equals("meydan"))) {
