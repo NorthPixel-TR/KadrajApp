@@ -1,9 +1,24 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.1",
+ "ver": "7.0.2",
  "at": 1793727074868,
- "note": "7.0.1: hata avı: sohbet araması, hesap oku, yanıtlı zamanlama, hikâyede hızlı çift dokunma ve telefonda kaydırma, kameranın yanlış sohbete göndermesi.",
+ "note": "7.0.2: logo çizilerek açılan açılış animasyonu, hikâye gibi Neler yeni, 31 Mart 2027 Zirve geri sayımı, geleceğe mektup ve o güne özel kutlama.",
  "items": [
+  {
+   "ad": "Açılış animasyonu ve açılış emniyeti",
+   "ok": true,
+   "not": "intro.js 10/10"
+  },
+  {
+   "ad": "Zirve (30/31 Mart, 1 Nisan 2027, önizleme)",
+   "ok": true,
+   "not": "zirve.js 29/29 (390, 360 koyu)"
+  },
+  {
+   "ad": "Hikâye gibi Neler yeni",
+   "ok": true,
+   "not": "wn.js 11/11"
+  },
   {
    "ad": "Sohbet aramasında ilk dokunuş",
    "ok": true,

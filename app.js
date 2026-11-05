@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70001,APP_VER="7.0.1";
+const APP_V=70002,APP_VER="7.0.2";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -2184,6 +2184,7 @@ const APP_GUIDE=`Kadraj bir sosyal uygulamadır (Firebase üzerinde çalışır,
 - Keşif Klaketleri: Klaketler sayfasında arkadaşların Klaketlerinin arasına her gün kendiliğinden sesli, kısa Türkçe meme videoları (ağırlıkta) ve insanların çektiği kısa videolar (dans, sokak, spor, yemek, hayvanlar…) gelir. Kimsenin yüklemesi gerekmez. Videoya dokununca durur/oynar, ses üstteki hoparlörden. Çocuk Modu'nda memeler gelmez. Yönetici bunu bir kez Yönetici › Keşif Klaketleri'nden açar. Akış'ta ve profillerde görünmez.
 - 6.9 Bora: Birden çok hesap (en çok 5): profilinde adının yanındaki oka ya da alttaki Ben'e basılı tut ya da Ayarlar › Kadraj'a özel › Hesaplar › Hesap ekle; listeden birine dokununca o hesaba geçer, ⋯ › Ana hesap yap (Kadraj açılınca o açılır) ya da Bu cihazdan çıkar. Sohbette yazma çubuğundaki çıkartma/GIF düğmesi › GIF (GIF ara, yönetici GIPHY anahtarını kaydettiyse; telefondan hareketli GIF de gönderilir, en çok 600 KB) ve aynı düğmede Benim sekmesi (çıkartmaların; Çıkartma oluştur: fotoğraf seç, şekil daire/yuvarlak/kalp/yıldız/serbest, beyaz kenar, yazı, yakınlaştır, kaydır; Kaydet ve gönder). Sohbette birinin çıkartmasına dokununca "Çıkartmalarıma ekle". Ayarlar › Kadraj'a özel: Animasyonlar (Kapalı, Hızlı, Normal, Akıcı), Sohbet balonu (Yuvarlak, Köşeli), Çift dokunma tepkisi, Gönderme sesi, Hesaplar, Çıkartmalarım. Sohbet ve Klaket sayfaları kayarak açılır. @bahsetmeler Kadraj'ın tema renginde, #etiketler mavi. Bildirimde Kadraj logosu. 6.9.1: alt menü sırası Akış, Keşfet, Sohbet, +, Klaket, Bildirim, Ben; Klakette küçük siyah çerçeve; ⋯ › Oynatma hızı (0,5x, 1x, 1,5x, 2x); çıkartmada Otomatik şekil kişiyi ya da hayvanı kendisi kırpar (telefonda çalışır, fotoğraf hiçbir yere gitmez); sohbette fotoğrafa basılı tut › Çıkartma yap; Ayarlar › Kadraj'a özel › Bu ayın özeti.
 - 7.0 Samyeli: Yeni görünüm (Instagram düzeni). Akış kartında beğeni satırına dokununca Beğenenler, 'Yorum ekle…' satırı. Hikâyeye dokununca sağdan açılır; son hikâye bitince sıradaki kişiye geçer, sola/sağa kaydırınca kişi değişir, aşağı kaydırınca kapanır. Ayarlar'da gruplar kayarak açılır. Sohbette mesajı zamanlamak için yaz ve gönder tuşuna basılı tut (⊕ menüsünde artık yok). Yazma çubuğu: solda kamera, sağda mikrofon, galeri, GIF/çıkartma ve ⊕ (tek seferlik fotoğraf, oyunlar, şarkı, paylaşım, sohbette ara). Sohbet listesinin üstündeki kutuyla sohbet ve kişi ara; satırdaki kamera o kişiye doğrudan fotoğraf çeker.
+- Zirve (31 Mart 2027): Akış'ta ve Ayarlar › Yardım ve hakkında'da geri sayım. 'Zirve'ye mesaj' ile kendine mektup ve en çok 3 tane 2027 hedefi yazılır; mektup 31 Mart 2027'ye kadar mühürlü (yazan bile okuyamaz), hedefler her zaman görünür ve işaretlenir. O gün açılışta kutlama, profilde 'Zirve'deydim' rozeti ve Ayarlar'da Zirve teması gelir. Kadraj açılırken logo çizilerek gelir, dokununca atlanır; Neler yeni hikâye gibi kaydırılır (son kartta 'Liste olarak gör').
 - 6.8 Kurgu (video düzenleyici): + › Kurgu kutucuğu (video seçince düzenleyici kendiliğinden açılır) ya da Klaket oluştur › Video seç ya da çek › "Kurgu: kes, hızlandır, yazı ekle". Altta zaman şeridi: iki sarı ucu sürükleyerek videonun başını ve sonunu kes (Kes sekmesinde "Başı buradan / Sonu burada"). Hız: 0,5x, 1x, 1,5x, 2x, 3x (hızlanınca video kısalır, sesi de hızlanır). Yazı: Yazı ekle, renk, stil (Gölgeli, Kutulu, Çerçeveli), boyut, animasyon (Belir, Zıpla, Daktilo, Kay), "Buradan başlasın / Burada bitsin" ile ne zaman görüneceği; önizlemede yazıyı sürükleyerek taşırsın. Filtre, Format (Orijinal, 9:16, 4:5, 1:1), Ses (videonun kendi sesini kapat), Kapak (oynatma çizgisindeki kareyi kapak yap). Bitti'ye basınca düzenleme videoya işlenir (video süresi kadar sürebilir); tekrar Kurgu'ya basınca asıl videodan, önceki ayarlarla devam edersin. En uzun Klaket yine 2 dakika.
 - 6.0 görünüm: arayüz yenilendi (Vizör ve Klasik ikisinde de): daha ferah kartlar, sayfa geçişleri yönlü (ileri sağdan, geri soldan, sekme alttan), alttan açılan pencerelerde seçenekler sırayla gelir. Profilde kişinin fotoğrafından bulanık kapak şeridi, Keşfet'te ara ara büyük karelerle mozaik ızgara, Bildirimler'de her satırda beğeni/yorum/takip rozeti, Ayarlar'da renkli ikonlar, yüklenirken iskelet ve ışıltı. Hareket azaltılmışsa animasyonlar kapanır.
 - 6.0 satranç: varsayılan taş seti Modern, tahta yeşil Turnuva (lobideki Görünüm'den değişir; daha önce seçim yapan kendi seçimini korur). Lobi: Botlara karşı, Arkadaşınla, Bulmacalar, Aynı telefonda. Oyun ekranı: telefonda hamleler üstte, tahta geniş, düğmeler altta; bilgisayarda hamle tablosu sağda. Ön hamle: rakip düşünürken taşını oynarsın, sıra gelince yapılır (kırmızı). Sağ tık kareyi işaretler, sağ tıkla sürükleyince ok çizer (shift yeşil, ctrl/alt mavi). Arkadaşınla çevrim içi oyunda da oyun incelemesi çalışır: Kitap, En iyi, Hata rozetleri, canlı doğruluk, değerlendirme çubuğu (satranç menüsünde Oyun incelemesi: canlı, oyun bitince ya da kapalı). Oyun sonunda yeni sonuç kartı.
@@ -2200,7 +2201,8 @@ const APP_GUIDE=`Kadraj bir sosyal uygulamadır (Firebase üzerinde çalışır,
 - Sürüm: yeni sürüm çıkınca "Yeni sürüm hazır" yazar; iki sürüm geride kalan eski sürüm kapanır ve güncellemen istenir.
 - Mesajlar uygulamanın Firebase veritabanında durur, uygulamaya giren herkes teknik olarak erişebilir; şifre ya da kişisel bilgi paylaşılmamalı.`;
 const ROTA_SYS=`Sen "Rota"sın: Kadraj uygulamasının yapay zekâ rehberisin. Türkçe, samimi, akıllı ve doğal konuş; karşındakinin sorusunu gerçekten anla ve düşünerek yanıtla. Uzunluğu soruya göre ayarla: selamlaşma ve kısa sohbette birkaç cümle; bir şey açıklaman, anlatman, tavsiye vermen, ödev ya da ders sorusu çözmen, bir şeyi karşılaştırman istenirse ayrıntılı, adım adım, örnekli ve gerektiğinde başlıklı/maddeli anlat. Soruyu tek cümleyle geçiştirme; bilmediğin şeyi uydurma, emin değilsen söyle. Önceki mesajları hatırla ve sohbetin akışına uy. Uygulama sorularında aşağıdaki rehbere dayan, olmayan özellik uydurma. Fotoğrafçılık, sosyal medya ve yazılım/kod konularında da bilgilisin; kod istenirse kısa, çalışır örnekleri üç ters tırnaklı kod bloğunda ver. Emoji kullanma.\n\nUYGULAMA REHBERİ:\n${APP_GUIDE}`;
-const FAQ=[[/(zamanla|zamanlı mesaj|sonra gönder|ileri tarihli)/i,"Mesajı yaz, sonra **gönder tuşuna basılı tut**; zamanlama penceresi açılır, saati seç."],
+const FAQ=[[/(zirve|31 mart|geleceğe mektup|mühürlü mektup)/i,"31 Mart 2027'de Kadraj **Zirve**'ye çıkıyor. **Ayarlar › Yardım ve hakkında › Zirve'ye mesaj** ile kendine mektup ve 2027 hedeflerini yaz. Mektup o güne kadar mühürlü, sen bile okuyamazsın; hedeflerini her zaman görür ve işaretlersin."],
+ [/(zamanla|zamanlı mesaj|sonra gönder|ileri tarihli)/i,"Mesajı yaz, sonra **gönder tuşuna basılı tut**; zamanlama penceresi açılır, saati seç."],
  [/(birden (çok|fazla) hesap|hesap (ekle|değiştir|geç)|ikinci hesap|çoklu (hesap|profil))/i,"En çok **5 hesap** ekleyebilirsin: profilinde adının yanındaki **oka** dokun (ya da alttaki **Ben**'e basılı tut) › **Hesap ekle**. Listeden bir hesaba dokununca ona geçersin. ⋯ › **Ana hesap yap** dersen Kadraj açılınca o hesap açılır."],
  [/(gif|çıkartma|sticker)/i,"Sohbette yazma çubuğundaki **çıkartma/GIF** düğmesiyle GIF arar ya da telefondan hareketli GIF gönderirsin. Aynı düğmede **Benim** › **Çıkartma oluştur**: fotoğraf seç, **Otomatik** fotoğraftaki kişiyi ya da hayvanı kendisi kırpar (ya da daire, kalp, yıldız seç), yazı ekle, **Kaydet ve gönder**. Sohbetteki bir fotoğrafa basılı tutup **Çıkartma yap** da diyebilirsin. Birinin çıkartmasına dokunup kendine ekleyebilirsin."],
  [/(animasyon|geçiş|kayarak|balon şekli|çift dokun)/i,"**Ayarlar › Kadraj'a özel**: Animasyonlar (Kapalı, Hızlı, Normal, Akıcı), sohbet balonu (Yuvarlak, Köşeli), çift dokununca hangi tepki gitsin ve gönderme sesi."],
@@ -2493,7 +2495,9 @@ const WN_ITEMS=[
   {v:70000,ic:"spark",g:"linear-gradient(135deg,#0c7a63,#0A84FF)",t:"Yepyeni görünüm",d:"Akış, profil, Keşfet ve Ayarlar Instagram düzeninde baştan tasarlandı. Her şey yumuşak animasyonlarla açılıyor; ayar grupları kayarak açılır",go:"feed"},
   {v:70000,ic:"play",g:"linear-gradient(135deg,#AF52DE,#FF2D55)",t:"Hikâyeler yandan açılır",d:"Hikâyeye dokununca sağdan kayarak açılır, kişiler arasında küp gibi döner. Sola/sağa kaydır kişi değişsin, aşağı kaydır kapansın",go:"feed"},
   {v:70000,ic:"send",g:"linear-gradient(135deg,#f59e0b,#ef4444)",t:"Gönder tuşuna basılı tut",d:"Mesajı zamanlamak için yaz, gönder tuşuna basılı tut. Mikrofon gönder tuşuna dönerek geçer",go:"chats"},
-  {v:70000,ic:"chat",g:"linear-gradient(135deg,#0A84FF,#5E5CE6)",t:"Sohbetler yenilendi",d:"Sohbet listesinde arama ve her sohbete doğrudan kamera, birleşik balonlar, 'Görüldü' yazısı, çift dokununca büyük kalp",go:"chats"}];
+  {v:70000,ic:"chat",g:"linear-gradient(135deg,#0A84FF,#5E5CE6)",t:"Sohbetler yenilendi",d:"Sohbet listesinde arama ve her sohbete doğrudan kamera, birleşik balonlar, 'Görüldü' yazısı, çift dokununca büyük kalp",go:"chats"},
+  {v:70000,ic:"flag",g:"linear-gradient(135deg,#f97316,#7c3aed)",t:"Zirve'ye geri sayım",d:"31 Mart 2027'de Kadraj Zirve'ye çıkıyor. Akış'ta geri sayım; Ayarlar › Yardım ve hakkında › Zirve'ye mesaj ile kendine mektup ve 2027 hedeflerini yaz, mektup o gün açılır",go:"feed"},
+  {v:70000,ic:"spark",g:"linear-gradient(135deg,#0c7a63,#f59e0b)",t:"Yeni açılış",d:"Kadraj açılırken logo çizilerek gelir, beklemezsin; dokununca atlanır. Neler yeni de artık hikâye gibi kaydırılıyor",go:"feed"}];
 const WN_MARK=`<svg class="wn-mark" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M2.5 8V5a2.5 2.5 0 0 1 2.5-2.5h3"/><path pathLength="1" d="M16 2.5h3A2.5 2.5 0 0 1 21.5 5v3"/><path pathLength="1" d="M21.5 16v3a2.5 2.5 0 0 1-2.5 2.5h-3"/><path pathLength="1" d="M8 21.5H5A2.5 2.5 0 0 1 2.5 19v-3"/><circle cx="12" cy="12" r="3.4"/></svg>`;
 function showWhatsNew(force){if($('#overlay [data-layer="whatsnew"]'))return;if(!force&&verLvl(LS.get("kadraj_seen_ver",0)||0)>=verLvl(APP_V))return;
  const items=WN_ITEMS.filter(x=>verLvl(x.v)===verLvl(APP_V)).map((x,i)=>`<button type="button" class="wn-item" data-act="wnGo" data-r="${x.go}" style="--i:${i};--g:${x.g}"><span class="wn-ic">${I(x.ic)}</span><span class="wn-t"><b>${esc(x.t)}</b><span>${esc(x.d)}</span></span>${I("next")}</button>`).join("");
@@ -10003,6 +10007,252 @@ HOOKS.after.push(r=>{if(r!=="chats"&&r!=="chat"&&typeof K70!=="undefined")K70.q=
 window.addEventListener("click",e=>{const l=$('#overlay [data-layer="story"]');if(!l||!l._fxT)return;const t=e.target;
  if(performance.now()-l._fxT<Math.max(320,k70D()*1000+60)&&(!l.contains(t)||(t.closest&&t.closest("#svNext,#svPrev")))){e.preventDefault();e.stopImmediatePropagation()}},true);
 /*}@js:70FXB*/
+
+/*@js:70ZIRVE{*/
+/* 7.0 bölgesi 70ZIRVE (sahibi: "Kadraj'ı açınca tanıtım animasyonu yap", "31 Mart 2027'de Zirve'ye geçecek, o güne özel şeyler yap").
+   1) Açılış (#intro, Blok A'daki introDone/introExit yerine): yalnızca logo. CSS (app.css 70ZIRVE) app.js inmeden ilk boyamada başlar: vizör köşeleri
+      çizilir (≈0,4 sn), K harfi çizilir, turuncu nokta düşüp zıplar (≈1,05 sn'de oturur). Uygulama hazır olunca (introDone) kalan çizim hızlandırılır
+      (K70I_MIN: açılıştan en az ~0,7 sn sonra, kalan en çok 0,26 sn), sonra logo büyüyüp solarak uygulamaya geçer (introExit, ~0,42 sn). Firebase'i
+      beklemez, yavaşlatmaz; hazır değilse logo durur (nokta 6 kez hafifçe atar, sonsuz değil), "yükleniyor" yazısı yok (12 sn'deki "Yeniden dene" kalır).
+      Dokununca: uygulama hazırsa hemen geçer, değilse çizim sona atlar ve hazır olunca beklemeden geçer (K70I.skip). Hareket azaltılmışsa yalnızca solma.
+      Açılış emniyeti (html.k-live, kStuck, kFail) aynı: introLive/k-live yine introExit'te konur.
+   2) Neler yeni hikâye sunumu (showWhatsNew sarıldı → wnStory): tam ekran kartlar (kapak + WN_ITEMS'ın şu anki ara sürüm maddeleri + son kart),
+      üstte ilerleme çubukları (WAAPI, kare başı JS yok), dokun sağ/sol ileri/geri, basılı tut duraklat, sola/sağa kaydır, aşağı kaydır kapat, oklar,
+      kartta büyük animasyonlu ikon, başlık, açıklama, "Dene" (ACT.wnGo). Hareket azaltılmışsa ya da hata olursa eski liste (son kartta "Liste olarak gör").
+   3) Zirve (31 Mart 2027, Türkiye saati; ZIRVE.at = 30 Mart 21:00 UTC). Test için ZIRVE.today (Date veren işlev), yönetici önizlemesi ZIRVE.prev.
+      - Akış'ta .zrc geri sayım kartı (hikâye şeridinin/özel gün kartının altında; dağ, tırmanan nokta, gün/saat/dk; günde bir kez kapatılır
+        kadraj_zrc_<uid>). Sayaç zrTick: dakikada bir (ayrıntı penceresinde saniyede bir) ve yalnızca sayaç ekrandayken. 6.6.1 kaydırma düzeltmesi
+        HOOKS.after'da eklendiği için geçerli.
+      - Ayarlar › Yardım ve hakkında › #k70Z: geri sayım, Zirve'ye mesaj, Kadraj yolculuğun (zrInfo: saniyeli sayaç, yolun yüzdesi, ilk günün).
+      - Zirve'ye mesaj (zrLetter): data/users/{uid}/zirve = {text, at, goals:[{t,ok}], opened}. Yalnızca pencere açılınca okunur; Zirve'den sonra
+        bir kez (zrAfterEnter, LS kadraj_zrlt_<uid> {has,op}) okunur. Zirve'ye kadar mühürlü (yazan bile okuyamaz, "yeniden yaz" eskisinin yerine geçer).
+        2027 hedefleri (en çok 3) her zaman görünür ve işaretlenir.
+      - 31 Mart: açılışta bir kez kutlama (zrCelebrate: gün doğumu, zirveye tırmanan çizgi, bayrak, havai fişek, konfeti; sonlu), profiles.zirve=1
+        ("Zirve'deydim" rozeti profilde, .zrbadge), Rota'nın paylaşımı (BOT_POSTS "zirve-2027"), Zirve teması (accentPal'a "zirve", o günden sonra).
+      - Yönetici › Zirve önizleme (ADM_EXTRA "zirve"): o günmüş gibi (yazma yok), kutlamayı oynat, mektup açılışı, kapat. */
+Object.assign(IP,{k70mt:'<path d="M2.5 20.5 9.5 8l4.2 7.2 2.3-3.2 5.5 8.5z"/><path d="M9.5 8V3.5l3.6 1.3-3.6 1.4"/>',
+ k70env:'<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m3.6 7 8.4 6.3L20.4 7"/>'});
+
+/* ================= 1) Açılış ================= */
+const K70I={skip:false,MIN:700,TAIL:260};
+const K70I_SEQ=["k70Mark","k70Draw","k70Dot"];
+function k70IA(){const el=introEl();try{return el?el.getAnimations({subtree:true}):[]}catch{return[]}}
+/* çizim dizisinin kalan süresi (ms); yalnızca sonlu dizi animasyonları */
+function k70IRem(){let rem=0;for(const a of k70IA()){try{if(!K70I_SEQ.includes(a.animationName))continue;const t=a.effect.getComputedTiming();if(!isFinite(t.endTime))continue;
+ const r=(t.endTime-(a.currentTime||0))/(a.playbackRate||1);if(r>rem)rem=r}catch{}}return rem}
+function k70ISpeed(target){const rem=k70IRem();if(rem<=target+20)return rem;const k=rem/Math.max(1,target);
+ for(const a of k70IA())try{if(K70I_SEQ.includes(a.animationName)){if(a.updatePlaybackRate)a.updatePlaybackRate((a.playbackRate||1)*k);else a.playbackRate=(a.playbackRate||1)*k}}catch{}
+ return target}
+function k70IFinish(){for(const a of k70IA())try{if(K70I_SEQ.includes(a.animationName)||a.animationName==="k70Glow")a.finish()}catch{}}
+introDone=function(){const el=introEl();if(!el||INTRO.gone){introLive();return}if(INTRO.ready)return;INTRO.ready=true;INTRO.readyAt=performance.now();clearTimeout(INTRO.timer);
+ const rm=k4rm();const el0=performance.now()-INTRO.t0;let wait;
+ if(rm)wait=Math.max(0,320-el0);
+ else if(K70I.skip){k70IFinish();wait=0}
+ else wait=k70ISpeed(Math.max(K70I.TAIL,K70I.MIN-el0));
+ INTRO.timer=setTimeout(introExit,Math.max(0,wait))};
+introExit=function(){const el=introEl();if(!el){introLive();return}if(INTRO.gone)return;INTRO.gone=true;clearTimeout(INTRO.timer);
+ const rm=k4rm();el.classList.add("out");el.style.pointerEvents="none";el.removeAttribute("aria-busy");document.documentElement.classList.add("k-live");
+ try{const m=$("#main");if(S.authed&&m&&!rm&&!["reels","chat","chessgame"].includes(S.route.name)&&m.children.length&&!m.querySelector(".empty .spin")){m.classList.remove("enter");void m.offsetWidth;m.classList.add("enter");clearTimeout(m._et);m._et=setTimeout(()=>m.classList.remove("enter"),800)}}catch{}
+ let fin=false;const done=()=>{if(fin)return;fin=true;el.remove();introLive()};
+ try{if(!rm)k70IFinish();if(el.animate){const a=el.animate(rm?[{opacity:1},{opacity:0}]:[{opacity:1},{opacity:1,offset:.2},{opacity:0}],{duration:rm?200:420,easing:rm?"linear":"cubic-bezier(.4,0,.2,1)",fill:"forwards"});a.onfinish=done;
+   const vf=el.querySelector(".in-vf");if(!rm&&vf&&vf.animate)vf.animate([{transform:"scale(1)",opacity:1},{transform:"scale(.94)",opacity:1,offset:.22},{transform:"scale(3.2)",opacity:0}],{duration:420,easing:"cubic-bezier(.55,0,.75,.2)",fill:"forwards"});
+   const g=el.querySelector(".in-glow");if(!rm&&g&&g.animate)g.animate([{opacity:1,transform:"scale(1)"},{opacity:0,transform:"scale(1.5)"}],{duration:420,easing:"ease-out",fill:"forwards"})}}catch{}
+ setTimeout(done,rm?260:600)};
+(function k70IWire(){const el=introEl();if(!el)return;
+ el.addEventListener("pointerdown",e=>{if(e.target.closest("#introRetry"))return;if(INTRO.ready){clearTimeout(INTRO.timer);introExit();return}K70I.skip=true;k70IFinish()});
+ /* app.js geç indiyse (ör. yavaş ağ) çizim çoktan bitmiştir; dizi daha başlamadıysa (sayfa arka planda açıldıysa) bir şey yapma */
+})();
+
+/* ================= 2) Neler yeni: hikâye sunumu ================= */
+const K70W={list:0,st:null};
+{const f=showWhatsNew;showWhatsNew=function(force,...a){if($('#overlay [data-layer="whatsnew"]'))return;
+ if(!force&&verLvl(LS.get("kadraj_seen_ver",0)||0)>=verLvl(APP_V))return;
+ if(!K70W.list&&!kbReduce()){try{if(wnStory())return}catch(e){console.warn("wn70",e);closeLayer("whatsnew")}}
+ return f.call(this,force,...a)}}
+function wnItems(){return WN_ITEMS.filter(x=>verLvl(x.v)===verLvl(APP_V))}
+const K70_MARK=`<svg class="k70s-vf" viewBox="0 0 24 24" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M2.5 8V5a2.5 2.5 0 0 1 2.5-2.5h3"/><path pathLength="1" d="M16 2.5h3A2.5 2.5 0 0 1 21.5 5v3"/><path pathLength="1" d="M21.5 16v3a2.5 2.5 0 0 1-2.5 2.5h-3"/><path pathLength="1" d="M8 21.5H5A2.5 2.5 0 0 1 2.5 19v-3"/><path pathLength="1" d="M9.7 8.1v7.8"/><path pathLength="1" d="M9.7 12.3l4-4.2"/><path pathLength="1" d="M11.1 10.9l2.9 5"/><circle class="k70s-dot" cx="15.5" cy="8.5" r="1.25"/></svg>`;
+function wnStory(){const items=wnItems();if(!items.length)return false;
+ const n=items.length;const cards=[{k:"cover",g:"linear-gradient(150deg,#0C7A63,#0a4f73 60%,#1b1340)"},...items.map((x,i)=>({k:"item",x,i,g:x.g||"linear-gradient(135deg,#0C7A63,#22c55e)"})),{k:"end",g:"linear-gradient(160deg,#1b1340,#0C7A63)"}];
+ const spk=`<i class="k70s-sp s1"></i><i class="k70s-sp s2"></i><i class="k70s-sp s3"></i><i class="k70s-sp s4"></i>`;
+ const body=c=>{if(c.k==="cover")return`<div class="k70s-cv">${K70_MARK}<div class="k70s-badge">Yeni sürüm</div><h2>Kadraj ${esc(APP_VER)}</h2>${APP_NAME?`<div class="k70s-name">${esc(APP_NAME)} güncellemesi</div>`:""}<p>${n} yenilik seni bekliyor. Dokunarak ilerle.</p></div>`;
+  if(c.k==="end")return`<div class="k70s-cv k70s-end"><div class="k70s-mini">${items.map((x,i)=>`<span style="--g:${esc(x.g||"")};--i:${i}">${I(x.ic)}</span>`).join("")}</div><h2>Hepsi bu kadar</h2><p>Hepsine istediğin zaman Ayarlar › Yardım ve hakkında › Neler yeni'den bakabilirsin.</p><button type="button" class="k70s-go" data-act="wnOk">Hadi başlayalım${I("next")}</button><button type="button" class="k70s-ls" data-k70l>Liste olarak gör</button></div>`;
+  const x=c.x;return`<div class="k70s-it"><div class="k70s-ic">${I(x.ic)}<i class="k70s-ring"></i>${spk}</div><small>Yenilik ${c.i+1} / ${n}</small><h2>${esc(x.t)}</h2><p>${esc(x.d)}</p>${x.go?`<button type="button" class="k70s-go" data-act="wnGo" data-r="${esc(x.go)}">Dene${I("next")}</button>`:""}</div>`};
+ const l=openLayer("whatsnew",`<div class="k70s-bk"></div><div class="full k70s" role="dialog" aria-modal="true" aria-roledescription="hikâye" aria-label="Kadraj ${esc(APP_VER)} ile gelenler" tabindex="-1">
+  <div class="k70s-bars" aria-hidden="true">${cards.map(()=>`<i><b></b></i>`).join("")}</div>
+  <div class="k70s-top"><span class="k70s-lg">${VF}<b>Kadraj ${esc(APP_VER)}</b></span><button type="button" class="k70s-x" data-act="close" aria-label="Kapat">${I("close")}</button></div>
+  <div class="k70s-st">${cards.map((c,i)=>`<section class="k70s-c k70s-${c.k}" data-i="${i}" style="--g:${esc(c.g)}" aria-hidden="true"><div class="k70s-in">${body(c)}</div></section>`).join("")}</div>
+  <button type="button" class="k70s-nv p" data-k70n="-1" aria-label="Önceki">${I("prev")}</button><button type="button" class="k70s-nv n" data-k70n="1" aria-label="Sonraki">${I("next")}</button></div>`,
+  {noScrim:true,onClose:()=>{LS.set("kadraj_seen_ver",APP_V);wnStop()}});
+ const st={l,cards,i:-1,a:null,paused:0};K70W.st=st;
+ const box=l.querySelector(".k70s");const secs=[...l.querySelectorAll(".k70s-c")];const bars=[...l.querySelectorAll(".k70s-bars b")];
+ const dur=c=>c.k==="cover"?3600:c.k==="end"?6000:Math.min(9000,4200+String(c.x.d||"").length*38);
+ const show=i=>{if(i<0)i=0;if(i>=cards.length)return closeLayer("whatsnew");const back=i<st.i;st.i=i;
+  secs.forEach((s,j)=>{s.classList.toggle("on",j===i);s.classList.toggle("past",j<i);s.classList.toggle("bk",back&&j===i);s.setAttribute("aria-hidden",j===i?"false":"true")});
+  if(st.a)try{st.a.cancel()}catch{}bars.forEach((b,j)=>{b.style.transform=j<i?"scaleX(1)":"scaleX(0)"});
+  const b=bars[i];st.a=b.animate([{transform:"scaleX(0)"},{transform:"scaleX(1)"}],{duration:dur(cards[i]),fill:"forwards"});
+  st.a.onfinish=()=>{if(st.i===i&&i<cards.length-1)show(i+1)};if(st.paused)st.a.pause();vib(4)};
+ st.show=show;
+ const pause=v=>{st.paused=v?1:0;box.classList.toggle("hold",!!v);try{v?st.a.pause():st.a.play()}catch{}};st.pause=pause;
+ /* dokunma: sol %30 geri, sağ ileri; basılı tut duraklat; yatay kaydırma ileri/geri; aşağı kaydırma kapat */
+ let pd=null;
+ box.addEventListener("pointerdown",e=>{if(e.target.closest("button,a,input"))return;pd={x:e.clientX,y:e.clientY,t:performance.now(),h:0};pd.tm=setTimeout(()=>{if(pd){pd.h=1;pause(1)}},200)});
+ box.addEventListener("pointermove",e=>{if(!pd)return;const dy=e.clientY-pd.y;if(dy>0&&Math.abs(dy)>Math.abs(e.clientX-pd.x)){box.style.transform=`translateY(${Math.min(dy,220)*.5}px)`;box.style.opacity=String(1-Math.min(dy,220)/600)}});
+ const up=e=>{if(!pd)return;clearTimeout(pd.tm);const p=pd;pd=null;box.style.transform="";box.style.opacity="";const dx=e.clientX-p.x,dy=e.clientY-p.y;
+  if(dy>90&&dy>Math.abs(dx))return closeLayer("whatsnew");
+  if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)){if(p.h)pause(0);return show(st.i+(dx<0?1:-1))}
+  if(p.h){pause(0);return}if(e.type==="pointercancel")return;const r=box.getBoundingClientRect();show(st.i+((e.clientX-r.left)<r.width*.3?-1:1))};
+ box.addEventListener("pointerup",up);box.addEventListener("pointercancel",up);
+ l.addEventListener("click",e=>{const nv=e.target.closest("[data-k70n]");if(nv){e.preventDefault();return show(st.i+ +nv.dataset.k70n)}
+  if(e.target.closest("[data-k70l]")){e.preventDefault();K70W.list=1;closeLayer("whatsnew");try{showWhatsNew(true)}finally{K70W.list=0}}});
+ show(0);try{box.focus({preventScroll:true})}catch{}return true}
+function wnStop(){const st=K70W.st;K70W.st=null;if(st&&st.a)try{st.a.cancel()}catch{}}
+document.addEventListener("keydown",e=>{const st=K70W.st;if(!st||!st.l.isConnected)return;const top=$$("#overlay .layer");if(top[top.length-1]!==st.l)return;
+ if(e.key==="ArrowRight"){e.preventDefault();st.show(st.i+1)}else if(e.key==="ArrowLeft"){e.preventDefault();st.show(st.i-1)}
+ else if(e.key===" "&&!e.target.closest("button")){e.preventDefault();st.pause(!st.paused)}});
+document.addEventListener("visibilitychange",()=>{const st=K70W.st;if(!st||!st.l.isConnected||!st.a)return;try{if(document.hidden)st.a.pause();else if(!st.paused)st.a.play()}catch{}});
+
+/* ================= 3) Zirve ================= */
+const ZIRVE={at:Date.UTC(2027,2,30,21,0,0),day:"2027-03-31",base:Date.UTC(2026,10,3,21,0,0),today:()=>new Date(),prev:false,t:0};
+const zrNow=()=>ZIRVE.prev?ZIRVE.at+9*36e5:+ZIRVE.today();
+/* Türkiye saati (UTC+3, yaz saati yok) ile gün anahtarı */
+const zrTr=t=>new Date(t+3*36e5);
+const zrKey=t=>{const d=zrTr(t);return d.getUTCFullYear()+"-"+gunPad(d.getUTCMonth()+1)+"-"+gunPad(d.getUTCDate())};
+const zrIsDay=()=>zrKey(zrNow())===ZIRVE.day;
+const zrReached=()=>zrNow()>=ZIRVE.at;
+const zrLeft=()=>Math.max(0,ZIRVE.at-zrNow());
+/* takvim günü farkı (Türkiye) */
+function zrDays(){const d=zrTr(zrNow());return Math.round((Date.UTC(2027,2,31)-Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()))/864e5)}
+function zrParts(ms){const s=Math.floor(ms/1000);return{d:Math.floor(s/86400),h:Math.floor(s%86400/3600),m:Math.floor(s%3600/60),s:s%60}}
+/* yolun yüzdesi: Kadraj'a katıldığı günden (yoksa 4 Kasım 2026'dan) Zirve'ye */
+const zrBase=()=>{const c=(S.uid&&(me()||{}).createdAt)||0;return c>0&&c<ZIRVE.at-864e5?c:ZIRVE.base};
+const zrPct=()=>{const b=zrBase();return Math.max(0,Math.min(1,(zrNow()-b)/(ZIRVE.at-b)))};
+const zrTrDate=t=>{const d=zrTr(t);return d.getUTCDate()+" "+BD_AY[d.getUTCMonth()]+" "+d.getUTCFullYear()};
+/* sahne: dağ, iz, bayrak; tırmanan noktanın yeri iz üzerinde yüzdeye göre */
+const ZR_TRAIL="M60 196C96 186 92 168 120 160S150 140 138 124S160 102 152 88S158 66 160 54";
+function zrMount(cls,pct){return`<svg class="${cls}" viewBox="0 0 220 200" aria-hidden="true"><defs><linearGradient id="zrS${cls}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff6f91"/></linearGradient></defs>
+ <circle class="zr-sun" cx="160" cy="70" r="30" fill="url(#zrS${cls})" opacity=".85"/><path class="zr-far" d="M0 200 0 150 40 120 70 142 104 100 130 124 180 84 220 120 220 200Z"/><path class="zr-pk" d="M18 200 160 40 220 128 220 200Z"/><path class="zr-snow" d="M160 40 146 58 154 56 160 64 168 55 176 60Z"/>
+ <path class="zr-tr" d="${ZR_TRAIL}" pathLength="1"/><g transform="translate(160 54)" class="zr-fl"><path d="M0 0V-22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M0-22 14-17.5 0-13Z" fill="#E30A17"/></g><circle class="zr-me" r="5" data-p="${pct==null?"":pct}"/></svg>`}
+function zrPlace(root){for(const c of root.querySelectorAll(".zr-me[data-p]")){const v=c.getAttribute("data-p");if(v==="")continue;const t=c.ownerSVGElement&&c.ownerSVGElement.querySelector(".zr-tr");if(!t)continue;
+ try{const L=t.getTotalLength();const p=t.getPointAtLength(L*Math.max(0,Math.min(1,+v)));c.setAttribute("cx",p.x.toFixed(1));c.setAttribute("cy",p.y.toFixed(1))}catch{}}}
+const zrCd=(mode)=>`<span class="zr-cd" data-zrcd="${mode}"></span>`;
+function zrTick(){clearTimeout(ZIRVE.t);const els=$$("[data-zrcd]");if(!els.length)return;let sec=false;const left=zrLeft();const p=zrParts(left);
+ for(const e of els){const s=e.dataset.zrcd==="s";if(s)sec=true;const u=(v,t)=>`<span><b>${s&&t!=="gün"?gunPad(v):v}</b>${t}</span>`;
+  e.innerHTML=left<=0?`<span class="zr-now"><b>Zirve'deyiz</b></span>`:u(p.d,"gün")+u(p.h,"saat")+u(p.m,"dk")+(s?u(p.s,"sn"):"")}
+ if(left<=0&&!ZIRVE.prev)zrDayCheck();
+ if(left>0)ZIRVE.t=setTimeout(zrTick,sec?1000-(Date.now()%1000)+5:60000-(Date.now()%60000)+20)}
+/* --- Akış kartı --- */
+const zrSeen=()=>LS.get("kadraj_zrc_"+S.uid,"");
+function zrLt(){return LS.get("kadraj_zrlt_"+S.uid,null)}
+function zrCardHtml(){const day=zrIsDay(),pre=!zrReached();const pv=ZIRVE.prev?" (önizleme)":"";
+ if(pre){const n=zrDays();return`<div class="zrc" data-zrc>${zrMount("zr-art",zrPct())}<div class="t"><small>31 Mart 2027 · Zirve${pv}</small><b>${n<=1?"Yarın Zirve günü":`Zirve'ye ${n} gün`}</b>${zrCd("m")}<div class="bt"><button class="btn sec sm" type="button" data-zrl>${I("k70env")}${LS.get("kadraj_zrw_"+S.uid)?"Mektubun mühürlü":"Zirve'ye mesaj yaz"}</button><button class="btn ghost sm" type="button" data-zri>Ayrıntılar</button></div></div><button class="x" type="button" data-zrx aria-label="Kapat">${I("close")}</button></div>`}
+ if(day)return`<div class="zrc day" data-zrc>${zrMount("zr-art",1)}<div class="t"><small>Bugün${pv}</small><b>Zirve'deyiz!</b><span>Kadraj bugün Zirve'ye ulaştı. Mühürlü mektupların açıldı.</span><div class="bt"><button class="btn sm" type="button" data-zrcel>${I("spark")}Kutlamayı izle</button><button class="btn sec sm" type="button" data-zrl>${I("k70env")}Mektubun</button></div></div><button class="x" type="button" data-zrx aria-label="Kapat">${I("close")}</button></div>`;
+ const lt=zrLt();if(lt&&lt.has&&!lt.op)return`<div class="zrc day" data-zrc>${zrMount("zr-art",1)}<div class="t"><small>31 Mart 2027'den</small><b>Geçmişten bir mektubun var</b><span>Zirve'ye yazdığın mektup açıldı.</span><div class="bt"><button class="btn sm" type="button" data-zrl>${I("k70env")}Mektubu aç</button></div></div><button class="x" type="button" data-zrx aria-label="Kapat">${I("close")}</button></div>`;
+ return""}
+HOOKS.after.push(r=>{if(r!=="feed"||!S.uid||S.guest)return;try{const m=$("#main");if(!m||m.querySelector(".zrc"))return;zrDayCheck();if(!ZIRVE.prev&&zrSeen()===zrKey(zrNow()))return;
+ const h=zrCardHtml();if(!h)return;const d=document.createElement("div");d.innerHTML=h;const el=d.firstElementChild;
+ const ref=[...m.querySelectorAll(".gnc,.stories")].pop();if(ref)ref.after(el);else m.prepend(el);zrPlace(el);zrTick()}catch(e){console.warn("zrc",e)}});
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-zrx],[data-zrl],[data-zri],[data-zrcel],[data-zrth]");if(!t)return;e.preventDefault();
+ if(t.hasAttribute("data-zrx")){const c=t.closest(".zrc");if(ZIRVE.prev)ZIRVE.prev=false;else LS.set("kadraj_zrc_"+S.uid,zrKey(zrNow()));if(c)c.remove();return}
+ if(t.hasAttribute("data-zrl"))return zrLetter();if(t.hasAttribute("data-zri"))return zrInfo();if(t.hasAttribute("data-zrcel"))return zrCelebrate(true);
+ if(t.hasAttribute("data-zrth"))return zrTheme()},true);
+/* --- Zirve'ye mesaj --- */
+const ZR_SAMPLE={text:"Merhaba gelecekteki ben!\nBunu Kasım 2026'da yazıyorum. Umarım bu yıl istediğin her şeyi yapmışsındır.\n(Bu bir önizleme mektubu.)",at:Date.UTC(2026,10,4,12),goals:[{t:"Daha çok kitap okumak",ok:1},{t:"LGS'de iyi bir sonuç",ok:0}],opened:0};
+const zrPath=()=>`data/users/${S.uid}/zirve`;
+async function zrGet(){try{return await DB.get(zrPath())}catch(e){console.warn("zr",e);return undefined}}
+function zrGoalsHtml(gs,edit){gs=Array.isArray(gs)?gs.slice(0,3):[];
+ if(edit)return`<div class="zr-gl">${[0,1,2].map(i=>`<textarea class="in k1l" rows="1" maxlength="80" data-zrg="${i}" placeholder="${i===0?"Örn. Daha çok kitap okumak":"Bir hedef daha (isteğe bağlı)"}">${esc((gs[i]&&gs[i].t)||"")}</textarea>`).join("")}</div>`;
+ if(!gs.length)return"";return`<div class="zr-gl ro">${gs.map((g,i)=>`<button type="button" class="zr-g${g.ok?" ok":""}" data-zrgo="${i}" aria-pressed="${!!g.ok}"><span class="ck">${I("check")}</span><span>${esc(String(g.t||""))}</span></button>`).join("")}</div>`}
+async function zrLetter(){if(!S.uid||S.guest)return guard&&guard();const l=sheet("zirve","Zirve'ye mesaj",`<div class="zr-lt"><div class="spin" style="margin:40px auto"></div></div>`,{tall:true});
+ const box=l.querySelector(".zr-lt");let doc=await zrGet();if(!l.isConnected)return;if(doc===undefined){box.innerHTML=`<p class="muted" style="text-align:center;padding:30px 10px">Mektubun okunamadı. İnternetini kontrol edip yeniden dene.</p>`;return}
+ if(!doc&&ZIRVE.prev)doc=ZR_SAMPLE;
+ const reached=zrReached();
+ const draw=()=>{if(!l.isConnected)return;
+  if(reached){if(!doc||!doc.text){box.innerHTML=`<div class="zr-env open">${zrEnvSvg()}</div><h3>Zirve'ye mektup yazmamıştın</h3><p class="muted">Kadraj 31 Mart 2027'de Zirve'ye ulaştı. Bir sonraki dönüm noktasında yazmayı unutma.</p>`;return}
+   box.innerHTML=`<div class="zr-env open anim">${zrEnvSvg()}</div><div class="zr-paper"><small>${esc(zrTrDate(doc.at||0))} tarihinde yazdın</small><div class="zr-tx">${esc(String(doc.text))}</div></div>${doc.goals&&doc.goals.length?`<h4 class="zr-h">2027 hedeflerin</h4>`+zrGoalsHtml(doc.goals):""}`;
+   if(!doc.opened&&!ZIRVE.prev){doc.opened=1;write(()=>DB.update(zrPath(),{opened:now()}),{quiet:true});LS.set("kadraj_zrlt_"+S.uid,{has:1,op:1});$$(".zrc").forEach(c=>{if(!zrIsDay())c.remove()})}return}
+  if(doc&&doc.text){box.innerHTML=`<div class="zr-env">${zrEnvSvg()}</div><h3>Mektubun mühürlü</h3><p class="muted">${esc(zrTrDate(doc.at||0))} tarihinde yazdın. 31 Mart 2027'de açılacak; o güne kadar sen bile okuyamazsın.</p>${zrCd("m")}
+   ${doc.goals&&doc.goals.length?`<h4 class="zr-h">2027 hedeflerin</h4>`+zrGoalsHtml(doc.goals):""}<button type="button" class="opt" data-zrre>${I("edit")}Yeniden yaz (eskisinin yerine geçer)</button>`;zrTick();return}
+  box.innerHTML=`<div class="zr-hd">${zrMount("zr-art sm",zrPct())}<p>Bugünkü kendinden 31 Mart 2027'deki kendine bir mektup yaz. Kadraj onu mühürler ve o gün açar.</p></div>
+   <textarea class="in zr-ta" id="zrTa" maxlength="1500" rows="7" placeholder="Merhaba gelecekteki ben…"></textarea><div class="zr-n"><span id="zrN">0</span>/1500</div>
+   <h4 class="zr-h">2027 hedeflerin <small>(isteğe bağlı, her zaman görünür)</small></h4>${zrGoalsHtml(doc&&doc.goals,true)}
+   <button type="button" class="btn block" id="zrGo">${I("lock")}Mühürle</button>`;
+  const ta=$("#zrTa",box);ta.oninput=()=>{$("#zrN",box).textContent=ta.value.length};
+  $("#zrGo",box).onclick=async()=>{if(!guard())return;let tx=ta.value.trim();if(tx.length<3)return toast("Birkaç kelime yaz.");if(ZIRVE.prev)return toast("Önizlemede kaydedilmez.");
+   if(typeof isChild==="function"&&isChild(S.uid)&&typeof cleanText==="function")tx=cleanText(tx);
+   const goals=[...box.querySelectorAll("[data-zrg]")].map(x=>x.value.trim()).filter(Boolean).slice(0,3).map(t=>({t:t.slice(0,80),ok:0}));
+   const nd={text:tx.slice(0,1500),at:now(),goals,opened:0,v:1};const b=$("#zrGo",box);b.disabled=true;
+   if(!(await write(()=>DB.set(zrPath(),nd)))){b.disabled=false;return}doc=nd;LS.set("kadraj_zrw_"+S.uid,1);vib([10,40,10]);toast("Mektubun mühürlendi. 31 Mart 2027'de görüşürüz.");
+   $$(".zrc [data-zrl]").forEach(x=>x.innerHTML=I("k70env")+"Mektubun mühürlü");draw();box.querySelector(".zr-env")?.classList.add("seal")}};
+ box.addEventListener("click",async e=>{const g=e.target.closest("[data-zrgo]");if(g&&doc&&Array.isArray(doc.goals)){const i=+g.dataset.zrgo;const gs=doc.goals.map((x,j)=>j===i?{...x,ok:x.ok?0:1}:x);
+   if(!ZIRVE.prev||doc!==ZR_SAMPLE){if(!(await write(()=>DB.update(zrPath(),{goals:gs}),{quiet:true})))return toast("Kaydedilemedi.")}doc={...doc,goals:gs};g.classList.toggle("ok");g.setAttribute("aria-pressed",String(!!gs[i].ok));vib(6);return}
+  if(e.target.closest("[data-zrre]")){dialog("Yeniden yaz","Yeni mektup eskisinin yerine geçer. Eskisini okuyamazsın, yalnızca yenisini yazarsın.",[{label:"Vazgeç",cls:"sec"},{label:"Yeniden yaz",fn:()=>{doc={goals:doc.goals};draw()}}])}});
+ draw();return l}
+function zrEnvSvg(){return`<svg viewBox="0 -26 120 112" aria-hidden="true"><rect class="e-b" x="6" y="22" width="108" height="62" rx="8"/><path class="e-t" d="M10 22H110L60 58Z"/><g class="e-p"><rect x="16" y="26" width="88" height="54" rx="4"/><path d="M28 40h64M28 50h52M28 60h58"/></g><path class="e-f" d="M6 84V34L60 66 114 34V84Z"/><g class="e-s"><circle cx="60" cy="56" r="9"/><path d="M55.5 59 58.5 53 61 57 62.5 55 65 59Z"/></g></svg>`}
+/* --- ayrıntılı geri sayım ve yolculuk --- */
+function zrInfo(){const p=me()||{};const T=zrNow();const c0=p.createdAt||0;const dd=c0?Math.max(0,Math.floor((T-c0)/864e5)):null;const atZ=c0?Math.floor((ZIRVE.at-c0)/864e5)+1:null;const np=(typeof postsOf==="function"?postsOf(S.uid):[]).length;
+ const l=sheet("zrinfo","Zirve",`<div class="zr-inf">${zrMount("zr-art big",zrReached()?1:zrPct())}
+  <div class="zr-big"><small>${zrReached()?"31 Mart 2027":"Zirve'ye kalan"}</small>${zrCd("s")}</div>
+  ${zrReached()?"":`<div class="zr-bar"><i style="width:${(zrPct()*100).toFixed(1)}%"></i></div><p class="muted zr-pc">%${Math.floor(zrPct()*100)} tamamlandı · ${zrBase()===ZIRVE.base?"7.0'dan beri":"Kadraj'a katıldığın günden beri"}</p>`}
+  <div class="box" style="margin:12px 0"><div class="row"><span class="t"><div><b>31 Mart 2027'de</b></div><div class="s">Açılışta kutlama, Zirve teması, profilinde "Zirve'deydim" rozeti (o gün Kadraj'ı açanlara) ve mühürlü mektupların açılışı.</div></span></div>
+  ${c0?`<div class="row"><span class="t"><div><b>Kadraj'daki ilk günün</b></div><div class="s">${esc(zrTrDate(c0))} · ${dd===0?"bugün":dd+" gün önce"}${zrReached()?"":` · Zirve günü Kadraj'daki ${atZ}. günün olacak`}</div></span></div>`:""}
+  <div class="row"><span class="t"><div><b>Bu yolculukta</b></div><div class="s">${np} paylaşım${(p.chess&&p.chess.g)?" · "+p.chess.g+" satranç maçı":""}</div></span></div></div>
+  <button type="button" class="btn block" data-zrl>${I("k70env")}Zirve'ye mesaj</button>${zrReached()?`<button type="button" class="btn sec block" style="margin-top:8px" data-zrth>${I("palette")}Zirve teması</button>`:""}</div>`,{tall:true});
+ zrPlace(l);zrTick();return l}
+/* --- Ayarlar › Yardım ve hakkında --- */
+try{const g=SG.find(x=>x.k==="yardim");if(g){g.x=[...(g.x||[]),"k70Z"];g.d="Zirve geri sayımı, "+g.d.charAt(0).toLocaleLowerCase("tr")+g.d.slice(1)}}catch(e){console.warn(e)}
+HOOKS.after.unshift(r=>{if(r!=="settings"||S.guest)return;const m=$("#main");if(!m||m.querySelector("#k70Z"))return;
+ const a=document.createElement("div");a.id="k70Z";a.className="box";a.style.margin="12px 16px";
+ a.innerHTML=`<button class="row" data-zri style="width:100%"><span class="cf-ic sm zr-ic">${I("k70mt")}</span><div class="t"><b>Zirve · 31 Mart 2027</b><div class="s">${zrReached()?"Kadraj Zirve'de":"Geri sayım ve Kadraj yolculuğun"}</div>${zrReached()?"":zrCd("m")}</div>${I("next")}</button>
+ <button class="row" data-zrl style="width:100%"><span class="cf-ic sm zr-ic2">${I("k70env")}</span><div class="t"><b>Zirve'ye mesaj</b><div class="s">${zrReached()?"Mektubunu aç":"Geleceğe mektup, 2027 hedefleri"}</div></div>${I("next")}</button>
+ ${zrReached()?`<button class="row" data-zrth style="width:100%"><span class="cf-ic sm zr-ic">${I("palette")}</span><div class="t"><b>Zirve teması</b><div class="s">${settings.accent==="zirve"?"Açık":"Gün doğumu renkleri"}</div></div>${I("next")}</button>`:""}`;
+ m.appendChild(a);setTimeout(zrTick,0)});
+/* --- Zirve teması --- */
+{const f=accentPal;accentPal=function(...a){const r=f.apply(this,a);try{if(zrReached()&&r&&!r.zirve)r.zirve={n:"Zirve",h:300,m:.5,l:["#D9366E","#FFFFFF","#FCE4EE"],d:["#FF8FB1","#1C0A1A","#33192F"]}}catch{}return r}}
+function zrTheme(){if(!zrReached())return toast("Zirve teması 31 Mart 2027'de açılır.");accentPal();const on=settings.accent==="zirve";try{ACT.accent(null,{v:on?"auto":"zirve"})}catch(e){settings.accent=on?"auto":"zirve";saveSettings();applyAccent()}
+ toast(on?"Zirve teması kapatıldı":"Zirve teması açıldı");if(S.route.name==="settings")render(false)}
+/* --- 31 Mart: bir kez kutlama, rozet, mektup --- */
+function zrDayCheck(){if(!S.uid||S.guest||!S.authed)return;if(!zrReached())return;
+ if(zrIsDay()&&!ZIRVE.prev){const p=me();if(p&&!p.zirve&&!ZIRVE.wr){ZIRVE.wr=1;write(()=>DB.update("profiles/"+S.uid,{zirve:1}),{quiet:true}).then(ok=>{if(ok)S.profiles[S.uid]={...S.profiles[S.uid],zirve:1}})}
+  if(!LS.get("kadraj_zrcel_"+S.uid)&&!ZIRVE.cel){ZIRVE.cel=1;introGone().then(()=>setTimeout(()=>{if(!$('#overlay [data-layer="zirvecel"]'))zrCelebrate(false)},400))}}
+ if(!ZIRVE.prev&&!zrLt()&&!ZIRVE.lq){ZIRVE.lq=1;zrGet().then(d=>{if(d===undefined){ZIRVE.lq=0;return}LS.set("kadraj_zrlt_"+S.uid,{has:d&&d.text?1:0,op:d&&d.opened?1:0});if(d&&d.text&&!d.opened&&S.route.name==="feed")render(false)})}}
+HOOKS.enter.push(()=>{try{zrDayCheck()}catch(e){console.warn("zr",e)}});
+function zrCelebrate(manual){if(!manual&&!ZIRVE.prev)LS.set("kadraj_zrcel_"+S.uid,1);const rm=kbReduce();const p=me()||{};const c0=p.createdAt||0;const dd=c0?Math.floor((ZIRVE.at-c0)/864e5)+1:0;const np=(typeof postsOf==="function"?postsOf(S.uid):[]).length;
+ const lt=zrLt();const hasL=ZIRVE.prev||!lt||lt.has;
+ const fw=rm?"":[[22,26,1.9,"#ffd166"],[76,20,2.25,"#ff6f91"],[50,12,2.6,"#7ce7c8"],[30,38,3.0,"#c3a6ff"],[70,34,3.35,"#ffd166"]].map(([x,y,d,c])=>`<div class="zr-fw" style="left:${x}%;top:${y}%;--dl:${d}s;--c:${c}">${Array.from({length:12},(_,i)=>`<i style="--a:${i*30}deg"></i>`).join("")}</div>`).join("");
+ const l=openLayer("zirvecel",`<div class="full zr-cel${rm?" rm":""}" role="dialog" aria-modal="true" aria-label="Zirve kutlaması">
+  <div class="zr-sky"></div><svg class="zr-scene" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><radialGradient id="zrSun"><stop offset="0" stop-color="#fff3c4"/><stop offset=".55" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff6f91" stop-opacity="0"/></radialGradient></defs>
+   <circle class="c-sun" cx="200" cy="96" r="70" fill="url(#zrSun)"/><path class="c-far" d="M0 300V214L52 176 92 204 140 150 182 186 232 140 286 182 340 136 400 176V300Z"/>
+   <path class="c-pk" d="M24 300 200 92 376 300Z"/><path class="c-snow" d="M200 92 180 118 192 115 200 126 210 114 222 119Z"/>
+   <path id="zrTrail" class="c-tr" pathLength="1" d="M70 300C120 284 112 258 150 246S192 222 170 200S206 168 194 148S206 116 200 98"/>
+   <g transform="translate(200 92)"><g class="c-fl"><path d="M0 0V-34" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path class="c-flg" d="M0-34 22-27 0-20Z" fill="#ffd166"/></g></g><circle class="c-me" r="5.5" cx="70" cy="300"/></svg>
+  ${fw}<div class="zr-ct"><small>31 Mart 2027${ZIRVE.prev?" · önizleme":""}</small><h2>Zirve'desin!</h2><p>Kadraj bugün Zirve'ye ulaştı.${dd>0?` Bu yolculukta ${dd} gündür birlikteyiz`:""}${np?`, ${np} paylaşım yaptın`:""}${dd>0||np?".":""}</p>
+   <div class="zr-cb">${hasL?`<button type="button" class="btn block" data-zrcl>${I("k70env")}Mektubunu aç</button>`:""}<button type="button" class="btn ${hasL?"sec ":""}block" data-zrth>${I("palette")}Zirve temasını dene</button><button type="button" class="btn ghost block" data-act="close">Devam et</button></div></div></div>`,{noScrim:true});
+ l.addEventListener("click",e=>{if(e.target.closest("[data-zrcl]")){e.preventDefault();closeLayer("zirvecel");zrLetter()}else if(e.target.closest("[data-zrth]"))closeLayer("zirvecel")});
+ if(!rm){try{const me_=l.querySelector(".c-me"),tr=l.querySelector(".c-tr");const L=tr.getTotalLength();const kf=[];for(let i=0;i<=24;i++){const pt=tr.getPointAtLength(L*i/24);kf.push({transform:`translate(${(pt.x-70).toFixed(1)}px,${(pt.y-300).toFixed(1)}px)`})}
+   me_.animate(kf,{duration:1500,delay:300,easing:"cubic-bezier(.45,.05,.3,1)",fill:"both"})}catch(e){console.warn("zr",e)}
+  vib([20,60,20,60,40]);setTimeout(()=>{if(l.isConnected)gunConfetti(false)},2100)}
+ else{try{const tr=l.querySelector(".c-tr"),c=l.querySelector(".c-me");const pt=tr.getPointAtLength(tr.getTotalLength());c.setAttribute("cx",pt.x);c.setAttribute("cy",pt.y)}catch{}}
+ return l}
+/* --- profil rozeti --- */
+HOOKS.after.push(r=>{if(r!=="profile")return;try{const uid=S.route.params.uid||S.uid;const m=$("#main");if(!m||m.querySelector(".zrbadge")||!(P(uid)||{}).zirve)return;const bt=m.querySelector(".prof .btns");if(!bt)return;
+ bt.insertAdjacentHTML("beforebegin",`<button type="button" class="zrbadge" data-zri title="31 Mart 2027">${I("k70mt")}Zirve'deydim</button>`)}catch(e){console.warn("zrb",e)}});
+/* --- Rota'nın paylaşımı (gün boyunca) --- */
+function zrBotPost(){if(BOT_POSTS.some(p=>p.id==="zirve-2027"))return;BOT_POSTS.unshift({id:"zirve-2027",uid:"bot:rota",bot:true,baseLikes:150,kind:"note",text:"Zirve'deyiz!",bg:2,
+ caption:"31 Mart 2027: Kadraj bugün Zirve'ye ulaştı. Bu yolu birlikte yürüdüğümüz herkese teşekkürler. Zirve'ye mektup yazdıysan bugün açıldı; Ayarlar'dan Zirve temasını da dene. #zirve",at:ZIRVE.at+5*6e4})}
+try{if(zrIsDay())zrBotPost()}catch(e){console.warn("zr",e)}
+/* --- Yönetici › Zirve önizleme --- */
+try{ADM_EXTRA.push({id:"zirve",title:"Zirve önizleme",desc:"31 Mart 2027'yi şimdiden dene",icon:"k70mt",order:68,count:()=>zrReached()&&!ZIRVE.prev?{t:"Zirve'de",c:"on"}:{t:ZIRVE.prev?"Önizleme":zrDays()+" gün",c:ZIRVE.prev?"on":"dim"},
+ html:()=>`<p class="muted" style="margin:0 0 8px;font-size:.82rem">Kadraj 31 Mart 2027'de (Türkiye saati) Zirve'ye geçer: açılışta kutlama, Rota'nın paylaşımı, Zirve teması, "Zirve'deydim" rozeti ve mühürlü mektupların açılışı. Önizleme yalnızca bu cihazda ve bu oturumda; hiçbir şey kaydedilmez.</p>
+  <div class="box" style="margin:0"><button class="row" type="button" data-zrp="day" style="width:100%"><span class="t"><div><b>31 Mart'mış gibi göster</b></div><div class="s">Akış'taki kart, Rota'nın paylaşımı, tema ve kutlama</div></span>${I("next")}</button>
+  <button class="row" type="button" data-zrp="cel" style="width:100%"><span class="t"><div><b>Kutlamayı oynat</b></div></span>${I("next")}</button>
+  <button class="row" type="button" data-zrp="lt" style="width:100%"><span class="t"><div><b>Mektup açılışını dene</b></div><div class="s">Mektubun yoksa örnek mektup</div></span>${I("next")}</button>
+  <button class="row" type="button" data-zrp="cd" style="width:100%"><span class="t"><div><b>Geri sayım kartını göster</b></div><div class="s">Bugün kapattıysan yeniden çıkar</div></span>${I("next")}</button>
+  ${ZIRVE.prev?`<button class="row" type="button" data-zrp="off" style="width:100%"><span class="t"><div><b>Önizlemeyi kapat</b></div></span>${I("close")}</button>`:""}</div>`,
+ wire:el=>{el.addEventListener("click",e=>{const b=e.target.closest("[data-zrp]");if(!b)return;const k=b.dataset.zrp;
+  if(k==="off"){ZIRVE.prev=false;const i=BOT_POSTS.findIndex(p=>p.id==="zirve-2027");if(i>=0&&!zrIsDay())BOT_POSTS.splice(i,1);toast("Önizleme kapatıldı");tab("feed");return}
+  if(k==="cd"){LS.del("kadraj_zrc_"+S.uid);ZIRVE.prev=false;tab("feed");return}
+  ZIRVE.prev=true;if(k==="day"){zrBotPost();tab("feed");setTimeout(()=>zrCelebrate(true),350)}else if(k==="cel")zrCelebrate(true);else zrLetter()})}})}catch(e){console.warn("zr adm",e)}
+/*}@js:70ZIRVE*/
 
 boot();
 
