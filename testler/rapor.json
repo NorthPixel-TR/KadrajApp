@@ -1,8 +1,8 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.6",
+ "ver": "7.0.7",
  "at": 1793727074868,
- "note": "7.0.6: profil açılınca fotoğraflar bir kez, hızlıca dönerek gösteriliyor.",
+ "note": "7.0.7: video sınırı 340 MB (95 MB'a kadar küçültülmeden yüklenir).",
  "items": [
   {
    "ad": "Bir kez dönen profil fotoğrafları ve Ben çift dokunma (390 ve 800 px)",
