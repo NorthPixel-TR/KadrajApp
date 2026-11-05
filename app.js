@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70002,APP_VER="7.0.2";
+const APP_V=70003,APP_VER="7.0.3";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -7561,7 +7561,7 @@ const schLabel=t=>{const d=new Date(t),n=new Date();const hm=d.toLocaleTimeStrin
  return d.toLocaleDateString("tr-TR",{day:"numeric",month:"short"})+" "+hm};
 function schOpts(){const n=new Date(),o=[];o.push(["1 saat sonra",now()+H]);const ev=new Date(n);ev.setHours(20,0,0,0);if(ev>n)o.push(["Bu akşam 20:00",+ev]);
  const tm=new Date(n);tm.setDate(n.getDate()+1);tm.setHours(9,0,0,0);o.push(["Yarın 09:00",+tm]);return o}
-function schOpen(){const k=pinKey();if(!k)return;if(!S.chats[k.cid])return toast("Önce bir mesaj gönder, sonra zamanlayabilirsin.");
+function schOpen(){const k=pinKey();if(!k)return;/* 7.0.3: yeni DM'de sohbet belgesi yoksa da açılır; gönderirken dmEnsure kurar */if(!S.chats[k.cid]&&k.type!=="dm")return toast("Önce bir mesaj gönder, sonra zamanlayabilirsin.");
  const pad=x=>String(x).padStart(2,"0");const dflt=new Date(now()+H);const loc=`${dflt.getFullYear()}-${pad(dflt.getMonth()+1)}-${pad(dflt.getDate())}T${pad(dflt.getHours())}:${pad(dflt.getMinutes())}`;
  const l=sheet("sch","Mesajı zamanla",`<form class="schf" id="schF"><textarea class="in" id="schT" maxlength="2000" placeholder="Mesaj yaz…"></textarea>
   <div class="schq">${schOpts().map(([t,v],i)=>`<button type="button" data-schv="${v}" aria-pressed="${i===0}">${esc(t)}</button>`).join("")}<button type="button" data-schv="c" aria-pressed="false">Başka zaman</button></div>
@@ -10253,6 +10253,11 @@ try{ADM_EXTRA.push({id:"zirve",title:"Zirve önizleme",desc:"31 Mart 2027'yi şi
   if(k==="cd"){LS.del("kadraj_zrc_"+S.uid);ZIRVE.prev=false;tab("feed");return}
   ZIRVE.prev=true;if(k==="day"){zrBotPost();tab("feed");setTimeout(()=>zrCelebrate(true),350)}else if(k==="cel")zrCelebrate(true);else zrLetter()})}})}catch(e){console.warn("zr adm",e)}
 /*}@js:70ZIRVE*/
+
+/*@js:703{*/
+/* 7.0.3 kalan küçük hatalar: kilitli zaman kapsülü kartı da yeni (Instagram) kart düzeninde (k70c, kullanıcı adı) */
+{const f=capCard;capCard=function(p,...r){let h=f.call(this,p,...r);try{const u=P(p.uid);h=h.replace('class="card capc"','class="card capc k70c"').replace(`<span class="uname">${esc(u.name)}</span>`,`<span class="uname">${esc(u.username||u.name||"")}</span>`)}catch{}return h}}
+/*}@js:703*/
 
 boot();
 

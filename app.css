@@ -4583,3 +4583,8 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 .accg [data-v="zirve"] .dot{background:linear-gradient(135deg,#FF9F43,#EE5A6F 55%,#7C5CFF)!important}
 @media (max-width:370px){.zrc .zr-art{width:66px;height:60px}.zr-cd>span{min-width:38px}}
 /*}@css:70ZIRVE*/
+/*@css:703{*/
+/* 7.0.3: sohbet ayrıntıları sağdan kayarken #overlay yatay taşmasın; kapsül kartı yeni kart düzeninde tam genişlik */
+#overlay{overflow-x:clip}
+:root[data-ui] #main .card.capc.k70c .capk{margin:0;border-radius:0}
+/*}@css:703*/

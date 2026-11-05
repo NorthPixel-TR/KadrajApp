@@ -1,9 +1,14 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.2",
+ "ver": "7.0.3",
  "at": 1793727074868,
- "note": "7.0.2: logo çizilerek açılan açılış animasyonu, hikâye gibi Neler yeni, 31 Mart 2027 Zirve geri sayımı, geleceğe mektup ve o güne özel kutlama.",
+ "note": "7.0.3: kalan küçük hatalar: sohbet ayrıntıları kayarken taşma, zaman kapsülü kartı yeni düzende, yeni sohbette basılı tutunca zamanlama.",
  "items": [
+  {
+   "ad": "Sohbet ayrıntıları kayarken taşma, kapsül kartı, yeni DM zamanlama",
+   "ok": true,
+   "not": "fx703.js 6/6 (7.0.2: 3 hata)"
+  },
   {
    "ad": "Açılış animasyonu ve açılış emniyeti",
    "ok": true,
