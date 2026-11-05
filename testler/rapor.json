@@ -1,9 +1,14 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.7",
+ "ver": "7.0.8",
  "at": 1793727074868,
- "note": "7.0.7: video sınırı 340 MB (95 MB'a kadar küçültülmeden yüklenir).",
+ "note": "7.0.8: sohbette ve paylaşımlarda video/fotoğraf indirme.",
  "items": [
+  {
+   "ad": "İndir (sohbet ve paylaşım menüsü)",
+   "ok": true,
+   "not": "dl708.js 9/9"
+  },
   {
    "ad": "Bir kez dönen profil fotoğrafları ve Ben çift dokunma (390 ve 800 px)",
    "ok": true,
