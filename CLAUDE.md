@@ -1,4 +1,4 @@
-# Kadraj: kod haritası (sürüm 7.0.9; 3.9 haritası + sonraki sürüm notları aşağıda)
+# Kadraj: kod haritası (sürüm 7.0.10; 3.9 haritası + sonraki sürüm notları aşağıda)
 
 Bu dosya, `index.html` okunarak çıkarılmış ayrıntılı bir haritadır. Yeni bir oturumda önce bunu oku, sonra gerekli fonksiyonu `grep` ile bul (satır numaraları değişir, isimlerle ara).
 
@@ -132,7 +132,7 @@ Bu dosya, `index.html` okunarak çıkarılmış ayrıntılı bir haritadır. Yen
 - Tepki bildirimi yok (`notifyChats` yalnızca son mesajı izler).
 
 ## 4.0'da eklenenler (kısa)
-- Sürüm (şu an 7.0.9 Samyeli): `APP_V=70009`, `APP_VER="7.0.9"` (app.js), `<head>`'deki `<meta name="kadraj-version" content="70009">`, `app.css?v=70009` ve `<script src="app.js?v=70009" onerror="kFail(1)">` birlikte artırılmalı; eski biçim (40) `verNorm` ile çevrilir (sürüm denetimi bu etiketi okur; `meta/_surum` belgesi en yüksek sürümü tutar; iki sürüm geride kalan istemci kapanır).
+- Sürüm (şu an 7.0.10 Samyeli): `APP_V=70010`, `APP_VER="7.0.10"` (app.js), `<head>`'deki `<meta name="kadraj-version" content="70010">`, `app.css?v=70010` ve `<script src="app.js?v=70010" onerror="kFail(1)">` birlikte artırılmalı; eski biçim (40) `verNorm` ile çevrilir (sürüm denetimi bu etiketi okur; `meta/_surum` belgesi en yüksek sürümü tutar; iki sürüm geride kalan istemci kapanır).
 - Kancalar: `ACT` (data-act eylemleri), `HOOKS.after/enter/profiles/boot` + `runHooks`. Aktiflik: `isActive`, `activeLabel`, `activeUsers`, `lastSeenAt`.
 - Blok A (`/*@js:A{*/`): `#intro` açılış animasyonu, karşılama ekranı (`welScreen`), sürüm denetimi (`verWatch`, `fetchRemoteVersion`, `hardReload`, `showVersionBlock`), `showWhatsNew` (`WN_ITEMS`).
 - Blok B: vurgu renkleri (`applyAccent`, `effAccent`), `themeSwitch`, tema eşitleme (`profiles.prefs`), yönetici ortak teması (`admin/tema`), ortak sohbet temaları (`chats/{cid}.theme`, `KB_THEMES`, yeni `applyWp`/`wallpaperMenu`), yeni `vSettings` (`data-set` anahtarları).
@@ -315,3 +315,4 @@ Bu dosya, `index.html` okunarak çıkarılmış ayrıntılı bir haritadır. Yen
 - 7.0.7 (sahibi "video sınırını hemen 340 MB yap"): telefondan seçilebilen video 300 → 340 MB (Klaket oluştur, `kmMem`, Toplu Klaket `BQ`), Cloudinary'ye küçültmeden giden en büyük video `CLD.maxMB` 40 → 95 MB (Cloudinary ücretsiz planında video sınırı 100 MB; üstü yine telefonda 25 MB'a küçültülür, süre sınırı 2 dk aynı). APP_GUIDE/FAQ güncel. t69 30/30.
 - 7.0.8 (sahibi "video indirme seçeneği ekle"): bölge 708. Sohbette video/fotoğraf mesajına basılı tut › İndir (`msgMenu` sarıldı, `#mmDl`), Klaket ve fotoğraf paylaşımının ⋯ menüsünde İndir (`postMenu` sarıldı, `#mDl`; çoklu fotoğrafta görünen fotoğraf `PHI`, meme Klaketlerinde yok, kilitli kapsülde yok). `dlMedia(ref,kind)`: `chunk:` → `resolveVideo`, Cloudinary asıl dosya, fetch → blob → `<a download>` (`kadraj-video-…mp4`). Android uygulamasında WebView indiremediği için Cloudinary dosyası `KadrajGaleri.ac` ile tarayıcıda `fl_attachment` açılır; parça/veri dosyası uygulamada indirilemez (uyarı). `IP.dl708`. APP_GUIDE/FAQ güncel. Test `/home/user/kadraj-test/m70/dl708.js` (9/9), t69 30/30.
 - 7.0.9 (sahibi "küçültülen video tost makinesi gibi, en az 720p olsun"; 329 MB, 2 dk 10 sn video): küçültme zaten 1280 px (720p) idi, düşük kalite 25 MB hedefinden (≈1,4 Mbps) geliyordu. Bulutta küçültme hedefi 25 → 88 MB (`compressVideo` çağrıları, `kurgu.js` `limitB`), bit hızı tavanı 2,5 → 5 Mbps (`compressVideo`, `kurgu.js`), süre sınırı `CLD.maxS` 120 → 180 sn (3 dk). 2 dk 10 sn'lik video ≈ 4,6 Mbps, ≈ 76 MB olur (95 MB'ın altında, Cloudinary ücretsiz planı 100 MB). Yazılar "3 dakika, 720p". t69 30/30, dl708 9/9. Gerçek büyük video bu ortamda denenmedi.
+- 7.0.10 (sahibi "en çok 2 dk 30 sn olsun"; telefonunda hâlâ 7.0.6 açıktı, o yüzden 20 MB'lık eski küçültmeyi gördü): `CLD.maxS` 180 → 150 sn, yazılar "2 dk 30 sn". Bu süre ve 88 MB hedefle 2 dk 30 sn ≈ 4 Mbps, ≈ 75 MB. t69 30/30.
