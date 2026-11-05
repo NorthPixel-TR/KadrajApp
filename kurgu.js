@@ -44,7 +44,7 @@ function frame(x,W,H,v,ed,st,sel){x.fillStyle="#000";x.fillRect(0,0,W,H);const v
 function mediaDur(v){return new Promise(res=>{if(isFinite(v.duration)&&v.duration>0)return res(v.duration);const done=()=>{if(isFinite(v.duration)&&v.duration>0){v.removeEventListener("durationchange",done);v.currentTime=0;res(v.duration)}};v.addEventListener("durationchange",done);try{v.currentTime=1e7}catch{}setTimeout(()=>res(isFinite(v.duration)&&v.duration>0?v.duration:0),4000)})}
 const seek=(v,t)=>new Promise(res=>{let ok=false;const f=()=>{if(ok)return;ok=true;v.removeEventListener("seeked",f);res()};v.addEventListener("seeked",f);try{v.currentTime=t}catch{f()}setTimeout(f,2500)});
 const maxOut=()=>{try{return cldOn()?CLD.maxS:30}catch{return 30}};
-const limitB=()=>{try{return S.mode==="local"?1.5*1048576:cldOn()?25*1048576:3*1048576}catch{return 3*1048576}};
+const limitB=()=>{try{return S.mode==="local"?1.5*1048576:cldOn()?88*1048576:3*1048576}catch{return 3*1048576}};
 const maxSide=()=>{try{return cldOn()?1280:854}catch{return 854}};
 const isPlain=(ed,D)=>ed.s<=.05&&ed.e>=D-.05&&ed.r===1&&!ed.f&&ed.fm==="o"&&!ed.mute&&!(ed.tx||[]).length&&ed.cv==null;
 
@@ -58,7 +58,7 @@ function render(url,ed,{onProg,alive}={}){return new Promise((resolve,reject)=>{
   const dur=Math.max(.3,(ed.e-ed.s)/ed.r);let stream;try{stream=cv.captureStream(30)}catch{return fail("Bu tarayıcı videoyu düzenleyemiyor.")}
   if(!ed.mute)try{const AC=window.AudioContext||window.webkitAudioContext;ac=new AC();const src=ac.createMediaElementSource(v);const dst=ac.createMediaStreamDestination();src.connect(dst);dst.stream.getAudioTracks().forEach(t=>stream.addTrack(t));ac.resume&&ac.resume()}catch{v.muted=true}else v.muted=true;
   const types=["video/mp4;codecs=avc1","video/mp4","video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"];const mt=types.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||"";
-  const br=Math.round(clamp((limitB()*.82*8)/dur-56000,350000,maxSide()>854?2500000:1200000));
+  const br=Math.round(clamp((limitB()*.82*8)/dur-56000,350000,maxSide()>854?5000000:1200000));
   try{mr=new MediaRecorder(stream,mt?{mimeType:mt,videoBitsPerSecond:br,audioBitsPerSecond:64000}:{videoBitsPerSecond:br})}catch{return fail("Bu tarayıcı video kaydedemiyor.")}
   mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
   mr.onstop=()=>{if(done)return;done=true;clean();const type=(mr.mimeType||mt||"video/webm").split(";")[0];const blob=new Blob(chunks,{type});if(!blob.size)return reject(new Error("Video hazırlanamadı."));resolve({file:new File([blob],"kurgu."+(type.includes("mp4")?"mp4":"webm"),{type}),poster,W,H})};

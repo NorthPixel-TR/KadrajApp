@@ -1,8 +1,8 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.8",
+ "ver": "7.0.9",
  "at": 1793727074868,
- "note": "7.0.8: sohbette ve paylaşımlarda video/fotoğraf indirme.",
+ "note": "7.0.9: küçültülen videolar 720p, 5 Mbps'e kadar (2 dk 10 sn ≈ 76 MB), süre sınırı 3 dk.",
  "items": [
   {
    "ad": "İndir (sohbet ve paylaşım menüsü)",
