@@ -1,13 +1,13 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.5",
+ "ver": "7.0.6",
  "at": 1793727074868,
- "note": "7.0.5: profil fotoğrafları dönerek kendiliğinden değişiyor.",
+ "note": "7.0.6: profil açılınca fotoğraflar bir kez, hızlıca dönerek gösteriliyor.",
  "items": [
   {
-   "ad": "Kendiliğinden dönen profil fotoğrafları ve Ben çift dokunma (390 ve 800 px)",
+   "ad": "Bir kez dönen profil fotoğrafları ve Ben çift dokunma (390 ve 800 px)",
    "ok": true,
-   "not": "av704.js 20/20"
+   "not": "av704.js 21/21"
   },
   {
    "ad": "Sohbet ayrıntıları kayarken taşma, kapsül kartı, yeni DM zamanlama",
