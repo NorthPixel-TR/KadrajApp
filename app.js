@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70010,APP_VER="7.0.10";
+const APP_V=70011,APP_VER="7.0.11";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -10340,5 +10340,100 @@ IP.dl708='<path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/>';
 {const f=postMenu;postMenu=function(id,...a){const r=f.call(this,id,...a);try{const p=postById(id);const l=$('#overlay [data-layer="menu"]');if(p&&l&&!capLocked(p)){
  if(p.video&&!p.kvy)dlBtn(l,"mDl",()=>dlMedia(p.video,"video"));else if(p.kind==="photo"){const L=typeof phList==="function"?phList(p):[p.src||p.img];const i=typeof PHI==="object"&&PHI[id]||0;const src=L[i]||L[0];if(src)dlBtn(l,"mDl",()=>dlMedia(R(src),"foto"))}}}catch(e){console.warn("mDl",e)}return r}}
 /*}@js:708*/
+/*@js:7011{*/
+/* 7.0.11 (sahibi: "indirdiğim video telefonda 3 saniye görünüyor, sonra 2 dk 10 sn oluyor; Instagram'a atınca yalnızca ilk 3 saniye"):
+   Telefonda küçültülen/kaydedilen video MediaRecorder'dan gelir: MP4 ise "parçalı MP4" (moov'da süre 0, örnekler moof+mdat parçalarında),
+   WebM ise başlıkta süre yok. Galeri ve Instagram yalnızca ilk parçayı okuyor. vidFix(file):
+   - parçalı MP4 → mp4Defrag: bütün parçaların örnek tablolarını (trun) tek moov'da toplar (stts, ctts, stss, stsz, stsc, co64; stsd aynen),
+     mvhd/tkhd/mdhd süreleri yazılır, mvex/edts atılır, ftyp+moov+mdat (moov başta, hızlı başlama). Görüntü/ses yeniden kodlanmaz, kalite aynı.
+   - WebM'de süre yoksa webmDur: Info'ya Duration eklenir (süre bilinmiyorsa son Cluster'dan bulunur).
+   storeVideo sarıldı (her yükleme: küçültülen, Kurgu, kamera, telefondan gelen); dlMedia sarıldı (tarayıcıda eski videoyu indirirken de düzeltir).
+   Android uygulamasında indirme tarayıcıda açıldığı için orada Cloudinary'nin yeniden kodladığı (oynatılan) MP4 indirilir (dl7011Url). */
+const MP4_C=new Set(["moov","trak","mdia","minf","stbl","edts","dinf","mvex","moof","traf"]);
+function mp4Boxes(u8,s,e){const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength),out=[];let p=s;
+ while(p+8<=e){let sz=dv.getUint32(p),hl=8;const t=String.fromCharCode(u8[p+4],u8[p+5],u8[p+6],u8[p+7]);
+  if(sz===1){sz=Number(dv.getBigUint64(p+8));hl=16}else if(sz===0)sz=e-p;if(sz<hl||p+sz>e)break;
+  const b={t,s:p,e:p+sz,d:p+hl};if(MP4_C.has(t))b.k=mp4Boxes(u8,b.d,b.e);out.push(b);p+=sz}return out}
+const mp4Find=(l,t)=>l&&l.find(b=>b.t===t);
+function mp4Box(t,parts){let n=8;for(const x of parts)n+=x.length;const o=new Uint8Array(n),dv=new DataView(o.buffer);dv.setUint32(0,n);for(let i=0;i<4;i++)o[4+i]=t.charCodeAt(i);let p=8;for(const x of parts){o.set(x,p);p+=x.length}return o}
+function mp4Full(t,v,f,body){const h=new Uint8Array(4);h[0]=v;h[1]=f>>16&255;h[2]=f>>8&255;h[3]=f&255;return mp4Box(t,[h,body])}
+function u32a(arr){const o=new Uint8Array(arr.length*4),dv=new DataView(o.buffer);arr.forEach((x,i)=>dv.setUint32(i*4,x>>>0));return o}
+function mp4Dur(u8,b,isTk,dur){const c=u8.slice(b.s,b.e),dv=new DataView(c.buffer),h=b.d-b.s,v=c[h];
+ const off=v===1?h+4+16+(isTk?8:4):h+4+8+(isTk?8:4);if(v===1)dv.setBigUint64(off,BigInt(Math.round(dur)));else dv.setUint32(off,Math.min(0xFFFFFFFF,Math.round(dur)));return c}
+function mp4IsFrag(u8){const top=mp4Boxes(u8,0,u8.length);return top.some(b=>b.t==="moof")&&!!mp4Find(mp4Find(top,"moov")?.k,"mvex")}
+function mp4Defrag(u8){const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);const top=mp4Boxes(u8,0,u8.length);const moov=mp4Find(top,"moov");if(!moov)throw new Error("moov yok");
+ const mvhd=mp4Find(moov.k,"mvhd");const mvTs=dv.getUint32(mvhd.d+(u8[mvhd.d]===1?20:12));
+ const trex={};const mvex=mp4Find(moov.k,"mvex");for(const b of (mvex&&mvex.k||[]).filter(b=>b.t==="trex"))trex[dv.getUint32(b.d+4)]={sdi:dv.getUint32(b.d+8),dur:dv.getUint32(b.d+12),size:dv.getUint32(b.d+16),flags:dv.getUint32(b.d+20)};
+ const T={};const traks=moov.k.filter(b=>b.t==="trak");
+ for(const tk of traks){const tkhd=mp4Find(tk.k,"tkhd");const id=dv.getUint32(tkhd.d+(u8[tkhd.d]===1?20:12));const mdia=mp4Find(tk.k,"mdia");const mdhd=mp4Find(mdia.k,"mdhd");const hdlr=mp4Find(mdia.k,"hdlr");
+  T[id]={tk,tkhd,mdia,mdhd,ts:dv.getUint32(mdhd.d+(u8[mdhd.d]===1?20:12)),vide:String.fromCharCode(...u8.slice(hdlr.d+8,hdlr.d+12))==="vide",durs:[],sizes:[],cto:[],sync:[],chunks:[]}}
+ const parts=[];let mlen=0;
+ for(const mf of top.filter(b=>b.t==="moof"))for(const tf of mf.k.filter(b=>b.t==="traf")){const tfhd=mp4Find(tf.k,"tfhd");const fl=(u8[tfhd.d+1]<<16)|(u8[tfhd.d+2]<<8)|u8[tfhd.d+3];let p=tfhd.d+4;const id=dv.getUint32(p);p+=4;const tr=T[id];if(!tr)continue;const dx=trex[id]||{dur:0,size:0,flags:0};
+  let base=mf.s;if(fl&1){base=Number(dv.getBigUint64(p));p+=8}if(fl&2)p+=4;let dDur=dx.dur,dSize=dx.size,dFl=dx.flags;if(fl&8){dDur=dv.getUint32(p);p+=4}if(fl&16){dSize=dv.getUint32(p);p+=4}if(fl&32){dFl=dv.getUint32(p);p+=4}
+  let next=base;
+  for(const tr2 of tf.k.filter(b=>b.t==="trun")){const v=u8[tr2.d],f=(u8[tr2.d+1]<<16)|(u8[tr2.d+2]<<8)|u8[tr2.d+3];let q=tr2.d+4;const n=dv.getUint32(q);q+=4;let off=next;if(f&1){off=base+dv.getInt32(q);q+=4}let ff=null;if(f&4){ff=dv.getUint32(q);q+=4}
+   let tot=0;const st=tr.sizes.length;
+   for(let i=0;i<n;i++){let du=dDur,sz=dSize,sf=(i===0&&ff!==null)?ff:dFl,co=0;if(f&0x100){du=dv.getUint32(q);q+=4}if(f&0x200){sz=dv.getUint32(q);q+=4}if(f&0x400){const x=dv.getUint32(q);q+=4;if(!(i===0&&ff!==null))sf=x}if(f&0x800){co=v?dv.getInt32(q):dv.getUint32(q);q+=4}
+    tr.durs.push(du);tr.sizes.push(sz);tr.cto.push(co);if(!(sf&0x10000))tr.sync.push(st+i+1);tot+=sz}
+   if(n){if(off+tot>u8.length)throw new Error("Bozuk parça");tr.chunks.push({rel:mlen,n});parts.push(u8.subarray(off,off+tot));mlen+=tot}next=off+tot}}
+ const ids=Object.keys(T).map(Number).filter(id=>T[id].sizes.length);if(!ids.length)throw new Error("Örnek yok");
+ let mvDur=0;const trakOut=[];
+ const build=(mdatData)=>{trakOut.length=0;mvDur=0;
+  for(const id of ids){const tr=T[id];const md=tr.durs.reduce((a,b)=>a+b,0);const tkD=md*mvTs/tr.ts;mvDur=Math.max(mvDur,tkD);
+   const stts=[];for(const d of tr.durs){const l=stts[stts.length-1];if(l&&l[1]===d)l[0]++;else stts.push([1,d])}
+   const boxes=[];const stsd=mp4Find(mp4Find(mp4Find(tr.mdia.k,"minf").k,"stbl").k,"stsd");boxes.push(u8.slice(stsd.s,stsd.e));
+   boxes.push(mp4Full("stts",0,0,u32a([stts.length,...stts.flat()])));
+   if(tr.cto.some(c=>c)){const neg=tr.cto.some(c=>c<0);const rl=[];for(const c of tr.cto){const l=rl[rl.length-1];if(l&&l[1]===c)l[0]++;else rl.push([1,c])}boxes.push(mp4Full("ctts",neg?1:0,0,u32a([rl.length,...rl.flat()])))}
+   if(tr.vide&&tr.sync.length<tr.sizes.length)boxes.push(mp4Full("stss",0,0,u32a([tr.sync.length,...tr.sync])));
+   const sc=[];tr.chunks.forEach((c,i)=>{const l=sc[sc.length-1];if(!l||l[1]!==c.n)sc.push([i+1,c.n,1])});boxes.push(mp4Full("stsc",0,0,u32a([sc.length,...sc.flat()])));
+   boxes.push(mp4Full("stsz",0,0,u32a([0,tr.sizes.length,...tr.sizes])));
+   const co=new Uint8Array(4+tr.chunks.length*8),cdv=new DataView(co.buffer);cdv.setUint32(0,tr.chunks.length);tr.chunks.forEach((c,i)=>cdv.setBigUint64(4+i*8,BigInt(mdatData+c.rel)));boxes.push(mp4Full("co64",0,0,co));
+   const stbl=mp4Box("stbl",boxes);const minf=mp4Find(tr.mdia.k,"minf");const minfKids=minf.k.map(b=>b.t==="stbl"?stbl:u8.slice(b.s,b.e));
+   const mdiaKids=tr.mdia.k.map(b=>b.t==="mdhd"?mp4Dur(u8,b,false,md):b.t==="minf"?mp4Box("minf",minfKids):u8.slice(b.s,b.e));
+   const trakKids=tr.tk.k.filter(b=>b.t!=="edts").map(b=>b.t==="tkhd"?mp4Dur(u8,b,true,tkD):b.t==="mdia"?mp4Box("mdia",mdiaKids):u8.slice(b.s,b.e));
+   trakOut.push(mp4Box("trak",trakKids))}
+  const moovKids=moov.k.filter(b=>b.t!=="mvex"&&(b.t!=="trak"||false)).map(b=>b.t==="mvhd"?mp4Dur(u8,b,false,mvDur):u8.slice(b.s,b.e));
+  return mp4Box("moov",[...moovKids,...trakOut])};
+ const ftyp=mp4Box("ftyp",[new TextEncoder().encode("isom"),u32a([512]),new TextEncoder().encode("isomiso2avc1mp41")]);
+ const big=mlen+8>0xFFFFFFFF;const mh=big?16:8;
+ let moovB=build(0);const dataStart=ftyp.length+moovB.length+mh;moovB=build(dataStart);
+ const out=new Uint8Array(ftyp.length+moovB.length+mh+mlen);out.set(ftyp,0);out.set(moovB,ftyp.length);let p=ftyp.length+moovB.length;const odv=new DataView(out.buffer);
+ if(big){odv.setUint32(p,1);out.set(new TextEncoder().encode("mdat"),p+4);odv.setBigUint64(p+8,BigInt(mh+mlen))}else{odv.setUint32(p,mh+mlen);out.set(new TextEncoder().encode("mdat"),p+4)}p+=mh;
+ for(const x of parts){out.set(x,p);p+=x.length}return out}
+/* WebM: Info içine Duration */
+function ebmlVint(u8,p){const b=u8[p];let l=1,m=0x80;while(l<=8&&!(b&m)){l++;m>>=1}if(l>8)return null;let v=b&(m-1),unk=v===m-1;for(let i=1;i<l;i++){v=v*256+u8[p+i];if(u8[p+i]!==255)unk=false}return{v,l,unk}}
+function ebmlId(u8,p){const b=u8[p];let l=1,m=0x80;while(l<=4&&!(b&m)){l++;m>>=1}let v=0;for(let i=0;i<l;i++)v=v*256+u8[p+i];return{v,l}}
+function ebmlSize(n,len){const o=new Uint8Array(len);let v=n;for(let i=len-1;i>=0;i--){o[i]=v&255;v=Math.floor(v/256)}o[0]|=0x80>>(len-1);return o}
+function webmLastMs(u8){/* son Cluster'ın zamanı + içindeki en büyük blok zamanı */const pat=[0x1F,0x43,0xB6,0x75];
+ for(let i=u8.length-8;i>0;i--){if(u8[i]!==0x1F||u8[i+1]!==0x43||u8[i+2]!==0xB6||u8[i+3]!==0x75)continue;const sz=ebmlVint(u8,i+4);if(!sz)continue;let p=i+4+sz.l,tc=null,mx=0;
+  while(p<u8.length-4){const id=ebmlId(u8,p);const s=ebmlVint(u8,p+id.l);if(!s)break;const d=p+id.l+s.l;if(id.v===0xE7){let v=0;for(let k=0;k<s.v;k++)v=v*256+u8[d+k];tc=v}else if(id.v===0xA3||id.v===0xA0){const tn=ebmlVint(u8,id.v===0xA3?d:d+2);const off=(id.v===0xA3?d:d+2)+(tn?tn.l:1);if(id.v===0xA3){const r=(u8[off]<<8|u8[off+1]);mx=Math.max(mx,r>32767?r-65536:r)}}else if(id.v===0x1F43B675)break;
+   if(s.unk||id.v===0xA0&&0)break;p=d+s.v}
+  if(tc!==null)return tc+mx+33;void pat}return 0}
+function webmDur(u8,ms){let p=0;const h=ebmlId(u8,0);if(h.v!==0x1A45DFA3)return null;const hs=ebmlVint(u8,h.l);p=h.l+hs.l+hs.v;
+ const sg=ebmlId(u8,p);if(sg.v!==0x18538067)return null;const ss=ebmlVint(u8,p+sg.l);const segStart=p,segData=p+sg.l+ss.l;let q=segData;
+ while(q<u8.length){const id=ebmlId(u8,q);const s=ebmlVint(u8,q+id.l);if(!s)return null;const d=q+id.l+s.l;
+  if(id.v===0x1F43B675)return null;/* Info Cluster'dan önce gelir */
+  if(id.v===0x1549A966){if(s.unk)return null;let r=d,has=null;while(r<d+s.v){const cid=ebmlId(u8,r);const cs=ebmlVint(u8,r+cid.l);if(cid.v===0x4489)has={p:r+cid.l+cs.l,l:cs.v};r=r+cid.l+cs.l+cs.v}
+   if(!ms)ms=webmLastMs(u8);if(!ms)return null;
+   if(has){const o=u8.slice();const dv=new DataView(o.buffer);if(has.l===8)dv.setFloat64(has.p,ms);else if(has.l===4)dv.setFloat32(has.p,ms);else return null;return o}
+   const dEl=new Uint8Array(11);dEl[0]=0x44;dEl[1]=0x89;dEl[2]=0x88;new DataView(dEl.buffer).setFloat64(3,ms);
+   const nsz=s.v+11;const szb=ebmlSize(nsz,8);const head=u8.subarray(0,q+id.l);const tail=u8.subarray(d+s.v);
+   let pre=head;if(!ss.unk){/* Segment boyunu da büyüt */const nss=ebmlSize(ss.v+11+(8-s.l),ss.l);pre=u8.slice(0,q+id.l);pre.set(nss,segStart+sg.l)}
+   const out=new Uint8Array(pre.length+8+s.v+11+tail.length);let o=0;out.set(pre,o);o+=pre.length;out.set(szb,o);o+=8;out.set(u8.subarray(d,d+s.v),o);o+=s.v;out.set(dEl,o);o+=11;out.set(tail,o);return out}
+  if(s.unk)return null;q=d+s.v}return null}
+async function vidFix(file,ms){try{if(!file||!file.size||file.size>400*1048576)return file;const u8=new Uint8Array(await file.arrayBuffer());const name=String(file.name||"video");
+  if(u8.length>12&&String.fromCharCode(u8[4],u8[5],u8[6],u8[7])==="ftyp"){if(!mp4IsFrag(u8))return file;const o=mp4Defrag(u8);const nf=new File([o],name.replace(/\.\w+$/,"")+".mp4",{type:"video/mp4"});nf._mem=1;nf._fixed=1;return nf}
+  if(u8[0]===0x1A&&u8[1]===0x45&&u8[2]===0xDF&&u8[3]===0xA3){const o=webmDur(u8,ms);if(!o)return file;const nf=new File([o],name,{type:file.type||"video/webm"});nf._mem=1;nf._fixed=1;return nf}}catch(e){console.warn("vidFix",e)}return file}
+{const f=storeVideo;storeVideo=async function(file,...a){if(file&&!file._fixed)file=await vidFix(file);return f.call(this,file,...a)}}
+/* indirme: tarayıcıda dosya düzeltilerek kaydedilir; uygulamada Cloudinary'nin oynatılan (yeniden kodlanmış) MP4'ü indirilir */
+const dl7011Url=u=>cldPlay(u).replace("/video/upload/","/video/upload/fl_attachment/");
+{const f=dlMedia;dlMedia=async function(ref,kind,...a){if(kind!=="video")return f.call(this,ref,kind,...a);const g=kgal();
+ if(g&&dlCld(String(ref||""))&&g.ac){try{await g.ac({url:dl7011Url(String(ref))});return toast("İndirme tarayıcıda açıldı")}catch(e){console.warn(e)}}
+ if(g)return f.call(this,ref,kind,...a);
+ try{let u=String(ref||"");if(!u)return toast("İndirilecek bir şey yok");if(u.startsWith("chunk:")){toast("Video hazırlanıyor…");u=await resolveVideo(u)}else if(dlCld(u))toast("İndiriliyor…");
+  const r=await fetch(u);if(!r.ok)throw new Error("HTTP "+r.status);let b=await r.blob();const fx=await vidFix(new File([b],"v",{type:b.type}));b=fx;
+  const ext=/webm/.test(b.type)?"webm":/quicktime/.test(b.type)?"mov":"mp4";const bu=URL.createObjectURL(b);const a2=document.createElement("a");a2.href=bu;a2.download=dlName("video",ext);document.body.appendChild(a2);a2.click();a2.remove();setTimeout(()=>URL.revokeObjectURL(bu),60000);toast("Video indirildi")}
+ catch(e){console.warn("dl",e);toast("İndirilemedi. İnternetini kontrol edip yeniden dene.")}}}
+/*}@js:7011*/
 boot();
 

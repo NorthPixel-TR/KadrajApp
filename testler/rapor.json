@@ -1,9 +1,14 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.10",
+ "ver": "7.0.11",
  "at": 1793727074868,
- "note": "7.0.10: video süre sınırı 2 dk 30 sn, 720p yüksek kalite.",
+ "note": "7.0.11: indirilen/yüklenen videonun süresi düzgün (parçalı MP4 tek parçaya çevriliyor, WebM'e süre ekleniyor).",
  "items": [
+  {
+   "ad": "Video süresi düzeltmesi (parçalı MP4, WebM)",
+   "ok": true,
+   "not": "vf/t.js 24/24"
+  },
   {
    "ad": "İndir (sohbet ve paylaşım menüsü)",
    "ok": true,
