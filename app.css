@@ -4015,3 +4015,363 @@ html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-i
 .k693-pl .src small{display:none!important}
 .k693-pl .src .ic{width:36px;height:36px;flex:none}
 /*}@css:693*/
+/*@css:70UI{*/
+/* 7.0 yeni arayüz (Instagram düzeni, Kadraj renkleri). Süreler --k69-d (Ayarlar › Animasyonlar; kapalıyken ~0). backdrop-filter yok, sonsuz animasyon yok.
+   Kapsam: genel görünüm, üst çubuk, alt menü, Akış kartı, hikâye şeridi ve görüntüleyici, profil, Keşfet, Bildirimler, Ayarlar, pencereler.
+   Sohbet listesi ve sohbet ekranı başka bölgede; #shell[data-r="chat"|"chats"] üst çubuğuna dokunulmaz. Klaket çerçevesi/düzeni aynı. */
+:root{--k70-d:var(--k69-d,.35s);--k70-e:cubic-bezier(.2,.8,.2,1);--k70-sp:cubic-bezier(.34,1.45,.64,1);--k70-out:cubic-bezier(.4,0,.9,.6)}
+/* --- zemin ve yuvarlak avatarlar --- */
+:root[data-ui="vizor"] .shell:not([data-ct]){background:var(--bg)}
+:root[data-ui] .av img{border-radius:50%}
+:root[data-ui] .av.ring::before{border-radius:50%}
+:root[data-ui] .av .on{border-color:var(--bg)}
+/* --- düğmelere basınca geri bildirim --- */
+:root[data-ui] :is(.btn,.chip,.opt,.src,.ctile,.pcard,.hlc,.story,.k70-lk,.k70-add,.sg-h,.setprof,.row>button.t,.act-row,.srow):active{transition-duration:.08s}
+:root[data-ui] :is(.btn,.chip,.ctile,.src):active{transform:scale(.95)}
+:root[data-ui] .opt:active,:root[data-ui] .setprof:active{transform:scale(.98)}
+:root[data-ui] :is(.sg-h,.act-row,.srow,.row):active{background:color-mix(in srgb,var(--fg) 6%,transparent)}
+:root[data-ui] #main .ib:active,:root[data-ui] #top .ib:active{transform:scale(.86)}
+:root[data-ui] .story:active .av,:root[data-ui] .hlc:active .hav{transform:scale(.92)}
+:root[data-ui] :is(.btn,.chip,.opt,.ib,.story .av,.hlc .hav,.sg-h,.setprof){transition:transform calc(var(--k70-d) * .8) var(--k70-sp),background-color .2s,color .2s,opacity .2s}
+
+/* --- üst çubuk: düz, simgeler çerçevesiz (sohbet ekranları hariç) --- */
+:root[data-ui] #shell:not([data-r="chat"]):not([data-r="chats"]) #top .ib{background:transparent;border-color:transparent;box-shadow:none;color:var(--fg)}
+:root[data-ui] #shell:not([data-r="chat"]):not([data-r="chats"]) #top .ib svg.i{width:1.55rem;height:1.55rem;stroke-width:1.8}
+:root[data-ui] #shell:not([data-r="chat"]):not([data-r="chats"]) #top h1{font:700 1.25rem/1.15 var(--f-display);letter-spacing:-.025em}
+:root[data-ui] #shell[data-r="feed"] #top .wordmark{font-size:1.55rem;letter-spacing:-.05em}
+:root[data-ui] #shell[data-r="feed"] #top .brand .vfmark{width:1.75rem;height:1.75rem}
+:root[data-ui]:not([data-ui="vizor"]) #shell:not([data-r="chat"]):not([data-r="chats"]) #top{background:var(--bg);min-height:54px}
+
+/* --- alt menü: ince, yazısız, seçili simge dolu --- */
+:root[data-ui] #dock nav>button .dl{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0;padding:0}
+:root[data-ui] #dock nav>button{gap:0;padding:11px 0;color:var(--fg)}
+:root[data-ui] #dock nav>button svg.i{width:1.62rem;height:1.62rem;stroke-width:1.75;color:var(--fg)}
+:root[data-ui] #dock nav>button[aria-current="page"] svg.i,:root[data-ui] #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i{color:var(--accent);stroke-width:2.1}
+:root[data-ui] #dock nav>button[aria-current="page"]:is([data-tab="feed"],[data-tab="chats"],[data-tab="activity"]) svg.i,:root[data-ui] #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i{fill:currentColor}
+:root[data-ui] #dock nav>button[aria-current="page"][data-tab="chats"] svg.i path+path,:root[data-ui] #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i path:first-of-type{stroke:var(--surface);fill:var(--surface)}
+:root[data-ui] #dock nav>button[aria-current="page"][data-tab="explore"] svg.i{stroke-width:2.9}
+:root[data-ui] #dock nav>button.pop svg.i,:root[data-ui] #dock nav>button.pop .me{animation:k70Dock calc(var(--k70-d) * 1.1) var(--k70-sp) both}
+@keyframes k70Dock{0%{transform:scale(.72)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+:root[data-ui] #dock .me{width:1.7rem;height:1.7rem;border-radius:50%;outline:0;box-shadow:0 0 0 1px var(--k6-hair)}
+:root[data-ui] #dock [aria-current="page"] .me{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--accent)}
+:root[data-ui] #dock .cnt-badge{top:4px}
+:root[data-ui] #dock nav>button[data-act="create"]{padding:0;display:grid;place-items:center}
+:root[data-ui] #dock .create{width:2.75rem;height:2.4rem;margin:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);box-shadow:none}
+:root[data-ui] #dock .create svg.i{width:1.5rem;height:1.5rem;stroke-width:2.3;color:inherit}
+:root[data-ui] #dock [data-act="create"]:active .create{transform:scale(.88)}
+:root[data-ui] .vz-focus::after{content:none}
+:root[data-ui]:not([data-ui="vizor"]) .vz-focus{display:none}
+/* Klasik: Instagram gibi düz, tam genişlik çubuk */
+:root[data-ui]:not([data-ui="vizor"]) #dock{padding:0 0 env(safe-area-inset-bottom,0px);background:var(--bg);border-top:1px solid var(--k6-hair)}
+:root[data-ui]:not([data-ui="vizor"]) #dock nav{max-width:640px;margin:0 auto;padding:1px 4px;border:0;border-radius:0;background:transparent;box-shadow:none}
+:root[data-ui]:not([data-ui="vizor"]) #dock .create{background:transparent;color:var(--fg);border:2px solid currentColor;width:1.75rem;height:1.75rem;border-radius:8px}
+:root[data-ui]:not([data-ui="vizor"]) #dock .create svg.i{width:1.15rem;height:1.15rem;stroke-width:2.6}
+:root[data-ui]:not([data-ui="vizor"]) #dock [data-act="create"]:active .create svg.i{transform:none}
+:root[data-ui]:not([data-ui="vizor"]) #dock nav>button[aria-current="page"][data-tab="chats"] svg.i path+path{stroke:var(--bg);fill:var(--bg)}
+:root[data-ui]:not([data-ui="vizor"]) #shell[data-r="reels"] #dock{background:#000;border-top-color:#222}
+:root[data-ui]:not([data-ui="vizor"]) #shell[data-r="reels"] #dock nav>button svg.i,:root[data-ui]:not([data-ui="vizor"]) #shell[data-r="reels"] #dock .create{color:#fff}
+:root[data-ui]:not([data-ui="vizor"]) #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i path:first-of-type{stroke:#000;fill:#000}
+/* Vizör: yüzen ince hap */
+:root[data-ui="vizor"] #dock nav{padding:3px 6px;max-width:430px}
+:root[data-ui="vizor"] #dock nav>button[aria-current="page"][data-tab="chats"] svg.i path+path{stroke:var(--surface)}
+:root[data-ui="vizor"] #dock .create{border-radius:50%;width:2.6rem;height:2.6rem}
+
+/* --- Akış: hikâye şeridi --- */
+:root[data-ui] #main .stories{gap:10px;padding:8px 12px 12px;margin-bottom:6px;border-bottom:1px solid var(--k6-hair)}
+:root[data-ui] #main .story{width:4.85rem;gap:6px}
+:root[data-ui] #main .story .av{--s:64px!important;margin-top:6px}
+:root[data-ui] #main .story .n{font:500 .72rem/1.2 var(--f-body);color:var(--fg);max-width:4.5rem}
+:root[data-ui] #main .story .n.muted{color:var(--muted)}
+:root[data-ui] #main .story .plus{width:22px;height:22px;right:-2px;bottom:-2px;border-radius:50%;border:2.5px solid var(--bg);box-shadow:none}
+:root[data-ui] .av.ring::before{inset:calc(var(--s,44px) * -.09);padding:max(2px,calc(var(--s,44px) * .04))}
+:root[data-ui] main.enter .stories>.story:nth-child(-n+10){animation-name:k70Pop}
+@keyframes k70Pop{from{opacity:0;transform:scale(.6)}}
+:root[data-ui] main.enter>*{animation-duration:var(--k70-d)!important}
+:root[data-ui] main.enter .stories>.story:nth-child(-n+10){animation-duration:calc(var(--k70-d) * 1.2)!important}
+
+/* --- Akış: Instagram paylaşım kartı (k70Card) --- */
+:root[data-ui] #main .card.k70c{margin:0 0 18px;border:0;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
+:root[data-ui] #main .card.k70c+.card.k70c{border-top:0}
+:root[data-ui] #main .k70c .card-h{gap:10px;padding:8px 4px 8px 12px;align-items:center}
+:root[data-ui] #main .k70c .card-h .av{--s:34px!important}
+:root[data-ui] #main .k70c .card-h .who{line-height:1.2;min-width:0}
+:root[data-ui] #main .k70c .card-h .who>div:first-child{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
+:root[data-ui] #main .k70c .card-h .uname{font:700 .9rem/1.2 var(--f-body);letter-spacing:0;overflow:hidden;text-overflow:ellipsis}
+:root[data-ui] #main .k70c .card-h .who .sub{margin-top:1px;font:400 .76rem/1.3 var(--f-body);color:var(--fg);opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:root[data-ui] #main .k70c .follow-link{color:var(--accent);font-weight:700;font-size:.86rem}
+:root[data-ui] #main .k70c .card-h .ib.plain{color:var(--fg)}
+:root[data-ui] #main .k70c>.media{margin:0;border-radius:0;max-width:none;width:100%}
+:root[data-ui] #main .k70c>.note{margin:0;border-radius:0}
+:root[data-ui] #main .k70c>.poll{margin:0 12px}
+:root[data-ui] #main .k70c .pills{gap:0;padding:4px 4px 0}
+:root[data-ui] #main .k70c .pill{min-height:2.7rem;padding:0 .55rem;gap:0;border:0;background:transparent;color:var(--fg)}
+:root[data-ui] #main .k70c .pill svg.i{width:1.6rem;height:1.6rem;stroke-width:1.75}
+:root[data-ui] #main .k70c .pill:active{background:transparent;transform:scale(.84)}
+:root[data-ui] #main .k70c .pill.liked{color:var(--heart)}
+:root[data-ui] #main .k70c .pill.saved{color:var(--fg)}
+:root[data-ui] #main .k70c .pill.rpon{color:var(--accent)}
+@media (hover:hover){:root[data-ui] #main .k70c .pill:hover{background:transparent;opacity:.6}}
+.k70-lk{display:flex;align-items:center;gap:7px;width:fit-content;max-width:calc(100% - 28px);margin:0 14px 2px;padding:2px 0;background:none;border:0;color:var(--fg);font:400 .9rem/1.35 var(--f-body);text-align:left;cursor:pointer}
+.k70-lk b{font-weight:700}
+.k70-lka{display:inline-flex;flex:none}
+.k70-lka img{width:20px;height:20px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 2px var(--bg);background:var(--surface-2)}
+.k70-lka img+img{margin-left:-7px}
+:root[data-ui] #main .k70c .card-b{gap:4px;padding:2px 14px 0;font-size:.9rem;line-height:1.42}
+:root[data-ui] #main .k70c .card-b .cap .uname{font-weight:700}
+:root[data-ui] #main .k70c .card-b .more{font-weight:400;font-size:.9rem;color:var(--muted);padding:1px 0}
+.k70-add{display:flex;align-items:center;gap:8px;margin-top:2px;padding:3px 0;background:none;border:0;color:var(--muted);font:400 .86rem/1 var(--f-body);text-align:left;cursor:text}
+.k70-add img{width:24px;height:24px;border-radius:50%;object-fit:cover;background:var(--surface-2)}
+.k70-tm{display:block;padding:2px 0 0;color:var(--muted);font:400 .72rem/1.3 var(--f-body);letter-spacing:.01em}
+:root[data-ui] #main .k70c .meta-line{order:9}
+:root[data-ui] #shell[data-r="post"] #main .card.k70c{margin-top:4px}
+/* çift dokunma kalbi: büyük, yaylı, sonra yukarı süzülür */
+:root[data-ui] .burst{width:110px;height:110px;margin:-55px;animation:k70Heart calc(var(--k70-d) * 2 + .3s) var(--k70-e) forwards;filter:drop-shadow(0 6px 18px rgba(0,0,0,.35))}
+@keyframes k70Heart{0%{transform:scale(0) rotate(-12deg);opacity:0}18%{transform:scale(1.25) rotate(6deg);opacity:1}30%{transform:scale(.92) rotate(0)}42%{transform:scale(1.04)}72%{transform:scale(1);opacity:1}100%{transform:translateY(-60px) scale(.6);opacity:0}}
+:root[data-ui] .burst svg{fill:#fff}
+
+/* --- hikâye görüntüleyici: sağdan açılır, aşağı kayıp kapanır, kişiler arası küp --- */
+.sv.k70-svin{animation:k70SvIn var(--k70-d) cubic-bezier(.16,.9,.3,1) both}
+@keyframes k70SvIn{from{transform:translate3d(100%,0,0)}}
+#k70Gh{position:fixed;inset:0;bottom:auto;height:var(--vvh,100%);z-index:49;pointer-events:none;overflow:hidden}
+#k70Gh .k70-gw{position:absolute;inset:0}
+#k70Gh,#k70Gh *{pointer-events:none!important}
+#k70Gh .k70-bk{position:absolute;inset:0;margin:0 auto;max-width:520px;background:#000}
+#k70Gh .k70-svout>.sv{animation:k70SvOut var(--k70-d) var(--k70-out) forwards}
+@keyframes k70SvOut{to{transform:translate3d(0,40%,0) scale(.7);opacity:0;border-radius:28px}}
+#k70Gh .k70-cout>.sv{transform-origin:100% 50%;animation:k70CubeOut var(--k70-d) ease-in both}
+#k70Gh .k70-coutp>.sv{transform-origin:0% 50%;animation:k70CubeOutP var(--k70-d) ease-in both}
+.sv.k70-cinn{transform-origin:0% 50%;animation:k70CubeIn var(--k70-d) ease-in both}
+.sv.k70-cinp{transform-origin:100% 50%;animation:k70CubeInP var(--k70-d) ease-in both}
+@keyframes k70CubeOut{50%{animation-timing-function:ease-out;transform:perspective(1200px) translateX(-50%) translateZ(-200px) rotateY(-45deg)}100%{transform:perspective(1200px) translateX(-100%) rotateY(-90deg);opacity:.3}}
+@keyframes k70CubeIn{0%{transform:perspective(1200px) translateX(100%) rotateY(90deg);opacity:.3}50%{animation-timing-function:ease-out;transform:perspective(1200px) translateX(50%) translateZ(-200px) rotateY(45deg)}}
+@keyframes k70CubeOutP{50%{animation-timing-function:ease-out;transform:perspective(1200px) translateX(50%) translateZ(-200px) rotateY(45deg)}100%{transform:perspective(1200px) translateX(100%) rotateY(90deg);opacity:.3}}
+@keyframes k70CubeInP{0%{transform:perspective(1200px) translateX(-100%) rotateY(-90deg);opacity:.3}50%{animation-timing-function:ease-out;transform:perspective(1200px) translateX(-50%) translateZ(-200px) rotateY(-45deg)}}
+.sv{overflow:hidden;will-change:auto}
+.sv .bars i{height:2.5px}
+.sv .shd .av{--s:32px!important}
+
+/* --- profil (Instagram düzeni) --- */
+:root[data-ui] #main .prof{gap:10px;padding:6px 16px 4px}
+:root[data-ui] #main .prof::before,:root[data-ui] #main .prof .k6-cover{display:none}
+:root[data-ui] #main .prof.k6-hasc{padding-top:6px}
+:root[data-ui] #main .prof .prof-top,:root[data-ui] #main .prof.k6-hasc .prof-top{align-items:center;gap:22px;padding-left:2px}
+:root[data-ui] #main .prof-top>.av{--s:86px!important}
+:root[data-ui] #main .prof-top>.av img{box-shadow:none!important}
+:root[data-ui] #main .prof.k6-hasc .prof-top>.av.ring::before{inset:calc(var(--s,44px) * -.09)}
+:root[data-ui] #main .prof .stats{gap:0}
+:root[data-ui] #main .prof .stats>*{padding:6px 0;border:0;border-radius:10px;background:transparent;line-height:1.2}
+:root[data-ui] #main .prof .stats b{font:700 1.12rem/1.2 var(--f-body);letter-spacing:-.01em}
+:root[data-ui] #main .prof .stats span{margin-top:2px;font:400 .84rem/1.2 var(--f-body);color:var(--fg)}
+:root[data-ui] #main .prof>div>b[style]{font:700 .95rem/1.3 var(--f-body)!important;letter-spacing:0}
+:root[data-ui] #main .prof .bio{font-size:.9rem;line-height:1.42}
+:root[data-ui] #main .prof .pnote{padding:5px 11px;font-size:.84rem;box-shadow:none;background:var(--surface-2);border-color:transparent}
+:root[data-ui] #main .prof .btns{gap:6px}
+:root[data-ui] #main .prof .btns .btn{flex:1 1 0;min-width:0}
+:root[data-ui] #main .prof .btns .btn{min-height:2.25rem;padding:0 .7rem;border-radius:10px;border:0;font:600 .86rem/1 var(--f-body);background:var(--surface-2);color:var(--fg);box-shadow:none}
+:root[data-ui] #main .prof .btns .btn:not(.sec){background:var(--accent);color:var(--accent-ink)}
+:root[data-ui] #main .prof .btns .btn svg.i{width:1.1rem;height:1.1rem}
+:root[data-ui] #main .prof .btns .btn.k70-ib{flex:0 0 2.5rem;width:2.5rem;padding:0}
+:root[data-ui] #main .hlr{gap:16px;padding:8px 16px 12px}
+:root[data-ui] #main .hlc .hav{width:4rem;height:4rem;box-shadow:0 0 0 1px var(--k6-hair);background:var(--bg)}
+:root[data-ui] #main .hlc small{font-weight:500;font-size:.72rem}
+/* simgeli sekmeler, altta kayan çizgi */
+:root[data-ui] #main .ptabs{margin:4px 0 0;padding:0;gap:0;border:0;border-bottom:1px solid var(--k6-hair);border-radius:0;background:transparent;box-shadow:none}
+:root[data-ui] #main .ptabs .chip{flex:1;min-height:2.85rem;padding:0;border:0;border-radius:0;background:transparent!important;box-shadow:none!important;color:var(--muted)}
+:root[data-ui] #main .ptabs .chip .pl{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+:root[data-ui] #main .ptabs .chip svg.i{display:block!important;width:1.5rem;height:1.5rem;stroke-width:1.8}
+:root[data-ui] #main .ptabs .chip[aria-pressed="true"]{color:var(--fg)}
+:root[data-ui] #main .ptabs .chip[aria-pressed="true"] svg.i{color:var(--fg)}
+:root[data-ui] #main .ptabs:not(:has(svg)) .chip{font:600 .9rem/1 var(--f-body)}
+:root[data-ui] #main .ptabs>.k6-ind{top:auto;bottom:-1px;height:2px!important;border-radius:2px;background:var(--fg);box-shadow:none}
+:root[data-ui] #main .ptabs:not(.k6-seg) .chip[aria-pressed="true"]{box-shadow:inset 0 -2px 0 var(--fg)!important}
+/* ızgara: Instagram gibi sık, köşesiz */
+:root[data-ui] #main .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;margin:0 0 14px;padding:0;background:none;border:0;border-radius:0;box-shadow:none}
+:root[data-ui] #main .tile{border-radius:0}
+:root[data-ui] #shell[data-r="profile"] #main .grid>.tile{aspect-ratio:4/5}
+:root[data-ui] #main .tile:active{transform:none;opacity:.8}
+:root[data-ui] #main .tile::before{height:30%}
+:root[data-ui] #main .ptabs+.grid,:root[data-ui] #main .ptabs+.kolc+.grid{margin-top:2px}
+
+/* --- Keşfet --- */
+:root[data-ui] #shell[data-r="explore"] #main .search .in,:root[data-ui] #shell[data-r="explore"] #main #q{border:0;border-radius:12px;background-color:var(--surface-2);box-shadow:none}
+:root[data-ui] #shell[data-r="explore"] #main .search .in:focus,:root[data-ui] #shell[data-r="explore"] #main #q:focus{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 45%,transparent)}
+:root[data-ui] #main .pcard{border-radius:14px;box-shadow:none;border:1px solid var(--k6-hair);background:var(--surface)}
+
+/* --- Bildirimler: düz liste --- */
+:root[data-ui] #shell[data-r="activity"] #main .box{margin:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+:root[data-ui] #shell[data-r="activity"] #main .box .row+.row{border-top:0}
+:root[data-ui] #shell[data-r="activity"] #main .act-row{padding:9px 16px;align-items:center}
+:root[data-ui] #shell[data-r="activity"] #main .act-row .t{font-size:.9rem;padding-top:0}
+:root[data-ui] #shell[data-r="activity"] #main .act-row .av{--s:44px!important}
+:root[data-ui] #shell[data-r="activity"] #main .act-th{width:44px;height:44px;border-radius:6px}
+:root[data-ui] #shell[data-r="activity"] #main .act-row>.btn{min-height:2.1rem;border-radius:9px;padding:0 1rem;font-size:.84rem}
+:root[data-ui] #shell[data-r="activity"] #main .sec-h{margin:14px 16px 4px;font:700 1rem/1.2 var(--f-body)}
+:root[data-ui] #shell[data-r="activity"] #main .act-ic{width:19px;height:19px;right:-3px;bottom:-3px;box-shadow:0 0 0 2px var(--bg)}
+:root[data-ui] #shell[data-r="people"] #main .box{border:0;background:transparent;box-shadow:none;border-radius:0;margin:0}
+:root[data-ui] #shell[data-r="people"] #main .box .row+.row{border-top:0}
+.k70-lkl.box{border:0;background:transparent;box-shadow:none;margin:0}
+.k70-lkl .row+.row{border-top:0!important}
+
+/* --- liste öğeleri ilk çizimde kademeli belirir (yeniden çizimde main.enter yok, tekrar oynamaz) --- */
+:root[data-ui] main.enter :is(.box>.row,.hrow>*,.notes>.nt,.hlr>*,.sr-flg>*,.sr-flr>*):nth-child(-n+12){animation-duration:var(--k70-d)!important}
+:root[data-ui] main.enter .grid>.tile:nth-child(-n+15){animation-duration:var(--k70-d)!important}
+:root[data-ui] main.enter>.sg{animation:k70Row var(--k70-d) var(--k70-e) both;animation-delay:calc(.03s * var(--k70i,0))}
+@keyframes k70Row{from{opacity:0;transform:translate3d(0,10px,0)}}
+:root[data-ui] main.enter>.sg:nth-of-type(2){--k70i:1}:root[data-ui] main.enter>.sg:nth-of-type(3){--k70i:2}:root[data-ui] main.enter>.sg:nth-of-type(4){--k70i:3}:root[data-ui] main.enter>.sg:nth-of-type(5){--k70i:4}:root[data-ui] main.enter>.sg:nth-of-type(6){--k70i:5}:root[data-ui] main.enter>.sg:nth-of-type(7){--k70i:6}:root[data-ui] main.enter>.sg:nth-of-type(8){--k70i:7}
+
+/* --- Ayarlar: Instagram listesi, gruplar yükseklik + saydamlıkla açılır (ışınlanmaz) --- */
+:root[data-ui] #shell[data-r="settings"] #main .setq{padding:2px 16px 8px}
+:root[data-ui] #shell[data-r="settings"] #main .setq .in{border:0;border-radius:12px;background-color:var(--surface-2);box-shadow:none;min-height:2.6rem}
+:root[data-ui] #shell[data-r="settings"] #main .setprof{margin:4px 16px 10px;width:calc(100% - 32px);border-radius:16px;box-shadow:none;border:1px solid var(--k6-hair)}
+:root[data-ui] #main .sg{display:grid;grid-template-rows:auto 0fr;align-content:start;margin:0;border:0;border-radius:0;background:transparent;overflow:visible;transition:grid-template-rows var(--k70-d) var(--k70-e)}
+:root[data-ui] #main .sg.open{grid-template-rows:auto 1fr}
+:root[data-ui] #main .sg-h{position:relative;gap:14px;padding:12px 16px;min-height:3.6rem;border-radius:0}
+:root[data-ui] #main .sg-h>.i:first-child{width:1.55rem;height:1.55rem;color:var(--fg);stroke-width:1.7}
+:root[data-ui] #main .sg-h b{font:500 .97rem/1.25 var(--f-body)}
+:root[data-ui] #main .sg-h small{font-size:.78rem}
+:root[data-ui] #main .sg-h>.i:last-child{width:1.15rem;height:1.15rem;stroke-width:2;transition:transform var(--k70-d) var(--k70-sp)}
+:root[data-ui] #main .sg.open .sg-h>.i:last-child{transform:rotate(90deg)}
+:root[data-ui] #main .sg-b{display:block!important;min-height:0;overflow:hidden;padding:0;border-top:0;opacity:0;visibility:hidden;transform:translate3d(0,-6px,0);transition:opacity calc(var(--k70-d) * .7) ease,transform var(--k70-d) var(--k70-e),visibility 0s linear var(--k70-d)}
+:root[data-ui] #main .sg.open .sg-b{opacity:1;visibility:visible;transform:none;transition:opacity var(--k70-d) ease calc(var(--k70-d) * .15),transform var(--k70-d) var(--k70-e),visibility 0s}
+:root[data-ui] #main .sg-b>:first-child{margin-top:2px!important}
+:root[data-ui] #main .sg-b>:last-child{margin-bottom:12px!important}
+:root[data-ui] #main.sgq .sg{grid-template-rows:auto 1fr;transition:none}
+:root[data-ui] #main.sgq .sg-b{opacity:1;visibility:visible;transform:none;transition:none}
+:root[data-ui] #main .sg .set,:root[data-ui] #main .sg .sxs .set{margin-left:16px;margin-right:16px;border-radius:14px;border:1px solid var(--k6-hair);box-shadow:none;background:var(--surface)}
+:root[data-ui] #main .sg .sg-b>.box{margin:8px 16px;border-radius:14px;box-shadow:none}
+:root[data-ui] #shell[data-r="settings"] #main .sxh{margin:14px 32px 6px;font:600 .74rem/1 var(--f-body);color:var(--muted)}
+:root[data-ui][data-mode] #shell[data-r="settings"] .sic{width:28px;height:28px;border-radius:0;background:transparent!important;color:var(--fg)!important;box-shadow:none!important}
+:root[data-ui][data-mode] #shell[data-r="settings"] .sic svg.i{width:22px;height:22px;stroke-width:1.75}
+:root[data-ui] #shell[data-r="settings"] .sxs .srow::after{left:56px}
+:root[data-ui] #shell[data-r="settings"] #main>.sxs:not(.sg .sxs) .set{margin:0 16px 12px;border-radius:14px;box-shadow:none}
+
+/* --- pencereler: süre ayardan; alttan yaylı açılış, hızlı kapanış --- */
+:root[data-ui] .scrim{animation-duration:calc(var(--k70-d) * .8)}
+:root[data-ui] .sheet{border-radius:20px 20px 0 0;animation:k70Sheet var(--k70-d) cubic-bezier(.2,.95,.25,1) both}
+@keyframes k70Sheet{from{transform:translate3d(0,100%,0)}}
+:root[data-ui] .sheet .grab{width:36px;height:4px;margin:8px auto 4px}
+:root[data-ui] #overlay .sheet .body>.opt{animation-duration:var(--k70-d)}
+:root[data-ui] .dialog{border-radius:20px;animation:k70Dlg var(--k70-d) var(--k70-sp) both}
+@keyframes k70Dlg{from{opacity:0;scale:.86}}
+:root[data-ui] .full{animation-duration:var(--k70-d)}
+:root[data-ui] #vzGhosts .sheet{animation:k6SheetOut min(.24s,var(--k70-d)) cubic-bezier(.4,0,1,1) forwards}
+:root[data-ui] #vzGhosts .dialog{animation:vzDlgOut min(.2s,var(--k70-d)) ease forwards}
+:root[data-ui] #vzGhosts .scrim{animation:vzOut min(.22s,var(--k70-d)) ease forwards}
+:root[data-ui] .toast{animation-duration:var(--k70-d)}
+
+/* --- resim yüklenirken iskelet: düz yer tutucu + ışıltı (k6Img) --- */
+:root[data-ui] #main .k6-ld{background:var(--surface-2)}
+:root[data-ui] #main .k70c .media.k6-ld{min-height:220px}
+
+/* --- tablet: Akış ve listeler ortada dar sütun (Instagram gibi) --- */
+@media (min-width:700px) and (max-width:899px){
+ :root[data-ui] #shell:is([data-r="feed"],[data-r="post"],[data-r="activity"],[data-r="settings"],[data-r="people"],[data-r="edit"]) main:not(.snap){padding-left:calc((100% - 600px) / 2);padding-right:calc((100% - 600px) / 2)}
+ :root[data-ui] #shell:is([data-r="profile"],[data-r="explore"]) main:not(.snap){padding-left:calc((100% - 720px) / 2);padding-right:calc((100% - 720px) / 2)}
+ :root[data-ui] #shell:is([data-r="feed"],[data-r="post"],[data-r="activity"],[data-r="settings"],[data-r="people"],[data-r="edit"]) .hd{padding-left:max(16px,calc((100% - 600px) / 2 + 12px));padding-right:max(16px,calc((100% - 600px) / 2 + 12px))}
+}
+@media (min-width:700px){:root[data-ui] #main .card.k70c{border:1px solid var(--k6-hair);border-radius:10px;padding-bottom:12px;overflow:hidden}:root[data-ui] #main .k70c .card-h .av{--s:36px!important}}
+
+/* --- hareket azaltılmışsa --- */
+html.reduce-motion .sv[class*="k70-"]{animation:none!important}
+html.reduce-motion #k70Gh{display:none}
+html.reduce-motion #main .sg,html.reduce-motion #main .sg-b,html.reduce-motion #main .sg-h>.i{transition:none!important}
+@media (prefers-reduced-motion:reduce){.sv[class*="k70-"]{animation:none!important}#k70Gh{display:none}#main .sg,#main .sg-b{transition:none!important}}
+/*}@css:70UI*/
+/*@css:70CHAT{*/
+/* 7.0 sohbet (70CHAT): Instagram gibi liste, yazma çubuğu geçişleri, birleşik balonlar, ayrıntılar. Süreler --k69-d'den. */
+:root{--k70-t:calc(var(--k69-d,.35s) * .6)}
+html.reduce-motion{--k70-t:.01s}
+@media (prefers-reduced-motion:reduce){:root{--k70-t:.01s}}
+/* --- yazma çubuğu: mikrofon ↔ gönder --- */
+.composer.k70c{position:relative}
+#main #composer.k693.k70c #sendBtn{position:relative;overflow:hidden;display:grid;place-items:center;transition:background-color var(--k70-t) ease,color var(--k70-t) ease,transform .18s cubic-bezier(.2,.8,.2,1),box-shadow var(--k70-t) ease}
+#sendBtn .k70-ic{grid-area:1/1;display:grid;place-items:center;transition:opacity var(--k70-t) ease,transform var(--k70-t) cubic-bezier(.3,1.35,.5,1)}
+#sendBtn .k70-ic svg.i{width:1.3rem;height:1.3rem}
+#sendBtn .k70-snd{opacity:0;transform:rotate(-90deg) scale(.35)}
+.composer.k693-has #sendBtn .k70-snd{opacity:1;transform:none}
+.composer.k693-has #sendBtn .k70-mic{opacity:0;transform:rotate(90deg) scale(.35)}
+#main #composer.k70c #sendBtn.k70-hold{transform:scale(.86)}
+#main #composer.k70c #sendBtn.k70-hold::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 2.5px rgba(255,255,255,.85);animation:k70Hold .45s linear both}
+@keyframes k70Hold{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.composer.k693.k70c .k693-tools{display:flex!important;overflow:hidden;max-width:126px;opacity:1;transform:none;visibility:visible;transition:max-width var(--k70-t) cubic-bezier(.2,.8,.2,1),opacity var(--k70-t) ease,transform var(--k70-t) ease,visibility 0s}
+.composer.k693.k70c.k693-has .k693-tools{max-width:0;opacity:0;transform:translateX(12px) scale(.9);visibility:hidden;pointer-events:none;transition:max-width var(--k70-t) cubic-bezier(.2,.8,.2,1),opacity calc(var(--k70-t) * .7) ease,transform var(--k70-t) ease,visibility 0s linear var(--k70-t)}
+.composer.k693.k70c .k693-tools .ib{flex:none}
+.composer.k693.k70c .k693-cam{transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+.composer.k693.k70c .k693-cam:active{transform:scale(.9)}
+.k70-tip{position:absolute;right:8px;bottom:calc(100% + 8px);z-index:31;max-width:min(260px,80vw);padding:8px 12px;border-radius:14px;background:var(--fg);color:var(--bg);font:600 .78rem/1.3 var(--f-body);box-shadow:0 10px 26px -12px rgba(0,0,0,.5);animation:k70TipIn var(--k69-d,.35s) cubic-bezier(.2,1.2,.4,1) both;cursor:pointer}
+.k70-tip::after{content:"";position:absolute;right:18px;top:100%;border:6px solid transparent;border-top-color:var(--fg)}
+.k70-tip.out{opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s}
+@keyframes k70TipIn{from{opacity:0;transform:translateY(8px) scale(.94)}}
+/* --- sohbet listesi --- */
+#top h1.k70-un{cursor:pointer;-webkit-tap-highlight-color:transparent}
+#top h1.k70-un .k70-dn{display:inline-block;vertical-align:-.1em;margin-left:4px;transform:rotate(90deg);color:var(--muted);line-height:0}
+#top h1.k70-un .k70-dn svg.i{width:1rem;height:1rem}
+.k70l .k70-sr{padding:2px 12px 12px}
+.k70l .k70-sr .in{border-radius:14px;border-color:transparent;background-color:var(--surface-2);box-shadow:none}
+.k70l .square[data-chat="meydan"]{padding:12px 14px;gap:12px}
+.k70l .square[data-chat="meydan"] .ic{width:44px;height:44px;border-radius:50%}
+.k70l .notes .av img,.k70l .row .av img,.k70l .k70-ppl .av img{border-radius:50%}
+.k70l .notes .nb{border-radius:18px;box-shadow:0 4px 14px -8px rgba(0,0,0,.35)}
+:root .k70l .box{background:transparent;border:0;box-shadow:none;border-radius:0;margin:0 0 6px;overflow:visible}
+:root .k70l .box .row{padding:8px 16px;border-top:0;border-radius:0;position:relative;transition:background-color .15s}
+:root .k70l .box .row+.row{border-top:0}
+.k70l .row .av{--s:56px!important}
+.k70l .row .t>div:first-child b{font-weight:600}
+.k70l .row .t .s{font-size:.84rem;margin-top:2px}
+.k70l .row.unread .t>div:first-child b{font-weight:800}
+.k70l .row.unread .t .s{color:var(--fg);font-weight:700}
+.k70l .row .udot{order:9;margin-left:2px}
+.k70-cam{order:10;flex:none;width:40px;height:40px;margin-right:-8px;display:grid;place-items:center;border-radius:50%;color:var(--muted);cursor:pointer;transition:transform .15s,background-color .15s,color .15s}
+.k70-cam svg.i{width:1.45rem;height:1.45rem}
+.k70-cam:hover{color:var(--fg);background:var(--surface-2)}.k70-cam:active{transform:scale(.88)}
+.k70l.k70-q>.notes,.k70l.k70-q>.sec-h,.k70l.k70-q>.hrow,.k70l.k70-q>.empty:not(.k70-none){display:none}
+.k70l .k70-none{padding:24px}
+/* sohbet üst çubuğu ve tanıtım bölümünde fotoğraf yuvarlak (Instagram gibi) */
+#top .chat-head .av img,#main #msgs .hero .av img,#main #msgs .avb .av img,#main #msgs .mn-ty .av img{border-radius:50%}
+/* --- sohbet ekranı: Instagram gibi birleşik balonlar (bub69 "k" köşeli seçenek dokunulmaz) --- */
+:root:not([data-bub69="k"]) #main #msgs .mrow .msg{border-radius:20px}
+/* DM: devam eden mesajda .dmav-sp, son mesajda .dmav; grup/Meydan: devam eden mesajda ilk çocuk boş span (gönderen yok). :has iç içe yazılamaz. */
+:root:not([data-bub69="k"]) #main #msgs .mrow[data-k]:not(.me):has(>.dmav-sp) .msg{border-bottom-left-radius:5px}
+:root:not([data-bub69="k"]) #main #msgs .mrow[data-k]:not(.me):not(:has(>.dmav,>.dmav-sp)):has(+.mrow[data-k]:not(.me)>span:first-child:not(.dmav-sp)) .msg{border-bottom-left-radius:5px}
+:root:not([data-bub69="k"]) #main #msgs .mrow[data-k]:not(.me):has(>.dmav-sp)+.mrow[data-k]:not(.me) .msg{border-top-left-radius:5px}
+:root:not([data-bub69="k"]) #main #msgs .mrow[data-k]:not(.me):has(>span:first-child:not(.dmav-sp)) .msg{border-top-left-radius:5px}
+:root:not([data-bub69="k"]) #main #msgs .mrow.me[data-k]+.mrow.me[data-k] .msg{border-top-right-radius:5px}
+:root:not([data-bub69="k"]) #main #msgs .mrow.me[data-k]:has(+.mrow.me[data-k]) .msg{border-bottom-right-radius:5px}
+/* aynı kişinin art arda mesajları sıkı */
+#main #msgs .mrow[data-k]:not(.me):has(>.dmav-sp)+.mrow[data-k]:not(.me),
+#main #msgs .mrow[data-k]:not(.me):has(>span:first-child:not(.dmav-sp)),
+#main #msgs .mrow.me[data-k]+.mrow.me[data-k]{margin-top:-4px}
+#main #msgs .mrow.has-react+.mrow[data-k]{margin-top:0!important}
+#main #msgs .stamp:not(.sysn){font:600 .7rem/1.3 var(--f-body);letter-spacing:0;text-transform:none;color:var(--muted);margin:14px 0 6px}
+#main #msgs .react{border:2px solid var(--bg);box-shadow:0 1px 3px rgba(0,0,0,.12);padding:1px 6px}
+#main #msgs .quote{border-left:0;border-radius:14px;padding:7px 11px;opacity:.92}
+#main #msgs .typing{border-radius:20px}
+/* DM: görüldü fotoğrafının yanında "Görüldü" */
+#main #msgs.k70dm .seenrow:not(.sr-ph) .seenav{overflow:visible;position:relative}
+#main #msgs.k70dm .seenrow:not(.sr-ph) .seenav img{border-radius:50%}
+#main #msgs.k70dm .seenrow:not(.sr-ph) .seenav:last-child::before{content:"Görüldü";position:absolute;right:calc(100% + 6px);top:50%;transform:translateY(-50%);font:500 .7rem/1 var(--f-body);color:var(--muted);white-space:nowrap;pointer-events:none}
+/* sesli mesaj: dalga çizgisi */
+#msgs .audm .bar{height:22px;border-radius:0;background:rgba(127,127,127,.42);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='22'%3E%3Cg fill='%23000'%3E%3Crect x='0' y='8' width='2.5' height='6' rx='1.25'/%3E%3Crect x='4' y='5' width='2.5' height='12' rx='1.25'/%3E%3Crect x='8' y='1' width='2.5' height='20' rx='1.25'/%3E%3Crect x='12' y='6' width='2.5' height='10' rx='1.25'/%3E%3Crect x='16' y='9' width='2.5' height='4' rx='1.25'/%3E%3Crect x='20' y='4' width='2.5' height='14' rx='1.25'/%3E%3Crect x='24' y='0' width='2.5' height='22' rx='1.25'/%3E%3Crect x='28' y='7' width='2.5' height='8' rx='1.25'/%3E%3Crect x='32' y='3' width='2.5' height='16' rx='1.25'/%3E%3Crect x='36' y='6' width='2.5' height='10' rx='1.25'/%3E%3Crect x='40' y='2' width='2.5' height='18' rx='1.25'/%3E%3Crect x='44' y='8' width='2.5' height='6' rx='1.25'/%3E%3C/g%3E%3C/svg%3E") left center/48px 22px repeat-x;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='22'%3E%3Cg fill='%23000'%3E%3Crect x='0' y='8' width='2.5' height='6' rx='1.25'/%3E%3Crect x='4' y='5' width='2.5' height='12' rx='1.25'/%3E%3Crect x='8' y='1' width='2.5' height='20' rx='1.25'/%3E%3Crect x='12' y='6' width='2.5' height='10' rx='1.25'/%3E%3Crect x='16' y='9' width='2.5' height='4' rx='1.25'/%3E%3Crect x='20' y='4' width='2.5' height='14' rx='1.25'/%3E%3Crect x='24' y='0' width='2.5' height='22' rx='1.25'/%3E%3Crect x='28' y='7' width='2.5' height='8' rx='1.25'/%3E%3Crect x='32' y='3' width='2.5' height='16' rx='1.25'/%3E%3Crect x='36' y='6' width='2.5' height='10' rx='1.25'/%3E%3Crect x='40' y='2' width='2.5' height='18' rx='1.25'/%3E%3Crect x='44' y='8' width='2.5' height='6' rx='1.25'/%3E%3C/g%3E%3C/svg%3E") left center/48px 22px repeat-x}
+#msgs .audm .bar i{background:currentColor}
+/* çift dokunma tepkisi */
+.k70-burst{position:fixed;z-index:60;width:68px;height:68px;margin:-34px 0 0 -34px;pointer-events:none;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25));animation:k70Burst .8s cubic-bezier(.2,1.3,.4,1) both}
+.k70-burst svg.rx{width:100%;height:100%}
+@keyframes k70Burst{0%{opacity:0;transform:scale(.2)}28%{opacity:1;transform:scale(1.18)}55%{transform:scale(.96)}75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:translateY(-26px) scale(.9)}}
+/* --- sohbet ayrıntıları --- */
+.cinfo .ci-top .av img{border-radius:50%}
+.cinfo .ci-top .nm{font-family:var(--f-body);font-weight:700}
+:root .cinfo .ci-list{background:transparent;border:0;box-shadow:none;margin-left:0;margin-right:0}
+:root .cinfo .ci-row{border-top:0;padding:12px 20px;border-radius:0;transition:background-color .15s}
+.cinfo .ci-row:active{background:var(--surface-2)}
+:root .cinfo .ci-row .ic{background:transparent!important;color:var(--fg);width:1.6rem;height:1.6rem;border-radius:0}
+.cinfo .ci-row .ic svg.i{width:1.45rem;height:1.45rem}
+:root .full.cinfo.k70-in{animation:k70CiIn var(--k69-d,.35s) cubic-bezier(.2,.9,.25,1) both}
+.cinfo.k70-in .body>*{animation:k70Up var(--k69-d,.35s) cubic-bezier(.2,.9,.25,1) both}
+.cinfo.k70-in .body>:nth-child(2){animation-delay:calc(var(--k69-d,.35s) * .12)}
+.cinfo.k70-in .body>:nth-child(3){animation-delay:calc(var(--k69-d,.35s) * .22)}
+.cinfo.k70-in .body>:nth-child(n+4){animation-delay:calc(var(--k69-d,.35s) * .32)}
+@keyframes k70CiIn{from{opacity:0;transform:translateX(32px)}}
+@keyframes k70Up{from{opacity:0;transform:translateY(14px)}}
+html.reduce-motion .cinfo.k70-in,html.reduce-motion .cinfo.k70-in .body>*,html.reduce-motion .k70-tip{animation:none}
+@media (prefers-reduced-motion:reduce){.cinfo.k70-in,.cinfo.k70-in .body>*,.k70-tip,.k70-burst{animation:none}}
+/*}@css:70CHAT*/

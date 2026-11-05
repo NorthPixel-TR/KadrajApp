@@ -1,83 +1,33 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "6.9.4",
+ "ver": "7.0.0",
  "at": 1793727074868,
- "note": "6.9.4: sohbette GIF'ler ve çıkartmalar büyüdü.",
+ "note": "7.0.0 Samyeli: yeni Instagram düzeni (Akış, hikâye, profil, ayarlar), animasyonlar, gönder tuşuna basılı tutunca zamanlama, mikrofon-gönder geçişi, yeni sohbet listesi.",
  "items": [
   {
-   "ad": "GIF ve çıkartma boyu",
+   "ad": "Sohbet 7.0 (basılı tut, geçiş, liste, balonlar)",
    "ok": true,
-   "not": "c694.js: GIF 281 px, çıkartma 190 px (390 px ekran)"
+   "not": "70chat_t70.js 34/34"
   },
   {
-   "ad": "Instagram gibi sohbet çubuğu (390 ve 800 px)",
+   "ad": "Yeni arayüz animasyonları (390/800/360)",
    "ok": true,
-   "not": "t69.js 30/30"
+   "not": "70ui_anim.js 19/19 her biri"
+  },
+  {
+   "ad": "t69.js 390 ve 800",
+   "ok": true,
+   "not": "30/30"
   },
   {
    "ad": "Kadraj testi",
    "ok": true,
-   "not": "49/49 adım"
+   "not": "49 adım"
   },
   {
    "ad": "Sohbet kayması (meas.js)",
    "ok": true,
-   "not": "hata yok"
-  },
-  {
-   "ad": "Bildirimi sağa kaydırarak kapatma",
-   "ok": true,
-   "not": "kn.js 8/8 (sağa kapanır, kısa kaydırmada geri döner, sola kapanmaz, yukarı ve dokunma bozulmadı)"
-  },
-  {
-   "ad": "6.9.1 özellikleri (telefon 390 px)",
-   "ok": true,
-   "not": "t69.js 29/29"
-  },
-  {
-   "ad": "6.9.1 özellikleri (tablet 800 px, menü altta)",
-   "ok": true,
-   "not": "t69.js 29/29"
-  },
-  {
-   "ad": "Otomatik çıkartma kırpma (MediaPipe DeepLab v3)",
-   "ok": true,
-   "not": "stk.js 4/4: mavi arka planlı kedi kırpıldı, ilk yüklemeden sonra ~0,5 sn"
-  },
-  {
-   "ad": "Çoklu hesap: ekle, geç, ana hesapla açılış, çıkar, çıkışta diğerine dön",
-   "ok": true,
-   "not": "acc.js 19/19, gerçek Firestore+Auth emülatörü"
-  },
-  {
-   "ad": "Kadraj testi (uygulama içi)",
-   "ok": true,
-   "not": "49/49 adım"
-  },
-  {
-   "ad": "Sohbet kayması",
-   "ok": true,
-   "not": "meas.js en büyük sıçrama 8 px"
-  },
-  {
-   "ad": "Bildirim, güncelleme, rozet",
-   "ok": true,
-   "not": "kln 14, kln2 16, gu 18, pk 6, rz 8"
-  },
-  {
-   "ad": "GIF araması gerçek GIPHY ile",
-   "ok": false,
-   "not": "Bu ortamdan GIPHY erişilemiyor; sahte yanıtla denendi. Yöneticinin GIPHY anahtarı kaydetmesi gerekiyor."
-  },
-  {
-   "ad": "Bildirim logosu ve uygulama içinden güncelleme gerçek telefonda",
-   "ok": false,
-   "not": "Android emülatörü yok; APK GitHub'da derleniyor, telefonda denenmeli."
-  },
-  {
-   "ad": "Uygulama tamamen kapalıyken bildirim",
-   "ok": false,
-   "not": "google-services.json ve FCM_SA bekleniyor"
+   "not": "6.9.4 ile aynı, bir senaryoda 1 px geri dönüş"
   }
  ]
 }
