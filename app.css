@@ -4605,3 +4605,13 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 #main .k704-t.add{border-style:dashed}
 #main .k704-h{display:block;text-align:center;font-size:.75rem;margin-top:2px}
 /*}@css:704*/
+/*@css:7012{*/
+/* 7.0.12: video indirme penceresi */
+.dl12{padding:6px 16px 16px;display:grid;gap:12px}
+.dl12-st{font-weight:600}
+.dl12-bar{height:6px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.dl12-bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s linear}
+.dl12-act:empty{display:none}
+.dl12-act .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none}
+.dl12-n{font-size:.8rem;margin:0}.dl12-n a{color:var(--accent)}
+/*}@css:7012*/

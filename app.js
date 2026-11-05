@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70011,APP_VER="7.0.11";
+const APP_V=70012,APP_VER="7.0.12";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -10435,5 +10435,32 @@ const dl7011Url=u=>cldPlay(u).replace("/video/upload/","/video/upload/fl_attachm
   const ext=/webm/.test(b.type)?"webm":/quicktime/.test(b.type)?"mov":"mp4";const bu=URL.createObjectURL(b);const a2=document.createElement("a");a2.href=bu;a2.download=dlName("video",ext);document.body.appendChild(a2);a2.click();a2.remove();setTimeout(()=>URL.revokeObjectURL(bu),60000);toast("Video indirildi")}
  catch(e){console.warn("dl",e);toast("İndirilemedi. İnternetini kontrol edip yeniden dene.")}}}
 /*}@js:7011*/
+/*@js:7012{*/
+/* 7.0.12 (sahibi: "Chrome'da siteden inmiyor"): tarayıcıda video indirme pencereyle.
+   7.0.8/7.0.11'de video fetch edilip uzun bir beklemeden sonra kodla <a download>.click() yapılıyordu; Android Chrome
+   kullanıcı dokunuşu olmadan (await sonrası) başlayan indirmeyi engelleyebiliyor, büyük videoda da hiçbir ilerleme görünmüyordu.
+   Artık dlVidSheet: "Video hazırlanıyor %…" (akışla okuma, Content-Length varsa yüzde) → vidFix (süre düzeltmesi) →
+   "Telefona kaydet" bağlantısı (gerçek <a download>, kişinin kendi dokunuşu, blob). Olmazsa ya da hata olursa
+   "Doğrudan indir": Cloudinary'nin yeniden kodladığı MP4'ü fl_attachment ile tarayıcının kendi indiricisi indirir (dl7011Url). */
+async function dlFetch(u,onP){const r=await fetch(u);if(!r.ok)throw new Error("HTTP "+r.status);const tot=+r.headers.get("content-length")||0;
+ if(!r.body||!r.body.getReader){const b=await r.blob();onP&&onP(1);return b}const rd=r.body.getReader(),ch=[];let got=0;
+ for(;;){const {done,value}=await rd.read();if(done)break;ch.push(value);got+=value.length;onP&&onP(tot?got/tot:-got)}return new Blob(ch,{type:r.headers.get("content-type")||"video/mp4"})}
+function dlVidSheet(ref){const u0=String(ref||"");const cld=dlCld(u0);const st={off:false,url:null};
+ const l=sheet("dl7012","Video indir",`<div class="dl12"><div class="dl12-st" id="dlSt">Video hazırlanıyor…</div><div class="dl12-bar"><i id="dlBar"></i></div><div class="dl12-act" id="dlAct"></div>${cld?`<p class="muted dl12-n">İndirme başlamazsa <a href="${esc(dl7011Url(u0))}" target="_blank" rel="noopener" id="dlDirect">doğrudan indir</a>.</p>`:""}</div>`,{onClose:()=>{st.off=true;if(st.url)setTimeout(()=>URL.revokeObjectURL(st.url),60000)}});
+ const $s=l.querySelector("#dlSt"),$b=l.querySelector("#dlBar"),$a=l.querySelector("#dlAct");
+ const fail=msg=>{if(st.off)return;$s.textContent=msg;$b.parentNode.style.display="none";
+  $a.innerHTML=cld?`<a class="btn" href="${esc(dl7011Url(u0))}" target="_blank" rel="noopener" id="dlDir2">${I("dl708")}Doğrudan indir</a>`:""};
+ (async()=>{try{let u=u0;if(u.startsWith("chunk:"))u=await resolveVideo(u);
+   const b=await dlFetch(u,p=>{if(st.off)return;if(p>=0){$b.style.width=Math.round(p*100)+"%";$s.textContent="Video hazırlanıyor %"+Math.round(p*100)}else $s.textContent="Video hazırlanıyor "+(Math.round(-p/1048576*10)/10)+" MB"});
+   if(st.off)return;$s.textContent="Süre düzeltiliyor…";$b.style.width="100%";
+   const fx=await vidFix(new File([b],"v",{type:b.type||"video/mp4"}));if(st.off)return;
+   const ext=/webm/.test(fx.type)?"webm":/quicktime/.test(fx.type)?"mov":"mp4";st.url=URL.createObjectURL(fx);
+   $s.textContent="Video hazır ("+(Math.round(fx.size/1048576*10)/10)+" MB)";$b.parentNode.style.display="none";
+   $a.innerHTML=`<a class="btn" href="${st.url}" download="${esc(dlName("video",ext))}" id="dlSave">${I("dl708")}Telefona kaydet</a>`;
+   $a.querySelector("#dlSave").addEventListener("click",()=>setTimeout(()=>{toast("Video indiriliyor, bildirimlere bak");closeLayer("dl7012")},400))}
+  catch(e){console.warn("dl7012",e);fail(cld?"Video burada hazırlanamadı. Doğrudan indir'e bas.":"Video indirilemedi. İnternetini kontrol edip yeniden dene.")}})();
+ return l}
+{const f=dlMedia;dlMedia=async function(ref,kind,...a){if(kind==="video"&&!kgal()&&ref)return dlVidSheet(ref);return f.call(this,ref,kind,...a)}}
+/*}@js:7012*/
 boot();
 

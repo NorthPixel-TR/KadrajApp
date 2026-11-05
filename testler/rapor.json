@@ -1,9 +1,14 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.11",
+ "ver": "7.0.12",
  "at": 1793727074868,
- "note": "7.0.11: indirilen/yüklenen videonun süresi düzgün (parçalı MP4 tek parçaya çevriliyor, WebM'e süre ekleniyor).",
+ "note": "7.0.12: tarayıcıda video indirme pencereyle (ilerleme + Telefona kaydet + Doğrudan indir).",
  "items": [
+  {
+   "ad": "Tarayıcıda video indirme penceresi",
+   "ok": true,
+   "not": "dl7012.js 8/8"
+  },
   {
    "ad": "Video süresi düzeltmesi (parçalı MP4, WebM)",
    "ok": true,
