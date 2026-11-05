@@ -1,33 +1,38 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.0",
+ "ver": "7.0.1",
  "at": 1793727074868,
- "note": "7.0.0 Samyeli: yeni Instagram düzeni (Akış, hikâye, profil, ayarlar), animasyonlar, gönder tuşuna basılı tutunca zamanlama, mikrofon-gönder geçişi, yeni sohbet listesi.",
+ "note": "7.0.1: hata avı: sohbet araması, hesap oku, yanıtlı zamanlama, hikâyede hızlı çift dokunma ve telefonda kaydırma, kameranın yanlış sohbete göndermesi.",
  "items": [
   {
-   "ad": "Sohbet 7.0 (basılı tut, geçiş, liste, balonlar)",
+   "ad": "Sohbet aramasında ilk dokunuş",
    "ok": true,
-   "not": "70chat_t70.js 34/34"
+   "not": "fx1_search_tap 7/7 (7.0.0: 3/5)"
   },
   {
-   "ad": "Yeni arayüz animasyonları (390/800/360)",
+   "ad": "Uzun adda hesap oku",
    "ok": true,
-   "not": "70ui_anim.js 19/19 her biri"
+   "not": "fx3_top_arrow 4/4"
   },
   {
-   "ad": "t69.js 390 ve 800",
+   "ad": "Yanıt seçiliyken zamanlama",
    "ok": true,
-   "not": "30/30"
+   "not": "fx4_sch_reply 5/5 (7.0.0: 3 hata)"
   },
   {
-   "ad": "Kadraj testi",
+   "ad": "Hikâyede hızlı çift dokunma",
    "ok": true,
-   "not": "49 adım"
+   "not": "dbltap 3/3"
   },
   {
-   "ad": "Sohbet kayması (meas.js)",
+   "ad": "Hikâyede telefonla kaydırma",
    "ok": true,
-   "not": "6.9.4 ile aynı, bir senaryoda 1 px geri dönüş"
+   "not": "swipe 4/4 (gerçek dokunma olayları)"
+  },
+  {
+   "ad": "t69 / t70 / anim / Kadraj testi",
+   "ok": true,
+   "not": "30/30, 34/34, 19/19, 49 adım"
   }
  ]
 }

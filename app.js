@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70000,APP_VER="7.0.0";
+const APP_V=70001,APP_VER="7.0.1";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -7562,13 +7562,13 @@ function schOpen(){const k=pinKey();if(!k)return;if(!S.chats[k.cid])return toast
  const l=sheet("sch","Mesajı zamanla",`<form class="schf" id="schF"><textarea class="in" id="schT" maxlength="2000" placeholder="Mesaj yaz…"></textarea>
   <div class="schq">${schOpts().map(([t,v],i)=>`<button type="button" data-schv="${v}" aria-pressed="${i===0}">${esc(t)}</button>`).join("")}<button type="button" data-schv="c" aria-pressed="false">Başka zaman</button></div>
   <input class="in" type="datetime-local" id="schD" value="${loc}" hidden><button class="btn block">Zamanla</button></form>`);
- const ta=$("#schT",l),dt=$("#schD",l);let pick=schOpts()[0][1];const mi=$("#msgIn");if(mi&&mi.value.trim())ta.value=mi.value.trim();ta.focus();
+ const ta=$("#schT",l),dt=$("#schD",l);let pick=schOpts()[0][1];const mi=$("#msgIn");const rp=S.replyTo;/* 7.0 hata avı A: yanıtlanan mesaj zamanlanan mesaja da geçer */if(mi&&mi.value.trim())ta.value=mi.value.trim();ta.focus();
  $$("[data-schv]",l).forEach(b=>b.onclick=()=>{$$("[data-schv]",l).forEach(x=>x.setAttribute("aria-pressed",x===b));if(b.dataset.schv==="c"){dt.hidden=false;pick=null}else{dt.hidden=true;pick=+b.dataset.schv}});
  $("#schF",l).onsubmit=async e=>{e.preventDefault();if(!guard())return;const v=kidClean(ta.value.trim());if(!v)return toast("Mesaj boş.");
   const at=pick||(dt.value?new Date(dt.value).getTime():0);if(!at||at<now()+60e3)return toast("En az bir dakika sonrasını seç.");
   closeLayer("sch");if(mi&&mi.value.trim()===v){mi.value="";try{cfGrow(mi,true)}catch{}try{draftSet(S.route.params.key,"")}catch{}}
-  const mid=rid();const msg={from:S.uid,at,text:v,sch:1};S.msgs=[...S.msgs,{id:mid,...msg}].sort((a,b)=>a.at-b.at);renderMsgs();
-  if(await dmEnsure(k)&&await write(()=>DB.set(`chats/${k.cid}/msgs/${mid}`,msg)))toast("Zamanlandı: "+schLabel(at));else{S.msgs=S.msgs.filter(x=>x.id!==mid);renderMsgs()}}}
+  const mid=rid();const msg={from:S.uid,at,text:v,sch:1};if(rp&&S.replyTo===rp){msg.reply=rp;S.replyTo=null;try{drawReply()}catch{}}S.msgs=[...S.msgs,{id:mid,...msg}].sort((a,b)=>a.at-b.at);renderMsgs();
+  if(await dmEnsure(k)&&await write(()=>DB.set(`chats/${k.cid}/msgs/${mid}`,msg)))toast("Zamanlandı: "+schLabel(at));else{S.msgs=S.msgs.filter(x=>x.id!==mid);renderMsgs();if(msg.reply&&!S.replyTo){S.replyTo=msg.reply;try{drawReply()}catch{}}}}}
 /* zamanı gelmemiş başkasının mesajı görünmez; zamanı gelince yeniden çizilir ve son mesaj özeti güncellenir */
 let schT=0;
 function schDue(k){const t=now();let next=Infinity;for(const m of S.msgs)if(m.sch&&m.at>t)next=Math.min(next,m.at);clearTimeout(schT);
@@ -9791,9 +9791,9 @@ Object.assign(IP,{chart69:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'});
      DOM'da wireComposer sarmalayıcısıyla kurulur (vChat dizgesi birçok yerde sarıldığı için dokunulmadı). Botlarda eski hal.
    - Üst çubuk: DM/grupta (i) düğmesi yok (başlığa dokununca ayrıntılar açılır); seri ateşi 0 iken başlıkta görünmez.
    - ⊕ menüsü: çubukta olanlar (Fotoğraf, Sesli mesaj, GIF, Çıkartma) çıkarıldı; kalanlar ızgara değil, açıklamasız kısa liste. */
-async function k693SendImg(img){const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;const s=Math.min(1,900/Math.max(iw,ih));const c=document.createElement("canvas");c.width=Math.round(iw*s);c.height=Math.round(ih*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);S.forceBottom=true;const extra=S.replyTo?{reply:S.replyTo}:{};S.replyTo=null;drawReply();return sendMessage(S.route.params.key,{img:encode(c,150000),text:"",...extra})}
-function k693Cam(){if(!guard())return;const i=document.createElement("input");i.type="file";i.accept="image/*";i.setAttribute("capture","environment");i.style.display="none";document.body.appendChild(i);
- i.onchange=async()=>{const f=i.files&&i.files[0];i.remove();if(!f)return;const u=URL.createObjectURL(f);const im=new Image();im.src=u;try{await im.decode()}catch{URL.revokeObjectURL(u);return toast("Fotoğraf açılamadı")}await k693SendImg(im);URL.revokeObjectURL(u)};
+async function k693SendImg(img,key0){const iw=img.naturalWidth||img.width,ih=img.naturalHeight||img.height;const s=Math.min(1,900/Math.max(iw,ih));const c=document.createElement("canvas");c.width=Math.round(iw*s);c.height=Math.round(ih*s);c.getContext("2d").drawImage(img,0,0,c.width,c.height);S.forceBottom=true;const extra=S.replyTo?{reply:S.replyTo}:{};S.replyTo=null;drawReply();return sendMessage(key0||S.route.params.key,{img:encode(c,150000),text:"",...extra})}
+function k693Cam(){if(!guard())return;const key0=S.route.params.key;const i=document.createElement("input");i.type="file";i.accept="image/*";i.setAttribute("capture","environment");i.style.display="none";document.body.appendChild(i);
+ i.onchange=async()=>{const f=i.files&&i.files[0];i.remove();if(!f)return;const u=URL.createObjectURL(f);const im=new Image();im.src=u;try{await im.decode()}catch{URL.revokeObjectURL(u);return toast("Fotoğraf açılamadı")}await k693SendImg(im,key0);URL.revokeObjectURL(u)};
  i.click();setTimeout(()=>{if(i.isConnected&&!i.files.length)i.remove()},120000)}
 {const f=wireComposer;wireComposer=function(...a){const r=f.apply(this,a);try{const fm=$("#composer"),inp=$("#msgIn");if(!fm||!inp||fm.dataset.k693)return r;const key=S.route.params.key;const k=keyInfo(key);if(k.type==="bot")return r;fm.dataset.k693="1";fm.classList.add("k693");
  const pl=fm.querySelector(".cplus");if(pl){pl.removeAttribute("data-act");pl.classList.add("k693-cam");pl.setAttribute("aria-label","Kamera");pl.innerHTML=I("camera");pl.onclick=e=>{e.preventDefault();e.stopPropagation();k693Cam()}}
@@ -9976,6 +9976,33 @@ const k70DragEnd=e=>{const g=K70U.drag;if(!g||e.pointerId!==g.id)return;K70U.dra
  back()};
 document.addEventListener("pointerup",k70DragEnd,true);document.addEventListener("pointercancel",k70DragEnd,true);
 /*}@js:70UI*/
+/*@js:70FXA{*/
+/* 7.0 hata avı A (sohbet ve mesajlaşma). */
+/* 1) Sohbet listesi araması (#k70Q) odaktayken gelen veri yeniden çizimi ertelenmez (S.dirty yok): liste çizilir, odak ve imleç
+      yeni kutuya geri verilir. Eskiden erteleniyordu; sonuçlardan birine dokununca kutu odağı bırakıyor, 60 ms sonra ertelenen çizim
+      satırları yeniden kuruyor ve dokunulan satır kaybolduğu için ilk dokunuş hiçbir şey açmıyordu. */
+{const f=refresh;refresh=function(...a){const el=document.activeElement;
+ if(S.authed&&S.route.name==="chats"&&el&&el.id==="k70Q"){const s=el.selectionStart,e=el.selectionEnd;renderDock();renderTop();render(false);refreshLayers();
+  const n=$("#k70Q");if(n){try{n.focus({preventScroll:true})}catch{n.focus()}try{n.setSelectionRange(s,e)}catch{}}return}
+ return f.apply(this,a)}}
+/* 2) Arama yazısı yalnızca sohbet listesi ile açılan sohbet arasında kalır; başka sayfaya geçince silinir (yoksa Sohbet sekmesine
+      sonradan dönünce liste süzülmüş, sohbetler kaybolmuş gibi görünüyordu). */
+HOOKS.after.push(r=>{if(r!=="chats"&&r!=="chat"&&typeof K70!=="undefined")K70.q=""});
+/* 3) Sohbet üst çubuğundaki kullanıcı adı uzunsa üç noktayla kısalınca hesap oku da kesiliyordu: ad ayrı kutuda kısalır, ok hep görünür. */
+{const f=renderTop;renderTop=function(...a){const r=f.apply(this,a);try{const h=S.route.name==="chats"&&$("#top h1.k70-un");
+ if(h&&!h.querySelector(".k70-unt")&&h.firstChild&&h.firstChild.nodeType===3){const s=document.createElement("span");s.className="k70-unt";s.textContent=h.firstChild.textContent;h.firstChild.replaceWith(s)}}catch(e){console.warn("70fxa t",e)}return r}}
+/*}@js:70FXA*/
+
+/*@js:70FXB{*/
+/* 7.0 hata avı B (sohbet dışı). Küçük düzeltmeler; her birinin nedeni yanında.
+   - Hikâye halkasına hızlı çift dokunma: ikinci dokunuş açılan görüntüleyicinin dokunma alanına düşüyor, ikinci hikâyeye atlıyor ya da
+     (7.0 kişiler arası geçişle) bir önceki kişiye geçiyordu; görüntüleyici sağdan kayarken solda açıkta kalan Akış'a düşen dokunuş da
+     hikâyeyi yeniden açıp ilk hikâyeyi atlatıyordu. Açılıştan sonra kayma süresince (en az 320 ms) #svNext/#svPrev ve katman dışına düşen
+     dokunuşlar yutulur (window yakalama aşaması, 70UI'nin document dinleyicisinden önce çalışır). */
+{const f=openStories;openStories=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="story"]');if(l)l._fxT=performance.now()}catch{}return r}}
+window.addEventListener("click",e=>{const l=$('#overlay [data-layer="story"]');if(!l||!l._fxT)return;const t=e.target;
+ if(performance.now()-l._fxT<Math.max(320,k70D()*1000+60)&&(!l.contains(t)||(t.closest&&t.closest("#svNext,#svPrev")))){e.preventDefault();e.stopImmediatePropagation()}},true);
+/*}@js:70FXB*/
 
 boot();
 

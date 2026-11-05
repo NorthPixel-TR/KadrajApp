@@ -4375,3 +4375,12 @@ html.reduce-motion{--k70-t:.01s}
 html.reduce-motion .cinfo.k70-in,html.reduce-motion .cinfo.k70-in .body>*,html.reduce-motion .k70-tip{animation:none}
 @media (prefers-reduced-motion:reduce){.cinfo.k70-in,.cinfo.k70-in .body>*,.k70-tip,.k70-burst{animation:none}}
 /*}@css:70CHAT*/
+/*@css:70FXB{*/
+/* Hikâyede parmakla kaydırma (70UI k70SvDrag): touch-action yoktu, telefon kaydırmayı kendisi üstlenip pointercancel gönderiyordu;
+   aşağı kaydırıp kapatma ve yana kaydırıp kişi değiştirme dokunmatik ekranda hiç çalışmıyordu. */
+#overlay [data-layer="story"] .sv{touch-action:none}
+/*}@css:70FXB*/
+/*@css:70FXA{*/
+/* sohbet üst çubuğu: uzun kullanıcı adı kısalır, hesap oku görünür kalır */
+#top h1.k70-un .k70-unt{display:inline-block;max-width:calc(100% - 1.4rem);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+/*}@css:70FXA*/
