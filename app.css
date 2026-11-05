@@ -4588,3 +4588,20 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 #overlay{overflow-x:clip}
 :root[data-ui] #main .card.capc.k70c .capk{margin:0;border-radius:0}
 /*}@css:703*/
+/*@css:704{*/
+/* 7.0.4: çoklu profil fotoğrafı (profilde noktalar, Düzenle'de şerit) */
+#main .prof-top{position:relative}
+#main .prof-top>.av.k704-av{touch-action:pan-y;cursor:pointer;user-select:none}
+#main .prof-top>.av.k704-av img{-webkit-user-drag:none}
+#main .k704-dots{position:absolute;left:0;top:calc(84px + 6px);width:84px;display:flex;justify-content:center;gap:4px;pointer-events:none}
+#main .k704-dots i{width:5px;height:5px;border-radius:50%;background:var(--line);transition:background var(--k69-d,.3s),transform var(--k69-d,.3s)}
+#main .k704-dots i.on{background:var(--accent);transform:scale(1.25)}
+#main .k704-avs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+#main .k704-t{position:relative;width:52px;height:52px;border-radius:50%;padding:0;border:2px solid var(--line);background:var(--surface-2);overflow:hidden;display:grid;place-items:center;color:var(--muted);transition:transform var(--k69-d,.3s)}
+#main .k704-t:active{transform:scale(.92)}
+#main .k704-t.main{border-color:var(--accent)}
+#main .k704-t img{width:100%;height:100%;object-fit:cover}
+#main .k704-t b{position:absolute;left:0;right:0;bottom:0;font:600 .58rem/1.5 var(--f-body);background:var(--accent);color:#fff;text-align:center}
+#main .k704-t.add{border-style:dashed}
+#main .k704-h{display:block;text-align:center;font-size:.75rem;margin-top:2px}
+/*}@css:704*/

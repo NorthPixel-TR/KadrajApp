@@ -1,9 +1,14 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.3",
+ "ver": "7.0.4",
  "at": 1793727074868,
- "note": "7.0.3: kalan küçük hatalar: sohbet ayrıntıları kayarken taşma, zaman kapsülü kartı yeni düzende, yeni sohbette basılı tutunca zamanlama.",
+ "note": "7.0.4: profilde en çok 5 fotoğraf (kaydırınca değişir), Ben'e çift dokununca diğer hesaba geçiş.",
  "items": [
+  {
+   "ad": "Çoklu profil fotoğrafı ve Ben çift dokunma (390 ve 800 px)",
+   "ok": true,
+   "not": "av704.js 18/18"
+  },
   {
    "ad": "Sohbet ayrıntıları kayarken taşma, kapsül kartı, yeni DM zamanlama",
    "ok": true,
