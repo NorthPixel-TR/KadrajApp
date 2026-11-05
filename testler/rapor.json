@@ -1,13 +1,13 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.4",
+ "ver": "7.0.5",
  "at": 1793727074868,
- "note": "7.0.4: profilde en çok 5 fotoğraf (kaydırınca değişir), Ben'e çift dokununca diğer hesaba geçiş.",
+ "note": "7.0.5: profil fotoğrafları dönerek kendiliğinden değişiyor.",
  "items": [
   {
-   "ad": "Çoklu profil fotoğrafı ve Ben çift dokunma (390 ve 800 px)",
+   "ad": "Kendiliğinden dönen profil fotoğrafları ve Ben çift dokunma (390 ve 800 px)",
    "ok": true,
-   "not": "av704.js 18/18"
+   "not": "av704.js 20/20"
   },
   {
    "ad": "Sohbet ayrıntıları kayarken taşma, kapsül kartı, yeni DM zamanlama",

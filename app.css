@@ -4591,8 +4591,8 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 /*@css:704{*/
 /* 7.0.4: çoklu profil fotoğrafı (profilde noktalar, Düzenle'de şerit) */
 #main .prof-top{position:relative}
-#main .prof-top>.av.k704-av{touch-action:pan-y;cursor:pointer;user-select:none}
-#main .prof-top>.av.k704-av img{-webkit-user-drag:none}
+#main .prof-top>.av.k704-av{perspective:420px}
+#main .prof-top>.av.k704-av img{backface-visibility:hidden;will-change:transform}
 #main .k704-dots{position:absolute;left:0;top:calc(84px + 6px);width:84px;display:flex;justify-content:center;gap:4px;pointer-events:none}
 #main .k704-dots i{width:5px;height:5px;border-radius:50%;background:var(--line);transition:background var(--k69-d,.3s),transform var(--k69-d,.3s)}
 #main .k704-dots i.on{background:var(--accent);transform:scale(1.25)}
