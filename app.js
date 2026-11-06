@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70012,APP_VER="7.0.12";
+const APP_V=70013,APP_VER="7.0.13";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -8204,7 +8204,7 @@ HOOKS.after.push(r=>{if(r==="profile"){const u=(S.route.params&&S.route.params.u
 function hlRowHtml(uid){const own=uid===S.uid;const list=hlOf(uid);if(!own&&(!list.length||!canSeeUser(uid)))return"";if(own&&S.guest)return"";
  return`<div class="hlr" aria-label="Öne çıkanlar">${own?`<button class="hlc new" data-hlnew="1" aria-label="Yeni öne çıkan"><span class="hav">${I("add")}</span><small>Yeni</small></button>`:""}${list.map(d=>{const it=d.items[0];return`<button class="hlc" data-hl="${esc(d.id)}" data-hlu="${esc(uid)}" aria-label="Öne çıkan: ${esc(d.name)}"><span class="hav"><img src="${esc(R(it.img))}" alt="" loading="lazy" decoding="async"></span><small>${esc(d.name)}</small></button>`}).join("")}</div>`}
 const vProfileBase550=vProfile;
-vProfile=function(uid){const h=vProfileBase550.apply(this,arguments);try{const u=uid||S.uid;const row=hlRowHtml(u);if(!row)return h;const i=h.indexOf('<div class="ptabs"');return i<0?h+row:h.slice(0,i)+row+h.slice(i)}catch(e){console.warn("hl",e);return h}};
+vProfile=function(uid){const h=vProfileBase550.apply(this,arguments);try{const u=uid||S.uid;const row=hlRowHtml(u);if(!row)return h;const i=h.search(/<div class="ptabs[ "]/);return i<0?h+row:h.slice(0,i)+row+h.slice(i)}catch(e){console.warn("hl",e);return h}};
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-hl],[data-hlnew]");if(!t)return;e.preventDefault();e.stopPropagation();
  if(t.dataset.hlnew)return hlNew();hlOpen(t.dataset.hlu,t.dataset.hl)},true);
 /* kare: hikâye resmi ya da telefondaki fotoğraf → 540x960 */
@@ -10271,7 +10271,7 @@ try{ADM_EXTRA.push({id:"zirve",title:"Zirve önizleme",desc:"31 Mart 2027'yi şi
    - Ben'e çift dokunma (cloud): 350 ms içinde ikinci dokunuş → accOther() (önceki hesap, yoksa listede sıradaki) → accSwitch. Tek hesapta bir kez ipucu. */
 const AV_MAX=5,AVI={};
 function avsOf(uid){const p=P(uid);const m=p&&p.avatar;const ex=Array.isArray(p&&p.avs)?p.avs.filter(x=>typeof x==="string"&&/^(data:image\/|https:\/\/|img\/)/.test(x)&&x!==m):[];return[m,...ex].filter((u,i,arr)=>u&&arr.indexOf(u)===i).slice(0,AV_MAX)}
-async function avsSave(list){list=list.filter(Boolean).slice(0,AV_MAX);const patch={avatar:list[0]||me().avatar,avs:list.slice(1)};
+async function avsSave(list){const ini=avsIni();list=list.filter(x=>x&&x!==ini).slice(0,AV_MAX);const patch={avatar:list[0]||(S.profiles[S.uid]||{}).avatar||null,avs:list.slice(1)};
  S.profiles={...S.profiles,[S.uid]:{...S.profiles[S.uid],...patch}};if(S.editDraft)S.editDraft.av=null;renderDock();avsEditPaint();
  return write(()=>DB.update("profiles/"+S.uid,patch))}
 /* 7.0.5 → 7.0.6 (sahibi: "kendi dönsün, dönme efektiyle"; sonra "yalnızca bir kez dönsün, 0,5 sn, profile basınca hemen"):
@@ -10281,7 +10281,7 @@ async function avsSave(list){list=list.filter(Boolean).slice(0,AV_MAX);const pat
 const AV_FIRST=250,AV_EVERY=500,AVR={uid:null,t:0,r:null,done:null};
 function avsShow(uid,i){const L=avsOf(uid);if(L.length<2)return;i=((i%L.length)+L.length)%L.length;AVI[uid]=i;
  const av=$("#main .prof-top > .av");const im=av&&av.querySelector("img");if(!im)return;const d=k69Dur();
- const put=()=>{im.src=L[i];[...document.querySelectorAll("#main .k704-dots i")].forEach((b,j)=>b.classList.toggle("on",j===i))};
+ const put=()=>{if(!im.isConnected)return;im.src=L[i];[...document.querySelectorAll("#main .k704-dots i")].forEach((b,j)=>b.classList.toggle("on",j===i))};
  if(!d){put();return}
  const h=.15;const ease=`transform ${h}s cubic-bezier(.4,0,.6,1)`;
  im.style.transition=ease;im.style.transform="rotateY(90deg)";
@@ -10309,7 +10309,7 @@ function avsEditPaint(){const pick=$("#main #editForm .avpick");if(!pick||!S.uid
   const l=sheet("k704av","Profil fotoğrafı",`<div style="display:flex;justify-content:center;padding:6px 0 10px"><span class="av" style="--s:96px"><img src="${esc(L[j])}" alt=""></span></div><button class="opt" id="k704Main">${I("check")}Ana fotoğraf yap</button><button class="opt red" id="k704Rm">${I("trash")}Kaldır</button>`);
   l.querySelector("#k704Main").onclick=async()=>{closeLayer("k704av");if(!guard())return;const n=[L[j],...L.filter((_,k)=>k!==j)];if(await avsSave(n))toast("Ana fotoğraf değişti")};
   l.querySelector("#k704Rm").onclick=async()=>{closeLayer("k704av");if(!guard())return;if(await avsSave(L.filter((_,k)=>k!==j)))toast("Fotoğraf kaldırıldı")}}}
-{const f=wireEdit;wireEdit=function(...a){const r=f.apply(this,a);try{const b=$("#editAvBtn");if(b&&!b._k704){b._k704=1;const old=b.onclick;b.onclick=async(...x)=>{const prev=avsOf(S.uid);await old.apply(b,x);
+{const f=wireEdit;wireEdit=function(...a){const r=f.apply(this,a);try{const b=$("#editAvBtn");if(b&&!b._k704){b._k704=1;const old=b.onclick;b.onclick=async(...x)=>{const ini=avsIni();const prev=avsOf(S.uid).filter(u=>u!==ini);await old.apply(b,x);
  const cur=me().avatar;if(cur&&prev[0]&&cur!==prev[0]){const n=[cur,...prev].filter((u,i,arr)=>arr.indexOf(u)===i).slice(0,AV_MAX);S.profiles={...S.profiles,[S.uid]:{...S.profiles[S.uid],avs:n.slice(1)}};await write(()=>DB.update("profiles/"+S.uid,{avs:n.slice(1)}),{quiet:true})}avsEditPaint()}}}catch(e){console.warn(e)}return r}}
 /* Ben'e çift dokunma → diğer hesap */
 function accOther(){const d=accData();const cur=accCur();const L=d.list.filter(x=>x.a!==cur);if(!L.length)return null;
@@ -10404,16 +10404,23 @@ function mp4Defrag(u8){const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLeng
 function ebmlVint(u8,p){const b=u8[p];let l=1,m=0x80;while(l<=8&&!(b&m)){l++;m>>=1}if(l>8)return null;let v=b&(m-1),unk=v===m-1;for(let i=1;i<l;i++){v=v*256+u8[p+i];if(u8[p+i]!==255)unk=false}return{v,l,unk}}
 function ebmlId(u8,p){const b=u8[p];let l=1,m=0x80;while(l<=4&&!(b&m)){l++;m>>=1}let v=0;for(let i=0;i<l;i++)v=v*256+u8[p+i];return{v,l}}
 function ebmlSize(n,len){const o=new Uint8Array(len);let v=n;for(let i=len-1;i>=0;i--){o[i]=v&255;v=Math.floor(v/256)}o[0]|=0x80>>(len-1);return o}
-function webmLastMs(u8){/* son Cluster'ın zamanı + içindeki en büyük blok zamanı */const pat=[0x1F,0x43,0xB6,0x75];
- for(let i=u8.length-8;i>0;i--){if(u8[i]!==0x1F||u8[i+1]!==0x43||u8[i+2]!==0xB6||u8[i+3]!==0x75)continue;const sz=ebmlVint(u8,i+4);if(!sz)continue;let p=i+4+sz.l,tc=null,mx=0;
-  while(p<u8.length-4){const id=ebmlId(u8,p);const s=ebmlVint(u8,p+id.l);if(!s)break;const d=p+id.l+s.l;if(id.v===0xE7){let v=0;for(let k=0;k<s.v;k++)v=v*256+u8[d+k];tc=v}else if(id.v===0xA3||id.v===0xA0){const tn=ebmlVint(u8,id.v===0xA3?d:d+2);const off=(id.v===0xA3?d:d+2)+(tn?tn.l:1);if(id.v===0xA3){const r=(u8[off]<<8|u8[off+1]);mx=Math.max(mx,r>32767?r-65536:r)}}else if(id.v===0x1F43B675)break;
-   if(s.unk||id.v===0xA0&&0)break;p=d+s.v}
-  if(tc!==null)return tc+mx+33;void pat}return 0}
+function webmLastMs(u8){/* son Cluster'ın zamanı + içindeki en geç bloğun bitişi (SimpleBlock ya da BlockGroup › Block; 7.0.13: BlockGroup da sayılır) */
+ const blk=q=>{const tn=ebmlVint(u8,q);if(!tn)return null;const o=q+tn.l;if(o+1>=u8.length)return null;const r=u8[o]<<8|u8[o+1];return r>32767?r-65536:r};
+ for(let i=u8.length-8;i>0;i--){if(u8[i]!==0x1F||u8[i+1]!==0x43||u8[i+2]!==0xB6||u8[i+3]!==0x75)continue;const sz=ebmlVint(u8,i+4);if(!sz)continue;
+  const end=sz.unk?u8.length:Math.min(u8.length,i+4+sz.l+sz.v);let p=i+4+sz.l,tc=null,mx=0;
+  while(p<end-2){const id=ebmlId(u8,p);const s=ebmlVint(u8,p+id.l);if(!s)break;const d=p+id.l+s.l;if(id.v===0x1F43B675)break;
+   if(id.v===0xE7){let v=0;for(let k=0;k<s.v;k++)v=v*256+u8[d+k];tc=v}
+   else if(id.v===0xA3){const r=blk(d);if(r!==null)mx=Math.max(mx,r+33)}
+   else if(id.v===0xA0){const e2=Math.min(end,d+s.v);let q=d,bt=null,bd=0;while(q<e2-1){const cid=ebmlId(u8,q);const cs=ebmlVint(u8,q+cid.l);if(!cs)break;const cd=q+cid.l+cs.l;
+     if(cid.v===0xA1)bt=blk(cd);else if(cid.v===0x9B){let v=0;for(let k=0;k<cs.v;k++)v=v*256+u8[cd+k];bd=v}if(cs.unk)break;q=cd+cs.v}if(bt!==null)mx=Math.max(mx,bt+(bd||33))}
+   if(s.unk)break;p=d+s.v}
+  if(tc!==null)return tc+mx}return 0}
 function webmDur(u8,ms){let p=0;const h=ebmlId(u8,0);if(h.v!==0x1A45DFA3)return null;const hs=ebmlVint(u8,h.l);p=h.l+hs.l+hs.v;
  const sg=ebmlId(u8,p);if(sg.v!==0x18538067)return null;const ss=ebmlVint(u8,p+sg.l);const segStart=p,segData=p+sg.l+ss.l;let q=segData;
  while(q<u8.length){const id=ebmlId(u8,q);const s=ebmlVint(u8,q+id.l);if(!s)return null;const d=q+id.l+s.l;
   if(id.v===0x1F43B675)return null;/* Info Cluster'dan önce gelir */
   if(id.v===0x1549A966){if(s.unk)return null;let r=d,has=null;while(r<d+s.v){const cid=ebmlId(u8,r);const cs=ebmlVint(u8,r+cid.l);if(cid.v===0x4489)has={p:r+cid.l+cs.l,l:cs.v};r=r+cid.l+cs.l+cs.v}
+   if(has&&!ms){const d0=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);const cur=has.l===8?d0.getFloat64(has.p):has.l===4?d0.getFloat32(has.p):0;if(cur>0)return null}
    if(!ms)ms=webmLastMs(u8);if(!ms)return null;
    if(has){const o=u8.slice();const dv=new DataView(o.buffer);if(has.l===8)dv.setFloat64(has.p,ms);else if(has.l===4)dv.setFloat32(has.p,ms);else return null;return o}
    const dEl=new Uint8Array(11);dEl[0]=0x44;dEl[1]=0x89;dEl[2]=0x88;new DataView(dEl.buffer).setFloat64(3,ms);
@@ -10450,17 +10457,59 @@ function dlVidSheet(ref){const u0=String(ref||"");const cld=dlCld(u0);const st={
  const $s=l.querySelector("#dlSt"),$b=l.querySelector("#dlBar"),$a=l.querySelector("#dlAct");
  const fail=msg=>{if(st.off)return;$s.textContent=msg;$b.parentNode.style.display="none";
   $a.innerHTML=cld?`<a class="btn" href="${esc(dl7011Url(u0))}" target="_blank" rel="noopener" id="dlDir2">${I("dl708")}Doğrudan indir</a>`:""};
- (async()=>{try{let u=u0;if(u.startsWith("chunk:"))u=await resolveVideo(u);
-   const b=await dlFetch(u,p=>{if(st.off)return;if(p>=0){$b.style.width=Math.round(p*100)+"%";$s.textContent="Video hazırlanıyor %"+Math.round(p*100)}else $s.textContent="Video hazırlanıyor "+(Math.round(-p/1048576*10)/10)+" MB"});
+ (async()=>{try{let u=u0;if(u.startsWith("chunk:")){u=await resolveVideo(u);if(!u)throw Object.assign(new Error("parça yok"),{gone:1})}
+   const b=await dlFetch(u,p=>{if(st.off)return;if(p>=0){$b.style.width=Math.round(p*100)+"%";$s.textContent="Video hazırlanıyor %"+Math.round(p*100)}else $s.textContent="Video hazırlanıyor "+dlMB(-p)+" MB"});
    if(st.off)return;$s.textContent="Süre düzeltiliyor…";$b.style.width="100%";
    const fx=await vidFix(new File([b],"v",{type:b.type||"video/mp4"}));if(st.off)return;
    const ext=/webm/.test(fx.type)?"webm":/quicktime/.test(fx.type)?"mov":"mp4";st.url=URL.createObjectURL(fx);
-   $s.textContent="Video hazır ("+(Math.round(fx.size/1048576*10)/10)+" MB)";$b.parentNode.style.display="none";
+   $s.textContent="Video hazır ("+dlMB(fx.size)+" MB)";$b.parentNode.style.display="none";
    $a.innerHTML=`<a class="btn" href="${st.url}" download="${esc(dlName("video",ext))}" id="dlSave">${I("dl708")}Telefona kaydet</a>`;
    $a.querySelector("#dlSave").addEventListener("click",()=>setTimeout(()=>{toast("Video indiriliyor, bildirimlere bak");closeLayer("dl7012")},400))}
-  catch(e){console.warn("dl7012",e);fail(cld?"Video burada hazırlanamadı. Doğrudan indir'e bas.":"Video indirilemedi. İnternetini kontrol edip yeniden dene.")}})();
+  catch(e){console.warn("dl7012",e);if(e&&e.gone)return fail("Bu video artık yok (silinmiş). İndirilemez.");fail(cld?"Video burada hazırlanamadı. Doğrudan indir'e bas.":"Video indirilemedi. İnternetini kontrol edip yeniden dene.")}})();
  return l}
 {const f=dlMedia;dlMedia=async function(ref,kind,...a){if(kind==="video"&&!kgal()&&ref)return dlVidSheet(ref);return f.call(this,ref,kind,...a)}}
 /*}@js:7012*/
+/*@js:7013A{*/
+/* 7.0.13 hata avı A (profil ve medya). Her düzeltme:
+   - Fotoğrafsız kişi Düzenle'de "+" ile fotoğraf ekleyince ya da "Fotoğrafı değiştir"e basınca P()'nin yedeği olan baş harf resmi (initialsAv)
+     gerçek fotoğraf sanılıp profiles.avatar/avs'a kaydediliyordu (ad değişse de eski harfler kalıyordu, şeritte fazladan "fotoğraf"). avsIni() o resmi
+     verir; avsSave ve wireEdit sarmalayıcısı (bölge 704, yerinde) onu süzer, yeni fotoğraf ana fotoğraf olur.
+   - Profilden hemen başka profile geçince önceki profilin dönme animasyonunun gecikmeli adımı yeni profilin noktalarını yanlış işaretliyordu
+     (avsShow, bölge 704, yerinde: resim sayfadan kalktıysa hiçbir şey yapmaz).
+   - Sohbette gönderilen videolar ve Yönetici › Toplu Klaket (kvStore) 7.0.11'deki süre düzeltmesinden (vidFix) geçmiyordu: telefonda kaydedilen/
+     küçültülen WebM'in süresi yoktu (Kadraj'ın oynatıcısında süre "sonsuz", ilerleme çubuğu ve indirilen dosya bozuk). kvStore sarıldı.
+   - vidFix süresi zaten yazılı WebM'in süresini de tahminle (son Cluster + 33 ms) yeniden yazıyordu; artık dokunmaz (webmDur, bölge 7011, yerinde).
+   - webmLastMs yalnızca SimpleBlock sayıyordu; Chrome'un canvas+MediaRecorder çıktısı (compressVideo, Kurgu) BlockGroup yazınca süre 0,033 sn
+     yazılıyordu (1,5 sn'lik video 33 ms görünüyordu). BlockGroup › Block (+BlockDuration) da okunur (bölge 7011, yerinde yeniden yazıldı).
+   - Video indir: silinmiş (parçaları olmayan) videoda "İnternetini kontrol et" diyip "null" adresini istiyordu; artık "Bu video artık yok"
+     (dlVidSheet, bölge 7012, yerinde). MB ondalığı virgüllü (dlMB).
+   - CSS: profilde uzun profil şarkısı adı (.pmus) profil ızgarasını genişletip sayfayı 200+ px yana kaydırıyordu (istatistikler, düğmeler ekran dışı);
+     .prof sütunu minmax(0,1fr). Kurgu'nun başlık çubuğu açık temada açık renk zemin + beyaz yazıydı (başlık ve kapat görünmüyordu); koyu zemin.
+   - Profilde 4+ sekme olunca (Yeniden/Etiketler, .ptabs.many) öne çıkan hikâyeler satırı sekmelerin üstü yerine sayfanın en altına düşüyordu
+     (bölge 550 vProfile sarmalayıcısı '<div class="ptabs"' arıyordu; yerinde düzeltildi). */
+function avsIni(){const raw=S.uid&&S.profiles[S.uid];return raw&&!raw.avatar?P(S.uid).avatar:null}
+const dlMB=n=>String(Math.round(n/1048576*10)/10).replace(".",",");
+{const f=kvStore;kvStore=async function(file,...a){if(file&&!file._fixed)file=await vidFix(file);return f.call(this,file,...a)}}
+/*}@js:7013A*/
+/*@js:7013B{*/
+/* 7.0.13 hata avı B (sohbet, ayarlar, genel arayüz).
+   1) Telefonda gönder düğmesine basılı tutup zamanlama penceresi açılınca, parmak kalkınca gelen tıklama pencerenin o noktadaki
+      "Zamanla" düğmesine düşüyor, mesaj hiç seçim yapılmadan varsayılan saate zamanlanıyordu (fareyle olmuyordu: tıklama aynı öğe ister).
+      Basılı tutma schOpen'ı açtıysa o parmağın kalkışından sonraki tek tıklama (gönder düğmesinin kendisi hariç, onu k70Composer yutar) yutulur.
+   2) Meydan'da (ve bot dışı zamanlamasız sohbette) gönder düğmesinin erişilebilirlik adı "zamanlamak için basılı tut" diyordu; zamanlama yalnızca DM ve grupta.
+   3) Mesaj menüsünde "Çıkartma yap" (690) "Vazgeç"in altına ekleniyordu; artık Vazgeç'ten önce.
+   4) Bildirimler sekmesi açıkken alt menüdeki Bildirim rozeti (yeni sayısı) bir sonraki veri gelişine kadar kalıyordu (dok sayfa çizilmeden
+      önce çiziliyor, "görüldü" zamanı sayfa çizilirken yazılıyor); Bildirimler çizilince dok yeniden çizilir.
+   5) (CSS) Boşluksuz uzun ad (40 karaktere kadar izinli) grup sohbetinde gönderen satırını ve balonu ekranın dışına, DM'in üstündeki tanıtım
+      kartını yana taşıyordu (#msgs yatay kayıyordu); bu yazılar artık kırılır. */
+const K13S={pid:null,arm:0,until:0};
+document.addEventListener("pointerdown",e=>{K13S.until=0;if(e.target.closest&&e.target.closest("#sendBtn")){K13S.pid=e.pointerId;K13S.arm=0}else K13S.pid=null},true);
+{const up=e=>{if(K13S.pid===e.pointerId){K13S.pid=null;if(K13S.arm){K13S.arm=0;K13S.until=performance.now()+700}}};document.addEventListener("pointerup",up,true);document.addEventListener("pointercancel",up,true)}
+window.addEventListener("click",e=>{if(!K13S.until)return;const ok=performance.now()<K13S.until;K13S.until=0;if(!ok||(e.target.closest&&e.target.closest("#sendBtn")))return;e.preventDefault();e.stopImmediatePropagation()},true);
+{const f=schOpen;schOpen=function(...a){if(K13S.pid!==null)K13S.arm=1;return f.apply(this,a)}}
+{const f=k70Upd;k70Upd=function(...a){const r=f.apply(this,a);try{const b=$("#sendBtn"),i=$("#msgIn");if(b&&i&&i.value.trim()&&!pinKey())b.setAttribute("aria-label","Gönder")}catch{}return r}}
+{const f=msgMenu;msgMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="menu"]');const s=l&&l.querySelector("#mmStk"),c=l&&l.querySelector('.opt[data-act="close"]');if(s&&c&&(c.compareDocumentPosition(s)&Node.DOCUMENT_POSITION_FOLLOWING))c.before(s)}catch{}return r}}
+HOOKS.after.push(r=>{if(r==="activity")try{renderDock()}catch(e){console.warn("7013B dock",e)}});
+/*}@js:7013B*/
 boot();
 

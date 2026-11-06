@@ -4615,3 +4615,13 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 .dl12-act .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;text-decoration:none}
 .dl12-n{font-size:.8rem;margin:0}.dl12-n a{color:var(--accent)}
 /*}@css:7012*/
+/*@css:7013A{*/
+/* uzun profil şarkısı adı profil ızgarasını genişletmesin (sayfa yana kayıyordu) */
+#main .prof{grid-template-columns:minmax(0,1fr)}
+/* Kurgu başlığı açık temada da koyu zeminde (yazı ve kapat beyaz) */
+.ked .hd{background:#0B0F0E}
+/*}@css:7013A*/
+/*@css:7013B{*/
+/* 7.0.13 hata avı B: boşluksuz uzun ad grupta gönderen satırını/balonu ve DM tanıtım kartını yana taşırmasın */
+#msgs .sender,#msgs .hero b,#msgs .hero span{overflow-wrap:anywhere;min-width:0;max-width:100%}
+/*}@css:7013B*/

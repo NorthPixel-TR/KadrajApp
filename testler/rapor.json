@@ -1,78 +1,53 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.12",
+ "ver": "7.0.13",
  "at": 1793727074868,
- "note": "7.0.12: tarayıcıda video indirme pencereyle (ilerleme + Telefona kaydet + Doğrudan indir).",
+ "note": "Büyük hata avı: 14 hata düzeltildi (WebM süresi, sohbet videosu süresi, profil fotoğrafı, zamanlama basılı tutma, rozet, taşmalar).",
  "items": [
   {
-   "ad": "Tarayıcıda video indirme penceresi",
+   "ad": "Akış, sohbet, profil, hikâye, ayarlar (Kadraj testi 49 adım)",
    "ok": true,
-   "not": "dl7012.js 8/8"
+   "not": "Hepsi geçti"
   },
   {
-   "ad": "Video süresi düzeltmesi (parçalı MP4, WebM)",
+   "ad": "Arayüz 390/800 (t69)",
    "ok": true,
-   "not": "vf/t.js 24/24"
+   "not": "30/30"
   },
   {
-   "ad": "İndir (sohbet ve paylaşım menüsü)",
+   "ad": "Sohbet 7.0 (t70)",
    "ok": true,
-   "not": "dl708.js 9/9"
+   "not": "34/34"
   },
   {
-   "ad": "Bir kez dönen profil fotoğrafları ve Ben çift dokunma (390 ve 800 px)",
+   "ad": "Profil fotoğrafları (av704)",
    "ok": true,
-   "not": "av704.js 21/21"
+   "not": "21/21"
   },
   {
-   "ad": "Sohbet ayrıntıları kayarken taşma, kapsül kartı, yeni DM zamanlama",
+   "ad": "İndirme (dl708, dl7012)",
    "ok": true,
-   "not": "fx703.js 6/6 (7.0.2: 3 hata)"
+   "not": "9/9, 8/8"
   },
   {
-   "ad": "Açılış animasyonu ve açılış emniyeti",
+   "ad": "Video süre düzeltme (vf, kvfix)",
    "ok": true,
-   "not": "intro.js 10/10"
+   "not": "24/24, 8/8"
   },
   {
-   "ad": "Zirve (30/31 Mart, 1 Nisan 2027, önizleme)",
+   "ad": "Hata avı A (profil/medya)",
    "ok": true,
-   "not": "zirve.js 29/29 (390, 360 koyu)"
+   "not": "avs0 4, p7b 7, kdhd 2, hlrow 3"
   },
   {
-   "ad": "Hikâye gibi Neler yeni",
+   "ad": "Hata avı B (sohbet/arayüz) 360/390",
    "ok": true,
-   "not": "wn.js 11/11"
+   "not": "15/15"
   },
   {
-   "ad": "Sohbet aramasında ilk dokunuş",
+   "ad": "Sohbet kayması (meas)",
    "ok": true,
-   "not": "fx1_search_tap 7/7 (7.0.0: 3/5)"
-  },
-  {
-   "ad": "Uzun adda hesap oku",
-   "ok": true,
-   "not": "fx3_top_arrow 4/4"
-  },
-  {
-   "ad": "Yanıt seçiliyken zamanlama",
-   "ok": true,
-   "not": "fx4_sch_reply 5/5 (7.0.0: 3 hata)"
-  },
-  {
-   "ad": "Hikâyede hızlı çift dokunma",
-   "ok": true,
-   "not": "dbltap 3/3"
-  },
-  {
-   "ad": "Hikâyede telefonla kaydırma",
-   "ok": true,
-   "not": "swipe 4/4 (gerçek dokunma olayları)"
-  },
-  {
-   "ad": "t69 / t70 / anim / Kadraj testi",
-   "ok": true,
-   "not": "30/30, 34/34, 19/19, 49 adım"
+   "not": "en çok 10 px, hata yok"
   }
  ]
 }
