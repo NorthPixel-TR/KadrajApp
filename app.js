@@ -21,7 +21,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70013,APP_VER="7.0.13";
+const APP_V=70014,APP_VER="7.0.14";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -862,7 +862,7 @@ function drawComposer(){const c=S.cmp;const titles={photo:"Yeni fotoğraf",reel:
   const drawOpts=()=>{$("#pOpts",l).innerHTML=c.options.map((o,i)=>`<div class="r"><input class="in" data-oi="${i}" maxlength="40" placeholder="Seçenek ${i+1}" value="${esc(o)}">${c.options.length>2?`<button class="ib" data-orm="${i}" aria-label="Seçeneği kaldır" type="button">${I("close")}</button>`:""}</div>`).join("");$$("[data-oi]",l).forEach(el=>el.oninput=()=>c.options[+el.dataset.oi]=el.value);$$("[data-orm]",l).forEach(el=>el.onclick=()=>{c.options.splice(+el.dataset.orm,1);drawOpts()});$("#pAdd",l).hidden=c.options.length>=4};
   $("#pQ",l).oninput=e=>c.question=e.target.value;$("#pAdd",l).onclick=()=>{if(c.options.length<4){c.options.push("");drawOpts()}};drawOpts()}
  else if(c.kind==="reel"){b.innerHTML=`<div style="padding:6px 16px 4px"><div class="seg">${[["video","Video"],["slides","Fotoğraflardan"]].map(([v,lb])=>`<button data-rm="${v}" aria-pressed="${c.mode===v}">${lb}</button>`).join("")}</div></div><div id="rBody"></div><div class="form">${capFields}</div>`;
-  $$("[data-rm]",l).forEach(el=>el.onclick=()=>{c.mode=el.dataset.rm;drawComposer()});
+  $$("[data-rm]",l).forEach(el=>el.onclick=()=>{if(c._vb)return toast("Video hazırlanıyor, bitmesini bekle.");c.mode=el.dataset.rm;drawComposer()});
   const rb=$("#rBody",l);
   if(c.mode==="video"){const lim=S.mode==="local"?8:cldOn()?60:20;rb.innerHTML=(c.video?`<div class="pv"><video id="vPrev" src="${c.videoUrl}" controls playsinline ${c.vmusic&&c.vmusic!=="none"?"muted":""} loop autoplay></video></div><div style="padding:0 16px;display:flex;gap:6px;flex-wrap:wrap"><button class="btn ghost" id="vRec" type="button">${I("camera")}Yeniden çek</button><button class="btn ghost" id="vPick" type="button">${I("film")}Başka video seç</button></div>
     <div class="form" style="padding-bottom:0"><span class="lbl">Ses</span><div class="seg">${[["none","Orijinal"],["lofi","Lo-fi"],["enerjik","Enerjik"],["sakin","Sakin"]].map(([v,lb])=>`<button data-vmu="${v}" aria-pressed="${(c.vmusic||"none")===v}" type="button">${lb}</button>`).join("")}</div><p class="muted" style="margin:0;font-size:.82rem">Müzik seçersen videonun kendi sesi kapanır, müzik cihazda çalınır.</p></div>`
@@ -872,10 +872,10 @@ function drawComposer(){const c=S.cmp;const titles={photo:"Yeni fotoğraf",reel:
    if(!f._mem){if(f.size>340*1048576)return toast("Video çok büyük (340 MB üstü). Daha kısa bir video seç.");try{const buf=await f.arrayBuffer();const nf=new File([buf],f.name||"flick.mp4",{type:f.type||"video/mp4"});nf._mem=1;f=nf}catch(e){console.warn(e);return toast("Video okunamadı. Videoyu Galeri'den tekrar seç; bulutta duruyorsa önce telefona indir.")}}const lim2=S.mode==="local"?1.5*1048576:cldOn()?CLD.maxMB*1048576:VMAX;
    const tgt=S.mode==="local"?lim2:cldOn()?lim2:3*1048576;const longV=cldOn()&&(await vidDur(f))>CLD.maxS+3;
    if(f.size>tgt||longV){const big=f.size>lim2;const go=$("#cmpGo",l);go.disabled=true;$("#rBody",l).innerHTML=`<div class="vbusy"><span class="spin"></span><b>Klaket hazırlanıyor</b><span class="pct" id="vbP">%0</span><small>Video telefonunda küçültülüyor, en fazla ${cldOn()?"2 dk 30 sn'si":"30 saniyesi"} alınır. Bu ekrandan çıkma.</small></div>`;
-    let shrunk=false;const alive=()=>S.cmp===c&&!!$('#overlay [data-layer="composer"]');try{const g=await compressVideo(f,{maxSide:cldOn()?1280:854,maxS:cldOn()?CLD.maxS:30,limit:cldOn()?88*1048576:tgt,onProg:p=>{const e=$("#vbP",l);if(e)e.textContent="%"+Math.round(p*100)}});if(g.size<f.size){f=g;shrunk=true}}catch(e){if(!alive())return;if(big){go.disabled=false;toast(e.message||"Video hazırlanamadı.");return drawComposer()}if(longV){go.disabled=false;toast("Video 2 dk 30 sn'den uzun ve kısaltılamadı. Daha kısa bir video seç.");return drawComposer()}}if(!alive())return;go.disabled=false;
+    let shrunk=false;c._vb=1;const alive=()=>S.cmp===c&&!!$('#overlay [data-layer="composer"]');try{const g=await compressVideo(f,{maxSide:cldOn()?1280:854,maxS:cldOn()?CLD.maxS:30,limit:cldOn()?88*1048576:tgt,onProg:p=>{const e=$("#vbP",l);if(e)e.textContent="%"+Math.round(p*100)}});if(g.size<f.size){f=g;shrunk=true}}catch(e){c._vb=0;if(!alive())return;if(big){go.disabled=false;toast(e.message||"Video hazırlanamadı.");return drawComposer()}if(longV){go.disabled=false;toast("Video 2 dk 30 sn'den uzun ve kısaltılamadı. Daha kısa bir video seç.");return drawComposer()}}c._vb=0;if(!alive())return;go.disabled=false;
     if(f.size>lim2){toast("Video hâlâ çok büyük. Daha kısa bir video seç.");return drawComposer()}toast(shrunk?"Video küçültüldü, hazır":"Video hazır")}if(c.videoUrl&&!Object.values(vcache).includes(c.videoUrl))try{URL.revokeObjectURL(c.videoUrl)}catch{}c.video=f;c.videoUrl=URL.createObjectURL(f);drawComposer()};
    $("#vPick",l).onclick=async()=>{S.onPickSlow=()=>{const h=$("#vHint",l);if(h)h.hidden=false};const f=await nativePick("video/*,.mp4,.mov,.m4v,.webm,.3gp,.mkv");if(f===undefined){$("#vHint",l).hidden=false;return}if(!f)return;useFile(f)};
-   const vs=$("#vSl",l);if(vs)vs.onclick=()=>{c.mode="slides";drawComposer()};
+   const vs=$("#vSl",l);if(vs)vs.onclick=()=>{if(c._vb)return toast("Video hazırlanıyor, bitmesini bekle.");c.mode="slides";drawComposer()};
    $("#vRec",l).onclick=async()=>{Music.stop();const f=await openRecorder(lim);if(f)useFile(f)};
    $$("[data-vmu]",l).forEach(el=>el.onclick=()=>{c.vmusic=el.dataset.vmu;$$("[data-vmu]",l).forEach(o=>o.setAttribute("aria-pressed",o===el));const v=$("#vPrev",l);if(c.vmusic==="none"){Music.stop();if(v)v.muted=false}else{if(v)v.muted=true;Music.start(c.vmusic)}})}
   else{rb.innerHTML=`<div class="rprev" id="rPrev"></div><div class="form" style="padding-bottom:0"><span class="lbl">Kareler (en fazla 3)</span><div class="slides-pick">${c.slides.map((s,i)=>`<div class="s"><img src="${R(s)}" alt=""><button data-srm="${i}" aria-label="Kareyi kaldır" type="button">${I("close")}</button></div>`).join("")}${c.slides.length<3?`<button class="add" id="sAdd" type="button" aria-label="Kare ekle">${I("add")}</button>`:""}</div>
@@ -947,7 +947,7 @@ async function resolveVideo(ref){if(vcache[ref])return vcache[ref];const[,vid,n]
  return vcache[ref]=URL.createObjectURL(new Blob([u8],{type:mime}))}
 /* 4.8: Klakette parçalı videolar yalnızca açık, önceki ve sonraki için indirilir (eskisi hepsini birden indiriyordu) */
 function hydrateVideos(){const near=new Set();if(activeReel){near.add(activeReel);if(activeReel.nextElementSibling)near.add(activeReel.nextElementSibling);if(activeReel.previousElementSibling)near.add(activeReel.previousElementSibling)}
- for(const v of $$("video[data-vref]")){if(v.getAttribute("src")||v._hy)continue;const r=v.closest(".reel");if(r&&!near.has(r))continue;v._hy=true;resolveVideo(v.dataset.vref).then(u=>{v._hy=false;if(u&&v.isConnected){v.src=u;if(activeReel&&activeReel.contains(v)&&settings.autoplay)v.play().catch(()=>{if(!v.muted&&activeReel&&activeReel.contains(v)){v.muted=true;v.play().catch(()=>{});S.needUnmute=true;const h=activeReel.querySelector(".rhint");if(h)h.hidden=false}})}}).catch(()=>{v._hy=false})}}
+ for(const v of $$("video[data-vref]")){if(v.getAttribute("src")||v._hy)continue;const r=v.closest(".reel");if(r&&!near.has(r))continue;v._hy=true;resolveVideo(v.dataset.vref).then(u=>{v._hy=!u;if(!u&&v.isConnected){vGone(v);return}if(u&&v.isConnected){v.src=u;if(activeReel&&activeReel.contains(v)&&settings.autoplay)v.play().catch(()=>{if(!v.muted&&activeReel&&activeReel.contains(v)){v.muted=true;v.play().catch(()=>{});S.needUnmute=true;const h=activeReel.querySelector(".rhint");if(h)h.hidden=false}})}}).catch(()=>{v._hy=false})}}
 const VMAX=4*1024*1024;
 /* 4.0: video parçaları bulutta ham bayt olarak saklanır (base64'e göre ~%25 daha az yer); yükleme yarıda kalırsa yazılan parçalar silinir */
 function delChunks(ref){if(!ref||!String(ref).startsWith("chunk:"))return;const[,vid,n]=String(ref).split(":");for(let i=0;i<+n;i++)DB.del(`vchunks/${vid}-${i}`).catch(()=>{})}
@@ -9723,7 +9723,7 @@ SG.splice(2,0,{k:"k69",t:"Kadraj'a özel",ic:"spark",s:["Kadraj'a özel"],d:"Ani
  h=h.replace(/<label class="srow [^"]*" data-k="[^"]*">(?:(?!<\/label>).)*data-set="reduceMotion"(?:(?!<\/label>).)*<\/label>/s,"");
  const ic=(n,c)=>`<span class="sic" style="--c:${c}">${I(n)}</span>`;const seg=(lbl,ics,c,key,opts,cur,kw)=>`<div class="srow sblk" data-k="${esc(kbFold(lbl+" "+kw+" "+opts.map(o=>o[1]).join(" ")))}"><div class="sbh">${ic(ics,c)}<span class="t">${lbl}</span></div><div class="seg" role="group" aria-label="${esc(lbl)}">${opts.map(([v,n])=>`<button type="button" data-k69s="${key}" data-v="${v}" aria-pressed="${cur===v}">${n}</button>`).join("")}</div></div>`;
  const rx=typeof REACTS!=="undefined"?REACTS.map(x=>x[0]):["heart"];const rxs=settings.dblRx&&rx.includes(settings.dblRx)?settings.dblRx:"heart";
- const body=seg("Animasyonlar","motion","#AF52DE","anim",[["off","Kapalı"],["hizli","Hızlı"],["normal","Normal"],["akici","Akıcı"]],k69AnimV(),"geçiş hareket kayma hız 0,5")+
+ const body=seg("Animasyonlar","motion","#AF52DE","anim",[["off","Kapalı"],["hizli","Hızlı"],["normal","Normal"],["akici","Akıcı"]],kbReduce()?"off":k69AnimV(),"geçiş hareket kayma hız 0,5")+(settings.reduceMotion!==true&&kbReduce()?`<p class="muted k7013-rm">Telefonunda "Hareketi azalt" açık olduğu için animasyonlar kapalı.</p>`:"")+
   seg("Sohbet balonu","chat","#34C759","bub69",[["r","Yuvarlak"],["k","Köşeli"]],settings.bub69==="k"?"k":"r","mesaj şekil köşe")+
   `<div class="srow sblk" data-k="${esc(kbFold("çift dokunma tepkisi mesaj kalp emoji"))}"><div class="sbh">${ic("heart","#FF2D55")}<span class="t">Çift dokunma tepkisi<small>Mesaja iki kez dokununca bu tepki gider</small></span></div><div class="k69-rx" role="group" aria-label="Çift dokunma tepkisi">${rx.map(k=>`<button type="button" data-k69s="dblRx" data-v="${k}" aria-pressed="${rxs===k}" aria-label="${esc(k)}">${typeof rxSvg==="function"?rxSvg(k):esc(k)}</button>`).join("")}</div></div>`+
   `<label class="srow" data-k="${esc(kbFold("gönderme sesi mesaj ses pop"))}">${ic("vol","#FF9500")}<span class="t">Gönderme sesi<small>Mesaj gidince kısa bir ses</small></span><span class="sw"><input type="checkbox" data-set="sendSnd" ${settings.sendSnd===true?"checked":""} aria-label="Gönderme sesi"><span></span></span></label>`+
@@ -9785,7 +9785,7 @@ function ozetSheet(){const t0=new Date();t0.setDate(1);t0.setHours(0,0,0,0);cons
  const days=Math.max(1,Math.ceil((now()-(+me().createdAt||now()))/864e5));const tile=(n,t)=>`<span><b>${n}</b><small>${t}</small></span>`;
  sheet("ozet",`${ay.charAt(0).toLocaleUpperCase("tr")+ay.slice(1)} özetin`,`<div class="k69-oz"><div class="k69-ozh">${avatar(S.uid,56,{click:false,ring:false})}<span><b>@${esc(me().username)}</b><small>Kadraj'daki ${days}. günün</small></span></div>
   <div class="k69-st">${tile(mon.length,"paylaşım")}${tile(likes,"beğeni")}${tile(coms,"yorum")}${tile(fol,"yeni takipçi")}</div>
-  ${best?`<button type="button" class="k69-ozb" data-open="${esc(best.id)}"><img src="${esc(postThumb(best))}" alt=""><span><b>En çok beğenilen</b><small>${bl} beğeni</small></span></button>`:`<p class="muted">Bu ay ilk paylaşımını yap, burada görünsün.</p>`}</div>`)}
+  ${best&&bl>0?`<button type="button" class="k69-ozb" data-open="${esc(best.id)}"><img src="${esc(postThumb(best))}" alt=""><span><b>En çok beğenilen</b><small>${bl} beğeni</small></span></button>`:my.length?`<p class="muted">Paylaşımların beğeni alınca en çok beğenilen burada görünür.</p>`:`<p class="muted">Bu ay ilk paylaşımını yap, burada görünsün.</p>`}</div>`)}
 ACT.k69oz=()=>ozetSheet();
 Object.assign(IP,{chart69:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'});
 /*}@js:690*/
@@ -10131,8 +10131,8 @@ const zrPct=()=>{const b=zrBase();return Math.max(0,Math.min(1,(zrNow()-b)/(ZIRV
 const zrTrDate=t=>{const d=zrTr(t);return d.getUTCDate()+" "+BD_AY[d.getUTCMonth()]+" "+d.getUTCFullYear()};
 /* sahne: dağ, iz, bayrak; tırmanan noktanın yeri iz üzerinde yüzdeye göre */
 const ZR_TRAIL="M60 196C96 186 92 168 120 160S150 140 138 124S160 102 152 88S158 66 160 54";
-function zrMount(cls,pct){return`<svg class="${cls}" viewBox="0 0 220 200" aria-hidden="true"><defs><linearGradient id="zrS${cls}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff6f91"/></linearGradient></defs>
- <circle class="zr-sun" cx="160" cy="70" r="30" fill="url(#zrS${cls})" opacity=".85"/><path class="zr-far" d="M0 200 0 150 40 120 70 142 104 100 130 124 180 84 220 120 220 200Z"/><path class="zr-pk" d="M18 200 160 40 220 128 220 200Z"/><path class="zr-snow" d="M160 40 146 58 154 56 160 64 168 55 176 60Z"/>
+function zrMount(cls,pct){return`<svg class="${cls}" viewBox="0 0 220 200" aria-hidden="true"><defs><linearGradient id="zrS${cls.replace(/\W/g,"")}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb36b"/><stop offset="1" stop-color="#ff6f91"/></linearGradient></defs>
+ <circle class="zr-sun" cx="160" cy="70" r="30" fill="url(#zrS${cls.replace(/\W/g,"")})" opacity=".85"/><path class="zr-far" d="M0 200 0 150 40 120 70 142 104 100 130 124 180 84 220 120 220 200Z"/><path class="zr-pk" d="M18 200 160 40 220 128 220 200Z"/><path class="zr-snow" d="M160 40 146 58 154 56 160 64 168 55 176 60Z"/>
  <path class="zr-tr" d="${ZR_TRAIL}" pathLength="1"/><g transform="translate(160 54)" class="zr-fl"><path d="M0 0V-22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M0-22 14-17.5 0-13Z" fill="#E30A17"/></g><circle class="zr-me" r="5" data-p="${pct==null?"":pct}"/></svg>`}
 function zrPlace(root){for(const c of root.querySelectorAll(".zr-me[data-p]")){const v=c.getAttribute("data-p");if(v==="")continue;const t=c.ownerSVGElement&&c.ownerSVGElement.querySelector(".zr-tr");if(!t)continue;
  try{const L=t.getTotalLength();const p=t.getPointAtLength(L*Math.max(0,Math.min(1,+v)));c.setAttribute("cx",p.x.toFixed(1));c.setAttribute("cy",p.y.toFixed(1))}catch{}}}
@@ -10511,5 +10511,17 @@ window.addEventListener("click",e=>{if(!K13S.until)return;const ok=performance.n
 {const f=msgMenu;msgMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="menu"]');const s=l&&l.querySelector("#mmStk"),c=l&&l.querySelector('.opt[data-act="close"]');if(s&&c&&(c.compareDocumentPosition(s)&Node.DOCUMENT_POSITION_FOLLOWING))c.before(s)}catch{}return r}}
 HOOKS.after.push(r=>{if(r==="activity")try{renderDock()}catch(e){console.warn("7013B dock",e)}});
 /*}@js:7013B*/
+/*@js:7013C{*/
+/* 7.0.13 ikinci tur (sahibi "düzelt hepsini" dedi):
+   - storeVideoFs sarıldı: Cloudinary hata verip telefonda küçültülen video da vidFix'ten geçer (süre doğru).
+   - vGone: parçaları silinmiş video siyah ekran yerine "Bu video artık yok" gösterir ve yeniden okunmaz (hydrateVideos, yerinde).
+   - toast sarıldı: aynı anda en çok 3 uyarı, eskiler kalkar.
+   - Bu ayın özeti 0 beğenide "En çok beğenilen" göstermez; Animasyonlar telefonun "Hareketi azalt"ını Kapalı gösterir;
+     Klaket videosu küçültülürken Fotoğraflardan kipine geçilmez (yerinde). CSS: pencere kenar boşlukları, 360 px tepki satırı. */
+function vGone(v){try{const h=v.closest(".reel");if(!h||h.querySelector(".k7013-gone"))return;const d=document.createElement("div");d.className="k7013-gone";d.textContent="Bu video artık yok";h.appendChild(d)}catch(e){}}
+{const f=storeVideoFs;storeVideoFs=async function(file,...a){try{if(file&&!file._fixed)file=await vidFix(file)}catch(e){}return f.call(this,file,...a)}}
+{const f=toast;toast=function(...a){const r=f.apply(this,a);try{const b=$("#toasts");if(b)while(b.children.length>3)b.firstElementChild.remove()}catch(e){}return r}}
+{const f=zrLetter;zrLetter=async function(...a){const r=await f.apply(this,a);try{const l=$('#overlay [data-layer="zirve"]');if(l)zrPlace(l)}catch(e){}return r}}
+/*}@js:7013C*/
 boot();
 

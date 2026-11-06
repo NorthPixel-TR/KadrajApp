@@ -4625,3 +4625,10 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 /* 7.0.13 hata avı B: boşluksuz uzun ad grupta gönderen satırını/balonu ve DM tanıtım kartını yana taşırmasın */
 #msgs .sender,#msgs .hero b,#msgs .hero span{overflow-wrap:anywhere;min-width:0;max-width:100%}
 /*}@css:7013B*/
+/*@css:7013C{*/
+.schf,.zr-lt{padding-left:16px;padding-right:16px}
+.k69-rx{flex-wrap:nowrap}
+.k69-rx button{flex:1 1 0;min-width:0;max-width:48px;width:auto}
+.k7013-rm{margin:-4px 0 4px;font-size:.82rem}
+#main .reel .k7013-gone{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:600;font-size:.95rem;background:#000;z-index:1;pointer-events:none}
+/*}@css:7013C*/

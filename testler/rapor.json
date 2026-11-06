@@ -1,8 +1,8 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.13",
+ "ver": "7.0.14",
  "at": 1793727074868,
- "note": "Büyük hata avı: 14 hata düzeltildi (WebM süresi, sohbet videosu süresi, profil fotoğrafı, zamanlama basılı tutma, rozet, taşmalar).",
+ "note": "Hata avı ikinci tur: silinmiş Klaket uyarısı, en çok 3 uyarı, ay özeti, animasyon ayarı, pencere kenarları, tepki satırı, Zirve resmi, yedek video yolunda süre düzeltmesi.",
  "items": [
   {
    "ad": "Akış, sohbet, profil, hikâye, ayarlar (Kadraj testi 49 adım)",
@@ -48,6 +48,11 @@
    "ad": "Sohbet kayması (meas)",
    "ok": true,
    "not": "en çok 10 px, hata yok"
+  },
+  {
+   "ad": "Hata avı ikinci tur (7013C) 360/390",
+   "ok": true,
+   "not": "10/10"
   }
  ]
 }
