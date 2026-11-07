@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70017,APP_VER="7.0.17";
+const APP_V=70018,APP_VER="7.0.18";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -9295,7 +9295,7 @@ function kyWd(k,f,el){clearTimeout(k._wd);k._wd=setTimeout(()=>{if(f.isConnected
 let KY_WARM=false;
 function kyWarm(){if(KY_WARM)return;KY_WARM=true;for(const h of["https://www.youtube-nocookie.com","https://www.youtube.com","https://i.ytimg.com","https://www.google.com"]){const l=document.createElement("link");l.rel="preconnect";l.href=h;l.crossOrigin="";document.head.appendChild(l)}}
 function kyOn(el){const k=el&&el.querySelector(".kyt");if(!k)return;kyWarm();
- const nx=settings.dataSaver?null:kyNb(el,1),pv=kyNb(el,0),keep=[el,nx,pv];
+ /* 7.0.18: kasma için meme oynatıcısı önceden kurulmaz, yalnızca açık Klakette bir oynatıcı (eskisi: sonraki + önceki) */const nx=null,pv=null,keep=[el];
  for(const x of $$("#main .reel"))if(!keep.includes(x)){const f=x.querySelector(".kyt iframe");if(f){f.remove();x.querySelector(".kyt").classList.remove("on","man")}}
  let f=k.querySelector("iframe");if(!f){f=kyMk(k);k._paused=false;kyWd(k,f,el)}
  else{f._pre=0;k._paused=false;if(f._ec)return kyErr(f,k,el,f._ec);kyCmd(f,"playVideo");if(!S.muted&&f._pl){f._um=Date.now();kyCmd(f,"unMute")}if(!k.classList.contains("on"))kyWd(k,f,el)}
@@ -10583,5 +10583,24 @@ function sbKeepAlive(){try{if(S.mode!=="cloud"||!S.uid||S.guest)return;const k="
   const r=await fetch(c.url+"/rest/v1/rpc/ping",{method:"POST",headers:h,body:"{}"});if(r.ok)LS.set(k,now())}catch(e){}},8000)}catch(e){}}
 HOOKS.enter.push(()=>sbKeepAlive());
 /*}@js:7017*/
+/*@js:7018{*/
+/* 7.0.18 (sahibi "kasmayı azaltacak şeyleri sil, küçük işe yarar bir şey ve yönetici paneline bir şey ekle" dedi):
+   - kasma: meme Klaketlerinde sonraki/önceki YouTube oynatıcısı önceden kurulmaz (kyOn, yerinde); en çok 1 oynatıcı.
+   - Ayarlar'ın en altında "Önbelleği temizle ve yenile" (#k718C): önbellekler + service worker silinir, sayfa ?v= ile yeniden açılır.
+   - Yönetici › Site ve uygulama (ADM_EXTRA "site"): adres, APK bağlantısı, sürüm, kopyala/paylaş. */
+function k718Clear(){dialog("Önbelleği temizle","Kadraj'ın telefonda sakladığı eski dosyalar silinip sayfa yeniden açılır. Hesabın ve mesajların silinmez.",[{label:"Vazgeç",cls:"sec"},{label:"Temizle",fn:async()=>{const j=[];try{if(window.caches)j.push(caches.keys().then(k=>Promise.all(k.map(x=>caches.delete(x)))))}catch(e){}
+ try{if(navigator.serviceWorker)j.push(navigator.serviceWorker.getRegistrations().then(r=>Promise.all(r.map(x=>x.unregister()))))}catch(e){}
+ await Promise.race([Promise.all(j).catch(()=>{}),new Promise(r=>setTimeout(r,3000))]);location.replace(location.pathname+"?v="+Date.now())}}])}
+HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector("#k718C"))return;const d=document.createElement("div");d.className="box";d.id="k718C";d.style.margin="12px 0";
+ d.innerHTML=`<button class="srow" type="button" data-act="k718clear"><span class="sic" style="--c:#8E8E93">${I("rotate")}</span><span class="t">Önbelleği temizle ve yenile<small>Kadraj takılırsa ya da eski sürüm açılırsa</small></span>${I("next","chev")}</button>`;m.appendChild(d)}catch(e){}});
+ACT.k718clear=()=>k718Clear();
+const K718_SITE="https://kadraj-4cz.pages.dev/",K718_APK=K718_SITE+"kadraj.apk";
+try{if(typeof ADM_EXTRA!=="undefined"&&Array.isArray(ADM_EXTRA))ADM_EXTRA.push({id:"site",title:"Site ve uygulama",desc:"Adres, APK bağlantısı, sürüm",icon:"globe",order:4,
+ html:()=>`<div style="display:grid;gap:8px;font-size:.9rem"><div><b>Site</b><br><a href="${K718_SITE}" target="_blank" rel="noopener">${K718_SITE}</a></div><div><b>Android uygulaması</b><br><a href="${K718_APK}" target="_blank" rel="noopener">${K718_APK}</a></div>
+  <div><b>Sürüm</b><br>${esc(APP_FULL)} · bu cihazın adresi ${esc(location.host)}</div><div class="muted" style="font-size:.82rem">GitHub hesabı askıya alındığı için (7 Kasım 2026) site Cloudflare'den sunuluyor. Eski uygulama silinip bu APK kurulmalı.</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" type="button" id="k718cp">Bağlantıları kopyala</button><button class="btn sec sm" type="button" id="k718sh">Paylaş</button></div></div>`,
+ wire:el=>{const t=`Kadraj'ın yeni adresi: ${K718_SITE}\nAndroid uygulaması: ${K718_APK}\n(Eski uygulamayı silip bunu kur.)`;const c=el.querySelector("#k718cp"),s=el.querySelector("#k718sh");
+  if(c)c.onclick=()=>copyText(t);if(s)s.onclick=()=>{if(navigator.share)navigator.share({text:t}).catch(()=>{});else copyText(t)}}})}catch(e){console.warn("k718",e)}
+/*}@js:7018*/
 boot();
 
