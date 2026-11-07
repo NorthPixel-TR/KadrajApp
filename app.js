@@ -2,7 +2,8 @@
 /* ============ Yardımcılar ============ */
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+var KDUK=0;/* 7.0.15: render görünümü kurarken (KDUK>0) uzun base64 data: adresi kısa yer tutucuya döner, kHTML DOM'a özellik olarak yazar (bölge 7015) */
+const esc=s=>(KDUK>0&&typeof s==="string"&&s.length>=1500&&s.charCodeAt(0)===100)?kDUesc(s):String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const clone=o=>JSON.parse(JSON.stringify(o??null));
 const now=()=>Date.now();
@@ -21,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70014,APP_VER="7.0.14";
+const APP_V=70015,APP_VER="7.0.15";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -411,10 +412,10 @@ const main=()=>$("#main");
 function render(full){const m=main();const st=m.scrollTop;const r=S.route;
  $("#top").hidden=!S.authed||r.name==="reels";$("#dock").hidden=!S.authed||r.name==="chat"||r.name==="reels"||r.name==="chessgame";
  if(activeReel)deactivateReel(activeReel);renderTop();renderDock();
- m.className="";let html="";
+ m.className="";let html="";KDUK++;try{
  if(S.authed&&!S.admin&&typeof bakimOn==="function"&&bakimOn()&&r.name!=="settings"){m.innerHTML=vBakim();return}
- switch(r.name){case"feed":html=vFeed();break;case"explore":html=vExplore();break;case"reels":m.className="snap";html=vReels();break;case"profile":html=vProfile(r.params.uid);break;case"post":html=vPost(r.params.id);break;case"activity":html=vActivity();break;case"chats":html=vChats();break;case"chat":m.className="chatmode";html=vChat(r.params.key);break;case"settings":html=vSettings();break;case"edit":html=vEdit();break;case"people":html=vPeople(r.params);break;case"invite":html=vInvite();break;case"chess":html=vChess();break;case"admin":html=vAdmin();break;case"chessgame":m.className="chessmode";html=vChessGame();break;default:html=vFeed()}
- m.innerHTML=html;m.scrollTop=full?0:st;if(full&&!["reels","chat","chessgame"].includes(r.name)){m.classList.add("enter");clearTimeout(m._et);m._et=setTimeout(()=>m.classList.remove("enter"),700)}afterRender()}
+ switch(r.name){case"feed":html=vFeed();break;case"explore":html=vExplore();break;case"reels":m.className="snap";html=vReels();break;case"profile":html=vProfile(r.params.uid);break;case"post":html=vPost(r.params.id);break;case"activity":html=vActivity();break;case"chats":html=vChats();break;case"chat":m.className="chatmode";html=vChat(r.params.key);break;case"settings":html=vSettings();break;case"edit":html=vEdit();break;case"people":html=vPeople(r.params);break;case"invite":html=vInvite();break;case"chess":html=vChess();break;case"admin":html=vAdmin();break;case"chessgame":m.className="chessmode";html=vChessGame();break;default:html=vFeed()}}finally{KDUK--}
+ kHTML(m,html,!full&&m._kr===r&&["feed","explore","profile","activity","post"].includes(r.name));m._kr=r;m.scrollTop=full?0:st;if(full&&!["reels","chat","chessgame"].includes(r.name)){m.classList.add("enter");clearTimeout(m._et);m._et=setTimeout(()=>m.classList.remove("enter"),700)}afterRender()}
 function renderTop(){if(!S.authed)return;const r=S.route.name;const t=$("#top");let h="";const backBtn=`<button class="ib plain" data-act="back" aria-label="Geri">${I("back")}</button>`;
  /* 5.7.3: üst çubukta satranç ve tema düğmesi yok (tema Ayarlar › Görünüm'de, satranç Keşfet'teki kartta) */
  if(r==="feed"){h=`<div class="brand">${VF}<span class="wordmark">kadraj</span></div>`}
@@ -10523,5 +10524,55 @@ function vGone(v){try{const h=v.closest(".reel");if(!h||h.querySelector(".k7013-
 {const f=toast;toast=function(...a){const r=f.apply(this,a);try{const b=$("#toasts");if(b)while(b.children.length>3)b.firstElementChild.remove()}catch(e){}return r}}
 {const f=zrLetter;zrLetter=async function(...a){const r=await f.apply(this,a);try{const l=$('#overlay [data-layer="zirve"]');if(l)zrPlace(l)}catch(e){}return r}}
 /*}@js:7013C*/
+/*@js:7015{*/
+/* 7.0.15 kasma (sahibi "çok kasıyor" dedi). Ölçüm (4 kat yavaş işlemci, 30 fotoğraflı Akış): her veri gelişindeki
+   yeniden çizim 500-700 ms sürüyordu, ekran o arada donuyordu. Nedenler: (1) paylaşım fotoğrafları HTML içinde yüzlerce
+   KB'lık data: adresi; ayrıştırıcı bu megabaytlarca metni her çizimde 3 kez tarıyordu (k70Card'ın template'i, onun
+   innerHTML'i, render'ın innerHTML'i); (2) değişmeyen kartlar da her seferinde silinip yeniden kurulup yerleştiriliyordu;
+   (3) zrPlace her çizimde getTotalLength ile düzen hesaplatıyordu.
+   - kDU/kDURe: uzun data: adresleri (>=1500 karakter) kalıcı kısa yer tutucuya çevrilir (aynı adres hep aynı yer tutucu,
+     KDU), ayrıştırıcı yalnızca kısa metni görür; adres DOM'a doğrudan özellik olarak yazılır.
+   - kHTML(el,html,morph): render tabanı (yerinde) bunu kullanır. morph (aynı sayfa, tam çizim değil; feed/explore/profile/
+     activity/post) iken #main'in üst düzey çocukları kaynak metinleriyle (_ks) karşılaştırılır: aynı kalan düğüm yerinde
+     kalır, yalnızca değişen/yeni olan kurulur, kancaların eklediği (kaynaksız) düğümler her seferinde eskisi gibi
+     kaldırılıp kancalarca yeniden eklenir.
+   - k70Card sarıldı: aynı yer tutucu.  - zrPlace: nokta yeri önbellekte. */
+const KDU_TAG="kdu7015x",KDU={m:new Map(),a:[]};
+function kDUid(d){let i=KDU.m.get(d);if(i==null){if(KDU.a.length>3000){KDU.m.clear();KDU.a.length=0}const c=JSON.parse(JSON.stringify(d));i=KDU.a.length;KDU.a.push(c);KDU.m.set(c,i)}return i}
+function kDUesc(s){if(KDU.m.has(s))return KDU_TAG+KDU.m.get(s)+"x";if(/^data:[a-z]+\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/.test(s))return KDU_TAG+kDUid(s)+"x";return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function kDU(h){return h.replace(/data:[a-z]+\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]{1500,}/g,m=>KDU_TAG+kDUid(m)+"x")}
+function kDURe(h){return h.indexOf(KDU_TAG)<0?h:h.replace(/kdu7015x(\d+)x/g,(m,i)=>KDU.a[+i]!=null?KDU.a[+i]:m)}
+function kDUfix(root){const all=root.nodeType===1?[root,...root.querySelectorAll("*")]:root.querySelectorAll?[...root.querySelectorAll("*")]:[];
+ for(const n of all){if(!n.attributes||!n.attributes.length)continue;for(const at of [...n.attributes]){if(at.value.indexOf(KDU_TAG)>=0)n.setAttribute(at.name,kDURe(at.value))}}}
+function kHTML(el,html,morph){let h;try{h=kDU(html)}catch(e){el.innerHTML=html;return}
+ try{
+  if(!morph||!el.childNodes.length){el.innerHTML=h;kDUfix(el);el._kh=h;el._kn=el.childNodes.length;for(const n of el.childNodes)n._ks=n.nodeType===1?n.outerHTML:"#"+n.textContent;return}
+  if(h===el._kh){let n=0;for(const o of el.childNodes)if(o._ks!=null)n++;if(n===el._kn){for(const o of [...el.childNodes])if(o._ks==null)o.remove();return}}
+  const tp=document.createElement("template");tp.innerHTML=h;const pool=new Map();
+  for(const o of el.childNodes){if(o._ks==null)continue;const q=pool.get(o._ks);q?q.push(o):pool.set(o._ks,[o])}
+  const res=[];for(const n of [...tp.content.childNodes]){const k=n.nodeType===1?n.outerHTML:"#"+n.textContent;const q=pool.get(k);
+   if(q&&q.length){res.push(q.shift())}else{if(n.nodeType===1)kDUfix(n);n._ks=k;res.push(n)}}
+  const keep=new Set(res);for(const o of [...el.childNodes])if(!keep.has(o))o.remove();
+  for(let i=0;i<res.length;i++){const c=el.childNodes[i];if(c!==res[i])el.insertBefore(res[i],c||null)}
+  el._kh=h;el._kn=res.length;
+ }catch(e){console.warn("kHTML",e);el.innerHTML=html;el._kh=null;for(const n of el.childNodes)n._ks=null}}
+{const f=k70Card;k70Card=function(h,...a){if(typeof h!=="string")return f.call(this,h,...a);if(KDUK>0)return f.call(this,h.length<3000?h:kDU(h),...a);if(h.length<3000)return f.call(this,h,...a);return kDURe(f.call(this,kDU(h),...a))}}
+{const ZPC=new Map();zrPlace=function(root){for(const c of root.querySelectorAll(".zr-me[data-p]")){const v=c.getAttribute("data-p");if(v==="")continue;const t=c.ownerSVGElement&&c.ownerSVGElement.querySelector(".zr-tr");if(!t)continue;
+ try{const vv=Math.round(Math.max(0,Math.min(1,+v))*1000)/1000;const k=t.getAttribute("d")+"|"+vv;let p=ZPC.get(k);if(!p){const L=t.getTotalLength();const q=t.getPointAtLength(L*vv);p={x:q.x.toFixed(1),y:q.y.toFixed(1)};if(ZPC.size>50)ZPC.clear();ZPC.set(k,p)}c.setAttribute("cx",p.x);c.setAttribute("cy",p.y)}catch{}}}}
+/* k70Card önbelleği: aynı girdiyle (kart HTML'i + beğenenler, yorum sayısı, ad, zaman yazısı, ayarlar) aynı çıktı */
+{const KC=new Map();const tk=v=>typeof v==="string"&&v.length>=1500?"#"+kDUid(v):String(v??"");const f=k70Card;
+ k70Card=function(h,p,o,...a){if(typeof h!=="string"||!p||h.indexOf('class="pills"')<0)return f.call(this,h,p,o,...a);
+  let key;try{const u=P(p.uid);const lk=likers(p.id).filter(x=>S.profiles[x]||BOT[x]).slice(0,2);
+   key=[KDUK>0?1:0,h.length<3000?h:kDU(h),(o&&o.full)?1:0,S.guest?1:0,S.uid,settings.hideLikes?1:0,u.username||u.name||"",p.loc||"",p.kind,likeCount(p),p.baseLikes||0,
+    lk.map(x=>x+":"+(P(x).username||"")+":"+tk(P(x).avatar)).join(","),commentsOf(p).length,p.caption?1:0,tk(S.uid?me().avatar:""),k70Ago(p.at||0)].join("\u0001")}catch(e){return f.call(this,h,p,o,...a)}
+  const c=KC.get(key);if(c!=null)return KDUK>0?c:kDURe(c);
+  const r=f.call(this,h,p,o,...a);const ck=KDUK>0?r:kDU(r);if(KC.size>400)KC.clear();KC.set(key,ck);return r}}
+/* veri gelişindeki yeniden çizim kaydırma sürerken (son dokunma/kaydırmadan 400 ms içinde) ertelenir, durunca bir kez yapılır */
+{const RS={t:0,q:0};const mark=()=>{RS.t=performance.now()};for(const ev of ["scroll","touchmove","wheel"])addEventListener(ev,mark,{capture:true,passive:true});
+ const f=refresh;refresh=function(...a){const r=S.route&&S.route.name;if(["feed","explore","profile","activity"].includes(r)&&performance.now()-RS.t<400){if(!RS.q)RS.q=setTimeout(function w(){if(performance.now()-RS.t<400){RS.q=setTimeout(w,150);return}RS.q=0;refresh()},150);return}
+  if(RS.q){clearTimeout(RS.q);RS.q=0}return f.apply(this,a)}}
+/* sürüm etiketi yerleşimi her yenilemede düzeni zorla hesaplatıyordu: kareye bir kez ertelenir */
+{const f=verTagPlace;let q=0,last=null;verTagPlace=function(el){last=el;if(q)return;q=requestAnimationFrame(()=>{q=0;try{f(last)}catch(e){}})}}
+/*}@js:7015*/
 boot();
 

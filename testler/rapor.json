@@ -1,8 +1,8 @@
 {
  "title": "6.8.24 Bildirim düğmeleri ve izin",
- "ver": "7.0.14",
+ "ver": "7.0.15",
  "at": 1793727074868,
- "note": "Hata avı ikinci tur: silinmiş Klaket uyarısı, en çok 3 uyarı, ay özeti, animasyon ayarı, pencere kenarları, tepki satırı, Zirve resmi, yedek video yolunda süre düzeltmesi.",
+ "note": "Kasma: Akış yenilemesi 4x yavaş işlemcide 600 ms → 200 ms, Keşfet 250 → 65 ms; kaydırırken yenileme yok.",
  "items": [
   {
    "ad": "Akış, sohbet, profil, hikâye, ayarlar (Kadraj testi 49 adım)",
@@ -53,6 +53,11 @@
    "ad": "Hata avı ikinci tur (7013C) 360/390",
    "ok": true,
    "not": "10/10"
+  },
+  {
+   "ad": "Kasma düzeltmesi doğruluğu (perf7/eq.js) 390/800",
+   "ok": true,
+   "not": "15/15"
   }
  ]
 }
