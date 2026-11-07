@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70016,APP_VER="7.0.16";
+const APP_V=70017,APP_VER="7.0.17";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -10574,5 +10574,14 @@ function kHTML(el,html,morph){let h;try{h=kDU(html)}catch(e){el.innerHTML=html;r
 /* sürüm etiketi yerleşimi her yenilemede düzeni zorla hesaplatıyordu: kareye bir kez ertelenir */
 {const f=verTagPlace;let q=0,last=null;verTagPlace=function(el){last=el;if(q)return;q=requestAnimationFrame(()=>{q=0;try{f(last)}catch(e){}})}}
 /*}@js:7015*/
+/*@js:7017{*/
+/* 7.0.17: Supabase yedeğini uyanık tutma Kadraj'ın içinde. GitHub hesabı askıya alınınca "Supabase uyanık tut" işi
+   (GitHub Actions) durdu; Supabase'in ücretsiz projesi 7 gün istek almazsa uykuya geçer. Bulut modunda girişten 8 sn sonra,
+   cihaz başına en çok 20 saatte bir rpc/ping (herkese açık publishable anahtarla; Firebase'e hiçbir okuma/yazma yok). */
+function sbKeepAlive(){try{if(S.mode!=="cloud"||!S.uid||S.guest)return;const k="kadraj_sbping",t=+(LS.get(k)||0);if(now()-t<20*H)return;
+ setTimeout(async()=>{try{const c=await acCfg();if(!c||c.fake)return;const h={apikey:c.key,"Content-Type":"application/json"};if(/^eyJ/.test(c.key))h.Authorization="Bearer "+c.key;
+  const r=await fetch(c.url+"/rest/v1/rpc/ping",{method:"POST",headers:h,body:"{}"});if(r.ok)LS.set(k,now())}catch(e){}},8000)}catch(e){}}
+HOOKS.enter.push(()=>sbKeepAlive());
+/*}@js:7017*/
 boot();
 
