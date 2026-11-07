@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70015,APP_VER="7.0.15";
+const APP_V=70016,APP_VER="7.0.16";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -7722,7 +7722,7 @@ function stPaint(l,s,owner,pause){let ov=$(".svst",l);if(!ov){ov=document.create
    kgal(): eklenti varsa onu döndürür (sitede null). kmpOpen'da ilk kutucuk "Galerin" (kmgOpen): telefondaki bütün fotoğraflar, albüm çipleri,
    60'lık sayfalar (IntersectionObserver), tek/çoklu seçim; seçilen fotoğraf 2048 px JPEG olarak gelir ve Kütüphane'ye (KMR) de eklenir.
    Uygulamada "ana ekrana ekle" afişi çıkmaz (isStandalone). Android tarayıcıda Ayarlar'da uygulamayı indirme satırı (#appEntry). */
-const APK_URL="https://github.com/kadrajsosyalmedya/Kadraj/releases/latest/download/kadraj.apk";
+const APK_URL="https://kadraj-4cz.pages.dev/kadraj.apk";
 function kgal(){try{const C=window.Capacitor;if(!C||!C.isNativePlatform||!C.isNativePlatform())return null;return(C.Plugins&&C.Plugins.KadrajGaleri)||null}catch{return null}}
 HOOKS.after.push(r=>{if(r!=="settings"||kgal()||!/Android/i.test(navigator.userAgent))return;const m=$("#main");if(!m||m.querySelector("#appEntry"))return;const d=document.createElement("div");d.id="appEntry";d.className="box";d.style.margin="12px 16px";
  d.innerHTML=`<a class="row" href="${APK_URL}" style="width:100%;color:inherit;text-decoration:none" target="_blank" rel="noopener">${I("image")}<div class="t"><b>Kadraj Android uygulaması</b><div class="s">Telefon galerin Kadraj'ın içinde · APK'yı indir ve kur</div></div>${I("next")}</a>`;const cf=m.querySelector("#cfEntry");if(cf)cf.before(d);else m.appendChild(d)});

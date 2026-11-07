@@ -5,8 +5,8 @@
   "appendUserAgent": "KadrajApp",
   "backgroundColor": "#0A110F",
   "server": {
-    "url": "https://kadrajsosyalmedya.github.io/Kadraj/",
+    "url": "https://kadraj-4cz.pages.dev/",
     "androidScheme": "https",
-    "allowNavigation": ["kadrajsosyalmedya.github.io", "*.firebaseapp.com", "*.googleapis.com", "*.gstatic.com", "res.cloudinary.com", "api.cloudinary.com", "*.workers.dev", "www.youtube-nocookie.com", "i.ytimg.com"]
+    "allowNavigation": ["kadraj-4cz.pages.dev", "kadrajsosyalmedya.github.io", "*.firebaseapp.com", "*.googleapis.com", "*.gstatic.com", "res.cloudinary.com", "api.cloudinary.com", "*.workers.dev", "www.youtube-nocookie.com", "i.ytimg.com"]
   }
 }
