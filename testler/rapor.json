@@ -1,0 +1,63 @@
+{
+ "title": "6.8.24 Bildirim düğmeleri ve izin",
+ "ver": "7.0.15",
+ "at": 1793727074868,
+ "note": "Kasma: Akış yenilemesi 4x yavaş işlemcide 600 ms → 200 ms, Keşfet 250 → 65 ms; kaydırırken yenileme yok.",
+ "items": [
+  {
+   "ad": "Akış, sohbet, profil, hikâye, ayarlar (Kadraj testi 49 adım)",
+   "ok": true,
+   "not": "Hepsi geçti"
+  },
+  {
+   "ad": "Arayüz 390/800 (t69)",
+   "ok": true,
+   "not": "30/30"
+  },
+  {
+   "ad": "Sohbet 7.0 (t70)",
+   "ok": true,
+   "not": "34/34"
+  },
+  {
+   "ad": "Profil fotoğrafları (av704)",
+   "ok": true,
+   "not": "21/21"
+  },
+  {
+   "ad": "İndirme (dl708, dl7012)",
+   "ok": true,
+   "not": "9/9, 8/8"
+  },
+  {
+   "ad": "Video süre düzeltme (vf, kvfix)",
+   "ok": true,
+   "not": "24/24, 8/8"
+  },
+  {
+   "ad": "Hata avı A (profil/medya)",
+   "ok": true,
+   "not": "avs0 4, p7b 7, kdhd 2, hlrow 3"
+  },
+  {
+   "ad": "Hata avı B (sohbet/arayüz) 360/390",
+   "ok": true,
+   "not": "15/15"
+  },
+  {
+   "ad": "Sohbet kayması (meas)",
+   "ok": true,
+   "not": "en çok 10 px, hata yok"
+  },
+  {
+   "ad": "Hata avı ikinci tur (7013C) 360/390",
+   "ok": true,
+   "not": "10/10"
+  },
+  {
+   "ad": "Kasma düzeltmesi doğruluğu (perf7/eq.js) 390/800",
+   "ok": true,
+   "not": "15/15"
+  }
+ ]
+}
