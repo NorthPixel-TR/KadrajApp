@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70023,APP_VER="7.0.23";
+const APP_V=70024,APP_VER="7.0.24";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -10617,5 +10617,17 @@ function npFrom(){return`<div class="np-from" role="note" aria-label="NorthPixel
 {const f=authShell;authShell=function(...a){const r=f.apply(this,a);try{const box=$("#main .auth");if(box&&!box.querySelector(".np-from"))box.insertAdjacentHTML("beforeend",npFrom())}catch(e){}return r}}
 HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector(".np-from"))return;m.insertAdjacentHTML("beforeend",npFrom())}catch(e){}});
 /*}@js:7020*/
+/*@js:7024{*/
+/* 7.0.24 Kurucuya tek dokunuşla yönetici paneli (sahibi "yazıyla değil tek butonla gireyim" dedi). Düğme yalnızca kurucu hesabında
+   (kullanıcı adı K51_OWNER, rzMine ile aynı denetim) görünür: kendi profilinde Profili düzenle satırının sonunda anahtar simgesi
+   ve Ayarlar'ın en üstünde "Yönetici paneli". Yönetici yazmalarını yine Firestore kuralları (yonetici()) korur; düğme yalnızca paneli açar. */
+const k724Own=()=>!!S.uid&&!S.guest&&String((S.profiles[S.uid]||{}).username||"").toLowerCase()===K51_OWNER;
+ACT.k724adm=()=>{if(!k724Own())return;if(!S.admin){S.admin=true;LS.set("kadraj_admin_"+S.uid,true);vib(30);toast("Yönetici paneli açıldı");try{admWatchReports()}catch(e){}try{admLog("Yönetici paneline girildi (tek dokunuş)")}catch(e){}}go("admin")};
+HOOKS.after.push(r=>{try{if(!k724Own())return;const m=$("#main");if(!m)return;
+ if(r==="profile"&&(!S.route.params.uid||S.route.params.uid===S.uid)){const bt=m.querySelector(".prof .btns");if(bt&&!bt.querySelector('[data-act="k724adm"]')){const b=document.createElement("button");b.className="btn sec k70-ib k724";b.dataset.act="k724adm";b.setAttribute("aria-label","Yönetici paneli");b.innerHTML=I("key");bt.appendChild(b)}}
+ if(r==="settings"&&!m.querySelector("#k724S")){const d=document.createElement("div");d.className="box";d.id="k724S";d.style.margin="0 0 12px";
+  d.innerHTML=`<button class="srow" type="button" data-act="k724adm"><span class="sic" style="--c:#0C7A63">${I("key")}</span><span class="t">Yönetici paneli<small>Yalnızca sana görünür</small></span>${I("next")}</button>`;
+  const q=m.querySelector("#setQ");const at=q&&q.closest(".box,.sxs,div");if(at&&at.parentElement===m)at.after(d);else m.prepend(d)}}catch(e){console.warn("k724",e)}});
+/*}@js:7024*/
 boot();
 
