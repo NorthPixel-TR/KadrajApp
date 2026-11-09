@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70018,APP_VER="7.0.18";
+const APP_V=70019,APP_VER="7.0.19";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -7722,7 +7722,7 @@ function stPaint(l,s,owner,pause){let ov=$(".svst",l);if(!ov){ov=document.create
    kgal(): eklenti varsa onu döndürür (sitede null). kmpOpen'da ilk kutucuk "Galerin" (kmgOpen): telefondaki bütün fotoğraflar, albüm çipleri,
    60'lık sayfalar (IntersectionObserver), tek/çoklu seçim; seçilen fotoğraf 2048 px JPEG olarak gelir ve Kütüphane'ye (KMR) de eklenir.
    Uygulamada "ana ekrana ekle" afişi çıkmaz (isStandalone). Android tarayıcıda Ayarlar'da uygulamayı indirme satırı (#appEntry). */
-const APK_URL="https://kadraj-4cz.pages.dev/kadraj.apk";
+const APK_URL="https://northpixel-tr.github.io/KadrajApp/kadraj.apk";
 function kgal(){try{const C=window.Capacitor;if(!C||!C.isNativePlatform||!C.isNativePlatform())return null;return(C.Plugins&&C.Plugins.KadrajGaleri)||null}catch{return null}}
 HOOKS.after.push(r=>{if(r!=="settings"||kgal()||!/Android/i.test(navigator.userAgent))return;const m=$("#main");if(!m||m.querySelector("#appEntry"))return;const d=document.createElement("div");d.id="appEntry";d.className="box";d.style.margin="12px 16px";
  d.innerHTML=`<a class="row" href="${APK_URL}" style="width:100%;color:inherit;text-decoration:none" target="_blank" rel="noopener">${I("image")}<div class="t"><b>Kadraj Android uygulaması</b><div class="s">Telefon galerin Kadraj'ın içinde · APK'yı indir ve kur</div></div>${I("next")}</a>`;const cf=m.querySelector("#cfEntry");if(cf)cf.before(d);else m.appendChild(d)});
@@ -7961,7 +7961,7 @@ HOOKS.after.push(r=>{if(r!=="settings"||S.guest)return;const m=$("#main");if(!m|
 /* 6.4.1 uygulama güncellemesi: APK'nın yerel sürümü (KadrajGaleri.surum, SURUM sabiti) APK_NATIVE'den küçükse ya da yöntem yoksa (eski APK)
    açılışta günde bir kez "Yeni sürüm var" penceresi (kadraj_apkask_<uid> = gün); İndir telefonun tarayıcısında APK_URL'yi açar (KadrajGaleri.ac).
    Ayarlar'daki #appInfo satırına da yazılır. Java tarafı değişince iki sayıyı birlikte artır. Site güncellemeleri APK'sız gelir, bunlar için gerekmez. */
-const APK_NATIVE=8;
+const APK_NATIVE=9;
 async function apkNative(){const G=kgal();if(!G)return null;try{if(typeof G.surum==="function"){const r=await G.surum();APK_PK=String(r&&r.paket||"");return r&&+r.surum||0}}catch{}return 0}
 /* 6.8.25: uygulamanın paket adı …kadrajapp oldu (eski …kadraj farklı imzalı kurulumlarda "paket çakışıyor" diyordu). Eski paketteki
    uygulamaya güncelleme penceresi yeni uygulamanın yanına kurulacağını ve eskisinin silinebileceğini söyler. */
@@ -10594,10 +10594,10 @@ function k718Clear(){dialog("Önbelleği temizle","Kadraj'ın telefonda sakladı
 HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector("#k718C"))return;const d=document.createElement("div");d.className="box";d.id="k718C";d.style.margin="12px 0";
  d.innerHTML=`<button class="srow" type="button" data-act="k718clear"><span class="sic" style="--c:#8E8E93">${I("rotate")}</span><span class="t">Önbelleği temizle ve yenile<small>Kadraj takılırsa ya da eski sürüm açılırsa</small></span>${I("next","chev")}</button>`;m.appendChild(d)}catch(e){}});
 ACT.k718clear=()=>k718Clear();
-const K718_SITE="https://kadraj-4cz.pages.dev/",K718_APK=K718_SITE+"kadraj.apk";
+const K718_SITE="https://northpixel-tr.github.io/KadrajApp/",K718_APK=K718_SITE+"kadraj.apk";
 try{if(typeof ADM_EXTRA!=="undefined"&&Array.isArray(ADM_EXTRA))ADM_EXTRA.push({id:"site",title:"Site ve uygulama",desc:"Adres, APK bağlantısı, sürüm",icon:"globe",order:4,
  html:()=>`<div style="display:grid;gap:8px;font-size:.9rem"><div><b>Site</b><br><a href="${K718_SITE}" target="_blank" rel="noopener">${K718_SITE}</a></div><div><b>Android uygulaması</b><br><a href="${K718_APK}" target="_blank" rel="noopener">${K718_APK}</a></div>
-  <div><b>Sürüm</b><br>${esc(APP_FULL)} · bu cihazın adresi ${esc(location.host)}</div><div class="muted" style="font-size:.82rem">GitHub hesabı askıya alındığı için (7 Kasım 2026) site Cloudflare'den sunuluyor. Eski uygulama silinip bu APK kurulmalı.</div>
+  <div><b>Sürüm</b><br>${esc(APP_FULL)} · bu cihazın adresi ${esc(location.host)}</div><div class="muted" style="font-size:.82rem">Site GitHub Pages'te (NorthPixel-TR/KadrajApp). Eski uygulama silinip bu APK kurulmalı.</div>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" type="button" id="k718cp">Bağlantıları kopyala</button><button class="btn sec sm" type="button" id="k718sh">Paylaş</button></div></div>`,
  wire:el=>{const t=`Kadraj'ın yeni adresi: ${K718_SITE}\nAndroid uygulaması: ${K718_APK}\n(Eski uygulamayı silip bunu kur.)`;const c=el.querySelector("#k718cp"),s=el.querySelector("#k718sh");
   if(c)c.onclick=()=>copyText(t);if(s)s.onclick=()=>{if(navigator.share)navigator.share({text:t}).catch(()=>{});else copyText(t)}}})}catch(e){console.warn("k718",e)}

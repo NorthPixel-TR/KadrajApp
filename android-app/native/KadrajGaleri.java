@@ -244,7 +244,7 @@ public class KadrajGaleri extends Plugin {
 
     /* Uygulamanın yerel sürümü: Java tarafı değişince SURUM'u artır, index.html'deki APK_NATIVE da aynı sayı olsun.
        Sayfa küçükse "Güncelleme var" penceresi çıkar. */
-    static final int SURUM = 8;
+    static final int SURUM = 9;
 
     @PluginMethod
     public void surum(PluginCall call) {
@@ -444,7 +444,7 @@ public class KadrajGaleri extends Plugin {
     @PluginMethod
     public void guncelle(PluginCall call) {
         final String u0 = call.getString("url", "");
-        if (!u0.startsWith("https://github.com/kadrajsosyalmedya/") && !u0.startsWith("https://kadraj-4cz.pages.dev/")) { call.reject("adres"); return; }
+        if (!u0.startsWith("https://github.com/kadrajsosyalmedya/") && !u0.startsWith("https://kadraj-4cz.pages.dev/") && !u0.startsWith("https://northpixel-tr.github.io/")) { call.reject("adres"); return; }
         final android.content.Context c = getContext();
         if (Build.VERSION.SDK_INT >= 26 && !c.getPackageManager().canRequestPackageInstalls()) {
             try {
@@ -465,7 +465,7 @@ public class KadrajGaleri extends Plugin {
                 for (int i = 0; i < 6; i++) {
                     java.net.URL url = new java.net.URL(u);
                     String host = url.getHost();
-                    if (!"https".equals(url.getProtocol()) || !(host.equals("github.com") || host.endsWith(".githubusercontent.com") || host.equals("kadraj-4cz.pages.dev"))) throw new Exception("adres");
+                    if (!"https".equals(url.getProtocol()) || !(host.equals("github.com") || host.endsWith(".githubusercontent.com") || host.equals("kadraj-4cz.pages.dev") || host.equals("northpixel-tr.github.io"))) throw new Exception("adres");
                     h = (java.net.HttpURLConnection) url.openConnection();
                     h.setInstanceFollowRedirects(false); h.setConnectTimeout(20000); h.setReadTimeout(30000);
                     int code = h.getResponseCode();
