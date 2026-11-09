@@ -4632,3 +4632,13 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 .k7013-rm{margin:-4px 0 4px;font-size:.82rem}
 #main .reel .k7013-gone{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:600;font-size:.95rem;background:#000;z-index:1;pointer-events:none}
 /*}@css:7013C*/
+/*@css:7020{*/
+.np-from{display:grid;justify-items:center;gap:3px;margin:22px auto 6px;text-align:center;color:var(--muted)}
+.np-from .np-f{font:500 .78rem/1 var(--f-body);letter-spacing:.02em}
+.np-from .np-l{display:inline-flex;align-items:center;gap:6px;font:700 .95rem/1 var(--f-display);letter-spacing:-.01em;color:var(--fg)}
+.np-from .np-logo{width:1.15rem;height:1.15rem;flex:none}
+#main .np-from{padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+#intro .np-from{margin:0;animation:npIn .45s ease .25s both}
+#intro .np-from .np-l{font-size:1.02rem}
+@keyframes npIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/*}@css:7020*/
