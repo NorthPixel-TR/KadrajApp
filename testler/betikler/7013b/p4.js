@@ -1,0 +1,11 @@
+const {open,OUT}=require('./lib');
+(async()=>{const {b,p,errors}=await open(390,780);
+const ly=()=>p.evaluate(()=>[...document.querySelectorAll('#overlay [data-layer]')].map(x=>x.dataset.layer).join(",")+" v="+$("#msgIn")?.value+" n="+S.msgs.length);
+await p.evaluate(()=>openChat("u:u2"));await p.waitForTimeout(600);await p.click("#msgIn");await p.keyboard.type("merhaba");await p.waitForTimeout(400);
+await p.evaluate(()=>{window.__ev=[];const t0=performance.now();for(const ev of ["pointerdown","pointerup","pointercancel","click","submit","touchstart","touchend","contextmenu"])document.addEventListener(ev,e=>__ev.push(Math.round(performance.now()-t0)+" "+ev+" "+(e.target.id||e.target.className?.baseVal||String(e.target.className).slice(0,30)||e.target.tagName)+" dp="+e.defaultPrevented),true)});
+const bb=await p.locator("#sendBtn").boundingBox();const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+const c=await p.context().newCDPSession(p);
+const tp=(t)=>c.send('Input.dispatchTouchEvent',{type:t,touchPoints:t==="touchEnd"?[]:[{x:cx,y:cy}]});
+await tp("touchStart");await p.waitForTimeout(700);console.log("touch held",await ly());await tp("touchEnd");await p.waitForTimeout(500);console.log("touch up",await ly());
+console.log(await p.evaluate(()=>__ev));
+console.log(errors);await b.close()})();

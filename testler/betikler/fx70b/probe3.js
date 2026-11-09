@@ -1,0 +1,22 @@
+/* 70FXB keşif: eski alanlar (Klaket, Oluştur, Kurgu, yönetici). node probe3.js <w> <light|dark> <vizor|klasik> */
+const sd=require('/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/a60ui/seed.js');
+const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/.claude/worktrees/agent-a493c6425937c90fc/index.html';
+const OUT='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/70FXB/p3';require('fs').mkdirSync(OUT,{recursive:true});
+const [,,W='390',TH='light',UI='vizor']=process.argv;const tag=W+TH[0]+UI[0];
+(async()=>{const {page:p,errors,close}=await sd.open(HTML,{width:+W,height:+W>600?1000:844,dark:TH==="dark",ui:UI});
+ const shot=async n=>{await p.waitForTimeout(900);await p.screenshot({path:`${OUT}/${n}_${tag}.png`});const o=await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth);console.log(n,o?"TAŞMA":"ok")};
+ await p.evaluate(()=>go("reels"));await shot("reels");
+ await p.evaluate(()=>{const b=document.querySelector('.reel [data-act="postmenu"]');b&&b.click()});await shot("reelmenu");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>tab("feed"));await p.waitForTimeout(500);
+ await p.evaluate(()=>openCreate());await shot("create");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>openComposer("poll"));await shot("cpoll");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>openComposer("reel"));await shot("creel");await p.evaluate(()=>closeAll());
+ await p.evaluate(async()=>{const cv=document.createElement("canvas");cv.width=720;cv.height=1280;const x=cv.getContext("2d");x.fillStyle="#468";x.fillRect(0,0,720,1280);const img=await loadImg(cv.toDataURL());openComposer("story");S.cmp.img=img;drawComposer()});await shot("cstory");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>{S.admin=true;go("admin")});await shot("admin");
+ await p.evaluate(()=>{const h=[...document.querySelectorAll("#main details summary, #main .adm-acc>button, #main [data-adma]")][0];h&&h.click()});await shot("admin2");
+ await p.evaluate(()=>{S.admin=false;go("edit")});await shot("edit");
+ await p.evaluate(()=>go("people",{uid:"u2",t:"followers"}));await shot("people");
+ await p.evaluate(()=>tab("explore"));await p.waitForTimeout(400);await p.evaluate(()=>{const q=document.getElementById("q");q.value="ay";q.dispatchEvent(new Event("input",{bubbles:true}))});await shot("srch");
+ await p.evaluate(()=>{const b=document.querySelector('[data-act="games"]');tab("chats")});await p.waitForTimeout(500);await p.evaluate(()=>gmHub&&gmHub());await shot("games");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>go("chess"));await shot("chess");
+ console.log("hatalar",JSON.stringify(errors.slice(0,5)));await close()})();

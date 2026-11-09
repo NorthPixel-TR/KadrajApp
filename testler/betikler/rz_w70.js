@@ -1,0 +1,31 @@
+/* 6.8.23 rozet kısayolu */
+const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
+const HTML='/home/user/Kadraj/.claude/worktrees/agent-a3b2f14b534c80de8/index.html',BASE='http://kadraj.test/';
+let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:844}});const errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.route('**/*',r=>{const u=r.request().url();if(u.startsWith(BASE)){const q=decodeURIComponent(new URL(u).pathname);if(q==='/'||q==='/index.html')return r.fulfill({body:fs.readFileSync(HTML),contentType:'text/html; charset=utf-8'});const f=path.join(path.dirname(HTML),q);if(fs.existsSync(f)&&fs.statSync(f).isFile())return r.fulfill({body:fs.readFileSync(f)});return r.fulfill({status:404,body:''})}if(u.startsWith('data:')||u.startsWith('blob:'))return r.continue();return r.abort()});
+ await p.goto(BASE+'index.html');await p.waitForTimeout(1500);
+ const login=async(me)=>p.evaluate(async(me)=>{if(S.mode!=="local"||!DB)await bootLocal();const T=Date.now();
+  for(const [uid,name,un] of [["u1","Bilal","bilolotr"],["u2","UkiiBey","ukiibey"],["u3","Can","can"]])await DB.set("profiles/"+uid,{uid,username:un,name,bio:"",avatar:null,following:{},botFollowers:{},private:false,createdAt:T-1e6});
+  S.uid=me;S.admin=false;LS.set("kadraj_session",me);await enterApp(false)},me);
+ await login("u1");await p.waitForTimeout(2500);
+ await p.evaluate(()=>{go("profile",{uid:"u2"});});await p.waitForTimeout(600);
+ await p.evaluate(()=>profMenu("u2"));await p.waitForTimeout(400);
+ ok(await p.evaluate(()=>!!document.querySelector("#pmRzH")&&/ver$/.test(document.querySelector("#pmRzH").textContent)),"kurucuda menüde 'No.1 Hayran rozetini ver' var (yönetici modu kapalı)");
+ await p.evaluate(()=>document.querySelector("#pmRzH").click());await p.waitForTimeout(800);
+ let r=await p.evaluate(()=>({ids:rzOf("u2"),db:JSON.parse(localStorage.getItem("kadraj_db")||"{}")}));
+ ok(r.ids.includes("hayran"),"rozet verildi "+JSON.stringify(r.ids));
+ ok(await p.evaluate(()=>/No\.1 Hayran/.test(document.querySelector("#main").textContent)),"profilde görünüyor");
+ await p.screenshot({path:__dirname+'/rz.png'});
+ await p.evaluate(()=>profMenu("u2"));await p.waitForTimeout(400);
+ ok(await p.evaluate(()=>/kaldır$/.test(document.querySelector("#pmRzH").textContent)),"menü artık 'kaldır' diyor");
+ await p.evaluate(()=>document.querySelector("#pmRzE").click());await p.waitForTimeout(700);
+ ok(await p.evaluate(()=>!!document.querySelector('[data-rzt="hayran"]')&&document.querySelector('[data-rzt="hayran"]').checked&&S.admin===false),"Rozetleri düzenle penceresi açılıyor, yönetici modu açılmıyor");
+ await p.evaluate(()=>closeAll());await p.waitForTimeout(300);
+ await p.evaluate(()=>{profMenu("u2")});await p.waitForTimeout(300);await p.evaluate(()=>document.querySelector("#pmRzH").click());await p.waitForTimeout(700);
+ ok(await p.evaluate(()=>!rzOf("u2").includes("hayran")),"kaldırılıyor");
+ /* başka kullanıcıda menü yok */
+ await p.evaluate(()=>{closeAll();endSession&&0});await login("u3");await p.waitForTimeout(2500);
+ await p.evaluate(()=>profMenu("u2"));await p.waitForTimeout(400);
+ ok(await p.evaluate(()=>!document.querySelector("#pmRzH")),"normal kullanıcıda rozet seçeneği yok");
+ ok(!errors.length,"sayfa hatası yok "+errors.join("|"));console.log(pass+"/"+(pass+fail));await b.close();process.exit(fail?1:0)})();

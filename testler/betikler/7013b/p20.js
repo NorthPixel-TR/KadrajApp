@@ -1,0 +1,12 @@
+const {open,OUT}=require('./lib');
+(async()=>{const W=+process.argv[2]||390;const {b,p,errors}=await open(W,780);
+const st=()=>p.evaluate(()=>S.route.name+" ["+[...document.querySelectorAll('#overlay [data-layer]')].map(x=>x.dataset.layer).join(",")+"] other="+[...document.querySelectorAll('body > *')].filter(e=>!/shell|overlay|toasts|SCRIPT|LINK|intro/.test(e.id||e.tagName)&&getComputedStyle(e).display!=="none").map(e=>e.id||e.className).join(","));
+await p.evaluate(()=>showWhatsNew(true));await p.waitForTimeout(800);console.log("wn",await st());
+await p.keyboard.press("ArrowRight");await p.waitForTimeout(400);await p.keyboard.press("Escape");await p.waitForTimeout(600);console.log("esc",await st());
+await p.evaluate(()=>showWhatsNew(true));await p.waitForTimeout(800);console.log("kBack",await p.evaluate(()=>window.kBack()),await st());await p.waitForTimeout(600);console.log(await st());
+await p.evaluate(()=>showWhatsNew(true));await p.waitForTimeout(800);await p.goBack();await p.waitForTimeout(600);console.log("goBack",await st());
+await p.evaluate(()=>zrInfo());await p.waitForTimeout(500);console.log("zr",await st());
+await p.evaluate(()=>zrLetter());await p.waitForTimeout(800);console.log("zrl",await st());await p.screenshot({path:OUT+"p20.png"});
+await p.keyboard.press("Escape");await p.waitForTimeout(400);console.log("esc",await st());
+await p.keyboard.press("Escape");await p.waitForTimeout(400);console.log("esc",await st());
+console.log(errors);await b.close()})();

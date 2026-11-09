@@ -1,0 +1,12 @@
+const {open,OUT}=require('./lib');
+(async()=>{const W=+process.argv[2]||390;const {b,p,errors}=await open(W,780);
+await p.evaluate(()=>tab("explore"));await p.waitForTimeout(700);
+await p.click("#q");await p.keyboard.type("ayse");await p.waitForTimeout(700);
+const rows=await p.evaluate(()=>[...document.querySelectorAll("#main [data-prof],#main [data-go]")].filter(e=>e.offsetParent).slice(0,5).map(e=>e.outerHTML.slice(0,90)));console.log(rows);
+await p.evaluate(()=>refresh());await p.waitForTimeout(50);
+const box=await p.evaluate(()=>{const e=[...document.querySelectorAll('#main [data-prof="u2"]')].find(e=>e.offsetParent);if(!e)return null;const r=e.getBoundingClientRect();return {x:r.left+Math.min(30,r.width/2),y:r.top+r.height/2}});console.log(box);
+const c=await p.context().newCDPSession(p);
+await c.send('Input.dispatchTouchEvent',{type:"touchStart",touchPoints:[{x:box.x,y:box.y}]});await p.waitForTimeout(140);
+await c.send('Input.dispatchTouchEvent',{type:"touchEnd",touchPoints:[]});await p.waitForTimeout(600);
+console.log("after",await p.evaluate(()=>S.route.name+" "+JSON.stringify(S.route.params)));
+console.log(errors);await b.close()})();

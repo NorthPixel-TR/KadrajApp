@@ -1,0 +1,13 @@
+const {open,OUT}=require('./lib');
+(async()=>{const W=+process.argv[2]||390;const {b,p,errors}=await open(W,780);
+await p.context().grantPermissions(["microphone"],{origin:"http://kadraj.test"}).catch(()=>{});
+await p.evaluate(()=>{navigator.mediaDevices&&(navigator.mediaDevices.getUserMedia=async()=>{window.__gum=(window.__gum||0)+1;const ac=new AudioContext();const d=ac.createMediaStreamDestination();return d.stream})});
+await p.evaluate(()=>openChat("u:u2"));await p.waitForTimeout(700);
+await p.click("#msgIn");await p.keyboard.type("çift dokun");await p.waitForTimeout(600);
+const bb=await p.locator("#sendBtn").boundingBox();const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+const c=await p.context().newCDPSession(p);
+const tap=async()=>{await c.send('Input.dispatchTouchEvent',{type:"touchStart",touchPoints:[{x:cx,y:cy}]});await p.waitForTimeout(40);await c.send('Input.dispatchTouchEvent',{type:"touchEnd",touchPoints:[]})};
+await tap();await p.waitForTimeout(90);await tap();await p.waitForTimeout(1200);
+console.log(await p.evaluate(()=>({n:S.msgs.length,rec:typeof REC!=="undefined"&&!!REC,gum:window.__gum||0,recUi:!!document.querySelector(".rec,.recbar,#recBar,.k-rec"),cls:$("#composer").className})));
+await p.screenshot({path:OUT+"p17.png"});
+console.log(errors);await b.close()})();

@@ -1,0 +1,23 @@
+const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
+const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';const D=process.argv[2];
+const GIF="R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:800},deviceScaleFactor:1,hasTouch:true});const p=await ctx.newPage();
+ await p.route('**/*',r=>{const u=r.request().url();
+  if(u.startsWith('https://api.giphy.com/'))return r.fulfill({contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({data:[1,2,3,4,5,6].map(i=>({images:{fixed_width:{url:`https://media${i}.giphy.com/media/abc${i}/200w.gif`,width:"200",height:"150"}}}))})});
+  if(u.includes('giphy.com/media'))return r.fulfill({contentType:'image/jpeg',body:fs.readFileSync('/home/user/Kadraj/img/kahve.jpg')});
+  if(u.startsWith(BASE)){const q=decodeURIComponent(new URL(u).pathname);if(q==='/'||q==='/index.html')return r.fulfill({body:fs.readFileSync(HTML),contentType:'text/html; charset=utf-8'});
+  const f=path.join(path.dirname(HTML),q);if(fs.existsSync(f)&&fs.statSync(f).isFile())return r.fulfill({body:fs.readFileSync(f)});return r.fulfill({status:404,body:''})}
+  if(u.startsWith('data:')||u.startsWith('blob:'))return r.continue();return r.abort()});
+ await p.goto(BASE+'index.html');await p.waitForTimeout(1500);
+ await p.evaluate(async()=>{if(S.mode!=="local"||!DB)await bootLocal();const T=Date.now();
+  for(const [uid,name,un] of [["u1","Bilal Kara","bilal"],["u2","Ayşe Yılmaz","ayse"]])await DB.set("profiles/"+uid,{uid,username:un,name,bio:"",avatar:null,following:{u1:1,u2:1},botFollowers:{},private:false,createdAt:T-1e6});
+  const cid=cidFor("u1","u2");await DB.set("chats/"+cid,{members:["u1","u2"],last:{text:"naber",from:"u2",at:T-1000},updatedAt:T-1000,reads:{}});
+  await DB.set("chats/"+cid+"/msgs/m1",{from:"u2",at:T-2000,text:"selam @bilal"});
+  S.uid="u1";LS.set("kadraj_session","u1");await enterApp(false);S.adm=S.adm||{};S.adm.gif={k:"abcdefghijklmnopqrstuvwx12"}});
+ await p.waitForTimeout(600);await p.evaluate(()=>{closeAll();openChat("u:u2")});await p.waitForTimeout(800);
+ await p.screenshot({path:D+"/c_dm.png"});
+ await p.fill("#msgIn","merhaba");await p.waitForTimeout(200);await p.screenshot({path:D+"/c_typ.png"});await p.fill("#msgIn","");await p.dispatchEvent("#msgIn","input");
+ const r=await p.evaluate(()=>({top:[...document.querySelectorAll("#top button")].map(b=>b.getAttribute("aria-label")||b.className),tools:document.querySelectorAll(".k693-tools button").length,cam:!!document.querySelector(".k693-cam")}));console.log(JSON.stringify(r));
+ await p.evaluate(()=>document.querySelectorAll(".k693-tools button")[2].click());await p.waitForTimeout(500);await p.screenshot({path:D+"/c_plus.png"});
+ console.log(await p.evaluate(()=>[...document.querySelectorAll('#overlay [data-layer="plus"] .src b')].map(x=>x.textContent).join(",")));
+ await b.close()})();

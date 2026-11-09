@@ -1,0 +1,20 @@
+/* 70FXB: hikâyede parmakla (dokunmatik) aşağı/yana kaydırma. node swipe.js [w] */
+const {open}=require('/home/user/kadraj-test/m70/lib.js');
+const [,,W='390']=process.argv;let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
+(async()=>{const {b,p,errors}=await open(+W,844,{touch:true});
+ await p.evaluate(async()=>{const T=Date.now();for(const [id,u] of [["s1","u2"],["s2","u3"],["s3","u4"]])await DB.set("stories/"+id,{uid:u,at:T-36e5,img:"img/kedi.jpg",views:{}});
+  window.__ev=[];for(const t of ["pointercancel","pointerup"])document.addEventListener(t,e=>__ev.push(t),true);tab("feed")});await p.waitForTimeout(1000);
+ const cdp=await p.context().newCDPSession(p);
+ const swipe=async(x0,y0,x1,y1)=>{await cdp.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x:x0,y:y0}]});for(let i=1;i<=10;i++){await cdp.send("Input.dispatchTouchEvent",{type:"touchMove",touchPoints:[{x:x0+(x1-x0)*i/10,y:y0+(y1-y0)*i/10}]});await p.waitForTimeout(16)}await cdp.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]})};
+ const who=()=>p.evaluate(()=>{const l=document.querySelector('#overlay [data-layer="story"]');return l?l.querySelector(".shd .n").firstChild.textContent:null});
+ await p.evaluate(()=>document.querySelector('.stories [data-story="u3"]').click());await p.waitForTimeout(800);
+ const w0=await who();
+ await swipe(+W*0.75,400,+W*0.15,410);await p.waitForTimeout(900);const w1=await who();
+ ok(w0&&w1&&w1!==w0,`sola kaydırınca sonraki kişi ${w0} → ${w1} olaylar=${await p.evaluate(()=>__ev.join(","))}`);
+ await p.evaluate(()=>__ev=[]);
+ await swipe(+W/2,300,+W/2,650);await p.waitForTimeout(900);
+ ok(!(await who()),`aşağı kaydırınca kapanır olaylar=${await p.evaluate(()=>__ev.join(","))}`);
+ await p.evaluate(()=>document.querySelector('.stories [data-story="u2"]').click());await p.waitForTimeout(800);const t0=await who();
+ await cdp.send("Input.dispatchTouchEvent",{type:"touchStart",touchPoints:[{x:+W*0.85,y:420}]});await p.waitForTimeout(60);await cdp.send("Input.dispatchTouchEvent",{type:"touchEnd",touchPoints:[]});await p.waitForTimeout(900);
+ ok(t0==="ayse"&&(await who())!=="ayse",`sağa dokununca ilerler ${t0} → ${await who()}`);
+ ok(!errors.length,"sayfa hatası yok "+errors.slice(0,2));console.log(pass+"/"+(pass+fail));await b.close();process.exit(fail?1:0)})();

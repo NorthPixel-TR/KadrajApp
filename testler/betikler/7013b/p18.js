@@ -1,0 +1,14 @@
+const {open,OUT}=require('./lib');
+(async()=>{const W=+process.argv[2]||390;const {b,p,errors}=await open(W,780);
+await p.evaluate(()=>openChat("u:u2"));await p.waitForTimeout(700);
+await p.click("#msgIn");await p.keyboard.type("tek dokun");
+await p.evaluate(()=>{window.__ev=[];const t0=performance.now();for(const ev of ["pointerdown","pointerup","pointercancel","click","submit","touchstart","touchend","focusout"])document.addEventListener(ev,e=>__ev.push(Math.round(performance.now()-t0)+" "+ev+" "+(e.target.id||String(e.target.className?.baseVal??e.target.className).slice(0,30)||e.target.tagName)+" dp="+e.defaultPrevented),true)});
+const bb=await p.locator("#sendBtn").boundingBox();const cx=bb.x+bb.width/2,cy=bb.y+bb.height/2;
+console.log(await p.evaluate(([x,y])=>{const e=document.elementFromPoint(x,y);const r=q=>{const b=$(q).getBoundingClientRect();return [b.left,b.top,b.right,b.bottom].map(Math.round)};return {hit:e.id||e.tagName,cx:Math.round(x),inp:r("#msgIn"),btn:r("#sendBtn"),tools:r(".k693-tools")}},[cx,cy]));
+const c=await p.context().newCDPSession(p);
+await c.send('Input.dispatchTouchEvent',{type:"touchStart",touchPoints:[{x:cx,y:cy}]});await p.waitForTimeout(60);await c.send('Input.dispatchTouchEvent',{type:"touchEnd",touchPoints:[]});
+await p.waitForTimeout(800);
+console.log(await p.evaluate(()=>({n:S.msgs.length,v:$("#msgIn").value,ev:__ev})));
+await p.touchscreen.tap(cx,cy);await p.waitForTimeout(800);
+console.log(await p.evaluate(()=>({n:S.msgs.length,v:$("#msgIn").value,ev:__ev.slice(-6)})));
+console.log(errors);await b.close()})();

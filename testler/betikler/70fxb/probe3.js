@@ -1,0 +1,11 @@
+const {rich,ok,done}=require('./h.js');const W=+process.argv[2]||360;
+(async()=>{const A=await rich({width:W});const p=A.page;
+ const L="Çokuzunkelimeboşluksuzbirsatır".repeat(6);
+ await p.evaluate(async(L)=>{const T=Date.now();await DB.set("profiles/u9",{uid:"u9",username:"muhammedalikarakaya_2008",name:"Muhammed Ali Karakaya",bio:L,avatar:null,following:{u1:T},botFollowers:{},private:false,createdAt:T,close:{u1:T}});
+  await DB.set("stories/LS",{uid:"u9",at:T-1000,img:"img/kedi.jpg",views:{},cf:1});},L);await p.waitForTimeout(500);
+ await p.evaluate(()=>go("profile",{uid:"u9"}));await p.waitForTimeout(400);
+ console.log(await p.evaluate(()=>{const m=document.getElementById("main");const vw=m.clientWidth;const o=[];for(const e of m.querySelectorAll("*")){const b=e.getBoundingClientRect();if(b.right>vw+2&&e.children.length===0)o.push(e.tagName+"."+e.className+" "+Math.round(b.right)+" p="+e.parentElement.className)}return{sw:m.scrollWidth,o:o.slice(0,8)}}));
+ await p.evaluate(()=>openStories("u9"));await p.waitForTimeout(400);
+ console.log(await p.evaluate(()=>{const b=document.querySelector('.sv .shd [data-act="close"]').getBoundingClientRect();return{r:b.right,vw:innerWidth}}));
+ await p.screenshot({path:'/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/70fxb/story24.png'});
+ await done(A)})();

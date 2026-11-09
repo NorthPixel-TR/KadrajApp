@@ -1,0 +1,25 @@
+const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
+const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';const D=process.argv[2];
+const GIF="R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:800},deviceScaleFactor:1,hasTouch:true});const p=await ctx.newPage();
+ await p.route('**/*',r=>{const u=r.request().url();
+  if(u.startsWith('https://api.giphy.com/'))return r.fulfill({contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({data:[1,2,3,4,5,6].map(i=>({images:{fixed_width:{url:`https://media${i}.giphy.com/media/abc${i}/200w.gif`,width:"200",height:"150"}}}))})});
+  if(u.includes('giphy.com/media'))return r.fulfill({contentType:'image/jpeg',body:fs.readFileSync('/home/user/Kadraj/img/kahve.jpg')});
+  if(u.startsWith(BASE)){const q=decodeURIComponent(new URL(u).pathname);if(q==='/'||q==='/index.html')return r.fulfill({body:fs.readFileSync(HTML),contentType:'text/html; charset=utf-8'});
+  const f=path.join(path.dirname(HTML),q);if(fs.existsSync(f)&&fs.statSync(f).isFile())return r.fulfill({body:fs.readFileSync(f)});return r.fulfill({status:404,body:''})}
+  if(u.startsWith('data:')||u.startsWith('blob:'))return r.continue();return r.abort()});
+ await p.goto(BASE+'index.html');await p.waitForTimeout(1500);
+ await p.evaluate(async()=>{if(S.mode!=="local"||!DB)await bootLocal();const T=Date.now();
+  for(const [uid,name,un] of [["u1","Bilal Kara","bilal"],["u2","Ayşe Yılmaz","ayse"]])await DB.set("profiles/"+uid,{uid,username:un,name,bio:"",avatar:null,following:{u1:1,u2:1},botFollowers:{},private:false,createdAt:T-1e6});
+  const cid=cidFor("u1","u2");await DB.set("chats/"+cid,{members:["u1","u2"],last:{text:"naber",from:"u2",at:T-1000},updatedAt:T-1000,reads:{}});
+  await DB.set("chats/"+cid+"/msgs/m1",{from:"u2",at:T-2000,text:"selam @bilal"});
+  S.uid="u1";LS.set("kadraj_session","u1");await enterApp(false);S.adm=S.adm||{};S.adm.gif={k:"abcdefghijklmnopqrstuvwx12"}});
+ await p.waitForTimeout(600);await p.evaluate(()=>{closeAll();openChat("u:u2")});await p.waitForTimeout(800);
+ await p.evaluate(()=>plusMenu());await p.waitForTimeout(500);await p.screenshot({path:D+"/g_plus.png"});
+ await p.evaluate(()=>{closeAll();gifPick(S.route.params.key,"gif")});await p.waitForTimeout(1000);await p.screenshot({path:D+"/g_pick.png"});
+ await p.evaluate(()=>{closeAll();window.pickImage=async()=>{const im=new Image();im.src="img/kahve.jpg";await im.decode();return{img:im,src:im.src}};stkMake(S.route.params.key)});await p.waitForTimeout(900);
+ await p.evaluate(()=>{document.querySelector('[data-sh="star"]').click();const t=document.getElementById('k69Tx');t.value="Günaydın";t.dispatchEvent(new Event('input'))});await p.waitForTimeout(300);await p.screenshot({path:D+"/g_stk.png"});
+ await p.evaluate(()=>document.getElementById('k69Go').click());await p.waitForTimeout(800);
+ await p.evaluate(()=>sendMessage(S.route.params.key,{gif:{u:"https://media3.giphy.com/media/abc3/200w.gif",w:200,h:150}}));await p.waitForTimeout(900);await p.screenshot({path:D+"/g_chat.png"});
+ await p.evaluate(()=>{go("settings")});await p.waitForTimeout(500);await p.evaluate(()=>document.querySelector('.sg[data-g="k69"] .sg-h').click());await p.waitForTimeout(500);await p.screenshot({path:D+"/g_set.png"});
+ await b.close()})();

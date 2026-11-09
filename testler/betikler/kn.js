@@ -1,0 +1,22 @@
+/* 6.9.2 uygulama içi bildirim: sağa kaydırınca kapanır, yukarı kaydırma ve dokununca açma bozulmadı */
+const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
+const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';
+let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
+(async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:800}});const p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));
+ await p.route('**/*',r=>{const u=r.request().url();if(u.startsWith(BASE)){const q=decodeURIComponent(new URL(u).pathname);if(q==='/'||q==='/index.html')return r.fulfill({body:fs.readFileSync(HTML),contentType:'text/html; charset=utf-8'});
+  const f=path.join(path.dirname(HTML),q);if(fs.existsSync(f)&&fs.statSync(f).isFile())return r.fulfill({body:fs.readFileSync(f)});return r.fulfill({status:404,body:''})}if(u.startsWith('data:')||u.startsWith('blob:'))return r.continue();return r.abort()});
+ await p.goto(BASE+'index.html');await p.waitForTimeout(1500);
+ await p.evaluate(async()=>{if(S.mode!=="local"||!DB)await bootLocal();const T=Date.now();for(const [uid,name,un] of [["u1","Bilal","bilal"],["u2","Ayşe","ayse"]])await DB.set("profiles/"+uid,{uid,username:un,name,bio:"",avatar:null,following:{},botFollowers:{},private:false,createdAt:T});S.uid="u1";LS.set("kadraj_session","u1");await enterApp(false)});
+ await p.waitForTimeout(800);await p.evaluate(()=>closeAll());
+ const show=()=>p.evaluate(()=>{document.querySelectorAll(".kn").forEach(x=>x.remove());knNotify({kind:"msg",title:"Ayşe",text:"selam",uid:"u2",key:"u:u2",demo:true})});
+ const drag=async(dx,dy)=>{const r=await p.evaluate(()=>{const e=document.querySelector(".kn .kn-m").getBoundingClientRect();return{x:e.x+e.width/2,y:e.y+e.height/2}});await p.mouse.move(r.x,r.y);await p.mouse.down();for(let i=1;i<=8;i++){await p.mouse.move(r.x+dx*i/8,r.y+dy*i/8);await p.waitForTimeout(16)}await p.mouse.up();await p.waitForTimeout(600)};
+ const live=()=>p.evaluate(()=>[...document.querySelectorAll(".kn")].filter(x=>!x._gone&&!x.classList.contains("out")).length);
+ await show();await p.waitForTimeout(500);ok(await live()===1,"bildirim çıktı");
+ await drag(160,4);ok(await live()===0,"sağa kaydırınca kapandı");
+ await show();await p.waitForTimeout(500);await drag(40,0);ok(await live()===1,"kısa kaydırmada geri yerine döner");
+ ok(await p.evaluate(()=>{const e=document.querySelector(".kn");return!e.style.transform||e.style.transform==="none"}),"yerine oturdu");
+ await drag(-160,0);ok(await live()===1,"sola kaydırınca kapanmaz");
+ await drag(0,-80);ok(await live()===0,"yukarı kaydırma hâlâ kapatıyor");
+ await show();await p.waitForTimeout(500);await p.evaluate(()=>document.querySelector(".kn .kn-m").dispatchEvent(new PointerEvent("pointerdown",{bubbles:true,pointerId:5,clientX:100,clientY:60})));await p.evaluate(()=>document.querySelector(".kn").dispatchEvent(new PointerEvent("pointerup",{bubbles:true,pointerId:5,clientX:100,clientY:60})));await p.waitForTimeout(600);
+ ok(await p.evaluate(()=>S.route.name==="chat"),"dokununca sohbet açılıyor");
+ ok(!errors.length,"sayfa hatası yok "+errors.join("|"));console.log(pass+"/"+(pass+fail));await b.close();process.exit(fail?1:0)})();

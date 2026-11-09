@@ -1,0 +1,28 @@
+/* keşif: 360 koyu temada sohbet katmanlarının ekran görüntüleri */
+const L=require('./lib.js');
+(async()=>{const W=+process.argv[2]||360,dark=process.argv[3]!=="light";const A=await L.open({w:W,h:740,dark});const p=A.page;await L.seed(p);
+ const sh=async n=>{await p.waitForTimeout(450);const ov=await p.evaluate(()=>[document.documentElement.scrollWidth,innerWidth,[...document.querySelectorAll("#overlay .sheet,#overlay .layer>*")].map(e=>e.scrollWidth-e.clientWidth).filter(x=>x>1)]);console.log(n,JSON.stringify(ov));await p.screenshot({path:L.SHOT+`s_${W}_${dark?"d":"l"}_${n}.png`})};
+ await p.evaluate(async()=>{const T=Date.now();const cid="gr-g1";
+  const im=(()=>{const c=document.createElement("canvas");c.width=300;c.height=200;const x=c.getContext("2d");x.fillStyle="#4a8";x.fillRect(0,0,300,200);return c.toDataURL("image/jpeg",.7)})();
+  await DB.set(`chats/${cid}/msgs/a1`,{from:"u2",at:T-400,text:"Uzun bir mesaj @bilal bakalım bu nasıl görünecek, satır kayacak mı #kadraj",reacts:{u1:"fire",u3:"laugh"},likes:{}});
+  await DB.set(`chats/${cid}/msgs/a2`,{from:"u3",at:T-300,gpoll:{q:"Cumartesi nereye?",o:["Sinema","Park","Evde oyun"]},pv:{u2:1}});
+  await DB.set(`chats/${cid}/msgs/a3`,{from:"u2",at:T-200,img:im,once:1});
+  await DB.set(`chats/${cid}/msgs/a4`,{from:"u1",at:T-150,text:"benim yanıtım",reply:{mid:"a1",from:"u2",text:"Uzun bir mesaj"}});
+  await DB.set(`chats/${cid}/msgs/a5`,{from:"u3",at:T-100,mus:{u:"it:1",t:"Şımarık - Tarkan",p:"https://audio.apple.com/x.m4a",a:"https://is1.mzstatic.com/x.jpg",e:0,s:0}});
+  await DB.set(`chats/${cid}/msgs/a6`,{from:"u2",at:T-50,oyun:{t:"xox",gid:"og-1"},text:"XOX oynayalım mı?"});
+  await DB.update("chats/"+cid,{pins:["a1"]});go("chat",{key:"g:"+cid})});await p.waitForTimeout(900);
+ await sh("grup");
+ await p.evaluate(()=>msgMenu("a1"));await sh("msgmenu");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>plusMenu());await sh("plus");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>reactList("a1"));await sh("rxlist");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>fwdSheet(S.msgs.find(m=>m.id==="a1")));await sh("fwd");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>schOpen());await sh("sch");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>gpNew(S.route.params.key));await sh("gpnew");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>chatInfo(S.route.params.key));await sh("info");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>groupMenu());await sh("gmenu");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>gifPick(S.route.params.key,"mine"));await sh("gif");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>{window.pickImage=async()=>{const c=document.createElement("canvas");c.width=400;c.height=300;const x=c.getContext("2d");x.fillStyle="#e33";x.fillRect(0,0,400,300);const im=new Image();im.src=c.toDataURL();await im.decode();return{img:im,src:im.src}};stkMake(S.route.params.key)});await sh("stk");await p.evaluate(()=>closeAll());
+ await p.evaluate(()=>{S.replyTo={mid:"a1",from:"u2",text:"Uzun bir mesaj @bilal bakalım bu nasıl görünecek, satır kayacak mı uzun uzun"};drawReply()});await sh("reply");
+ await p.evaluate(()=>{S.replyTo=null;drawReply();knNotify({kind:"msg",uid:"u2",title:"Ayşe Yılmaz",text:"Çok uzun bir bildirim metni ".repeat(5),key:"u:u2",cid:cidFor("u1","u2"),at:Date.now()})});await sh("kn");
+ await p.evaluate(()=>go("chats"));await sh("chats");
+ console.log("errors",A.errors);await A.close()})();

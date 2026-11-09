@@ -1,0 +1,11 @@
+const {open}=require('../m70/lib');const W=+process.argv[2]||390;const D='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/7013c/';require('fs').mkdirSync(D,{recursive:true});
+(async()=>{const {b,p,errors}=await open(W);
+ await p.evaluate(()=>openChat("u:u2"));await p.waitForTimeout(800);
+ await p.evaluate(()=>schOpen());await p.waitForTimeout(600);await p.screenshot({path:D+'sch'+W+'.png'});
+ const sch=await p.evaluate(()=>{const t=document.querySelector('#schT'),l=document.querySelector('#overlay [data-layer="sch"] .sheet, #overlay [data-layer="sch"]');const a=t.getBoundingClientRect();return {tl:a.left,tr:innerWidth-a.right}});console.log('sch',JSON.stringify(sch));
+ await p.evaluate(()=>closeAll());await p.waitForTimeout(300);
+ await p.evaluate(()=>zrLetter());await p.waitForTimeout(900);await p.screenshot({path:D+'zr'+W+'.png'});
+ await p.evaluate(()=>closeAll());await p.waitForTimeout(300);
+ await p.evaluate(()=>{tab("settings")});await p.waitForTimeout(500);
+ const mids=await p.evaluate(()=>(S.msgs||[]).map(m=>m.id));
+ console.log('errors',errors);await b.close()})();

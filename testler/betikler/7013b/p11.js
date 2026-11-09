@@ -1,0 +1,14 @@
+const {open,OUT}=require('./lib');
+(async()=>{const W=+process.argv[2]||390;const {b,p,errors}=await open(W,780);
+const st=()=>p.evaluate(()=>S.route.name+" ["+[...document.querySelectorAll('#overlay [data-layer]')].map(x=>x.dataset.layer).join(",")+"] msgs="+S.msgs.length+" v="+($("#msgIn")||{}).value);
+await p.evaluate(()=>openChat("u:u5"));await p.waitForTimeout(700);console.log("empty dm",await st());await p.screenshot({path:OUT+"p11a.png"});
+await p.evaluate(()=>chatInfo("u:u5"));await p.waitForTimeout(700);console.log("info",await st());
+const rows=await p.evaluate(()=>[...document.querySelectorAll('#overlay [data-layer="cinfo"] button')].map(b=>b.textContent.trim().slice(0,16)).join("|"));console.log(rows);
+await p.screenshot({path:OUT+"p11b.png"});await p.evaluate(()=>closeAll());
+await p.evaluate(()=>plusMenu());await p.waitForTimeout(300);console.log("plus",await p.evaluate(()=>[...document.querySelectorAll('#overlay [data-layer="plus"] button')].map(b=>(b.id||"")+":"+b.textContent.trim().slice(0,16)).join("|")));await p.evaluate(()=>closeAll());
+await p.click("#msgIn");await p.keyboard.type("ilk mesaj");await p.keyboard.press("Enter");await p.waitForTimeout(800);console.log("sent",await st(),await p.evaluate(()=>!!S.chats[cidFor("u1","u5")]));
+await p.evaluate(()=>openChat("g:gr-1"));await p.waitForTimeout(600);
+await p.evaluate(()=>plusMenu());await p.waitForTimeout(300);console.log("plus grp",await p.evaluate(()=>[...document.querySelectorAll('#overlay [data-layer="plus"] button')].map(b=>(b.id||"")+":"+b.textContent.trim().slice(0,16)).join("|")));await p.evaluate(()=>closeAll());
+await p.evaluate(()=>openChat("meydan"));await p.waitForTimeout(600);
+await p.evaluate(()=>plusMenu());await p.waitForTimeout(300);console.log("plus meydan",await p.evaluate(()=>[...document.querySelectorAll('#overlay [data-layer="plus"] button')].map(b=>(b.id||"")+":"+b.textContent.trim().slice(0,16)).join("|")));await p.evaluate(()=>closeAll());
+console.log(errors);await b.close()})();
