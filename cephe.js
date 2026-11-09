@@ -211,12 +211,14 @@ function delBld(g,b){const i=g.bld.indexOf(b);if(i>=0)g.bld.splice(i,1);g.bmap.d
 const cnt=(p,k)=>p.nb[k]||0;
 const inRad=(g,c)=>{if(!g.rad.length)return false;const W=g.m.W,x=c%W,y=(c/W)|0;for(const z of g.rad)if(z.until>g.t&&Math.hypot(z.c%W-x,((z.c/W)|0)-y)<=z.r)return true;return false};
 const popCap=p=>Math.max(1500,(p.cells-p.occ*.6)*800+cnt(p,"ev")*120000+cnt(p,"has")*80000);
-const troopCap=p=>5000+p.pop*.22+cnt(p,"kis")*40000;
+/* 7.1: sınır büyüdükçe yavaşlar (500 bine kadar tam, sonra %35, 2 milyondan sonra %10): 3 milyona ancak çok büyük imparatorluk ulaşır */
+const troopCap=p=>{const c=5000+p.pop*.22+cnt(p,"kis")*40000;return c<=5e5?c:c<=4785714?5e5+(c-5e5)*.35:2e6+(c-4785714)*.1};
 const cap=troopCap;
 const gm=p=>p.bot==="t"?TRIBE.g:p.bot?DIFF[p.diff].g:1;
 const ecoM=p=>1+.15*(p.eco-1);
 const popRate=p=>{if(!p.alive)return 0;const C=popCap(p);return p.pop>C?-(p.pop-C)*.03:(C-p.pop)*.012*(1+.15*cnt(p,"has"))*(1+.08*(p.eco-1))+5};
-const troopRate=p=>{if(!p.alive)return 0;const C=troopCap(p),t=p.troops+p.front;if(t>C)return -Math.min(p.troops,(t-C))*.02;return(300+p.pop*.004)*(1+.06*cnt(p,"ev")+.25*cnt(p,"kis"))*gm(p)*(1-t/C)};
+const troopRate=p=>{if(!p.alive)return 0;const C=troopCap(p),t=p.troops+p.front;if(t>C)return -Math.min(p.troops,(t-C))*.02;/* 7.1: dolma süresi sınıra göre (boşken ~4 dk'da dolar), yapılar en çok 2,5 kat hızlandırır */
+ return(150+C/260)*Math.min(2.5,1+.06*cnt(p,"ev")+.25*cnt(p,"kis"))*gm(p)*(1-t/C)};
 const goldGross=p=>p.alive?(40+p.pop*.00012+cnt(p,"fab")*260+cnt(p,"lim")*160)*ecoM(p):0;
 const goldRate=p=>goldGross(p)*(p.ov>=0?.75:1)+(p.trib||0);
 const power=p=>p.lvl*10;
@@ -961,10 +963,12 @@ function loop(){if(!V)return;cancelAnimationFrame(V.raf);V.pings=V.pings||[];V.s
   if(V.mode==="spawn"){if(V.room&&V.host)hostSpawnTick();if(V.spawnEnd&&performance.now()>=V.spawnEnd&&(!V.room||V.host))beginWar()}
   ensureOv();if(G.dirt.length){flushOv();V.labD=1}
   if(V.labD&&ts-labT>(G.pl.length>60?1300:900)){labT=ts;V.labD=0;labels(G)}
-  const busy=V.mode==="spawn"||G.att.length||G.boats.length||G.mis.length||G.booms.length||G.rad.length||V.pings.length||V.shake||ts-(V.inT||0)<1500;
-  if(ts-dT>=(busy?45:140)){dT=ts;draw(ts)}
+  /* 7.1: tam hız yalnızca dokunurken, benim cephemde ya da füze/patlama varken; başkaları savaşırken ~8 kare/sn, boşta ~5 */
+  const hot=V.mode==="spawn"||G.mis.length||G.booms.length||V.pings.length||V.shake||ts-(V.inT||0)<1500||G.att.some(a=>a.o===V.me||a.t===V.me)||G.boats.some(b=>b.o===V.me);
+  const warm=hot||G.att.length||G.boats.length||G.rad.length;
+  if(ts-dT>=(hot?50:warm?125:200)){dT=ts;draw(ts)}
   if(V.mode==="play"&&ts-(V.gunT||0)>380){V.gunT=ts;const n=G.att.filter(a=>(a.o===V.me||a.t===V.me)&&a.t>=0).length;if(n&&Math.random()<.35+.15*n)SND.play("gun");if(n&&Math.random()<.08*n)SND.play("art")}
-  if(ts-hT>250){hT=ts;hud()}};V.raf=requestAnimationFrame(f)}
+  if(ts-hT>400){hT=ts;hud()}};V.raf=requestAnimationFrame(f)}
 const ICP={};function icon(x,k,cx,cy,sz){let p=ICP[k];if(!p){p=ICP[k]=new Path2D((IC[k]||"").match(/d="([^"]+)"/g).map(s=>s.slice(3,-1)).join(" "))}x.save();x.translate(cx-sz/2,cy-sz/2);x.scale(sz/24,sz/24);x.strokeStyle="#fff";x.lineWidth=2.4;x.lineCap="round";x.lineJoin="round";x.stroke(p);x.restore()}
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
 function pill(x,t,cx,cy,bg,fs=11){x.font=`800 ${fs}px ${V.mono||"monospace"}`;const w=x.measureText(t).width+fs*1.1,h=fs*1.7;rr(x,cx-w/2,cy-h/2,w,h,h/2);x.fillStyle=bg;x.fill();x.strokeStyle="rgba(255,255,255,.85)";x.lineWidth=1.5;x.stroke();x.fillStyle="#fff";x.textAlign="center";x.textBaseline="middle";x.fillText(t,cx,cy+.5)}
@@ -994,7 +998,7 @@ function draw(ts){const g=G,m=g.m,x=V.cx,s=V.s,W=m.W;x.setTransform(V.dpr,0,0,V.
   const r=(sz/2+2)*Math.max(.05,sc);x.beginPath();x.arc(cx,cy+1.5,r,0,7);x.fillStyle="rgba(0,0,0,.25)";x.fill();x.beginPath();x.arc(cx,cy,r,0,7);x.fillStyle=p?p.bh:"#555";x.fill();x.lineWidth=1.5;x.strokeStyle="#fff";x.stroke();if(sc>.4)icon(x,b.k,cx,cy,sz*.68*sc)}}
  /* adlar ve asker sayıları */
  x.textAlign="center";x.textBaseline="middle";x.lineJoin="round";
- const LB=[];for(const p of g.pl)if((p.alive||p.cells)&&p.lr>0&&p.lx>=0&&!p.gone)LB.push(p);LB.sort((a,b)=>(b.i===V.me)-(a.i===V.me)||b.lr-a.lr);const used=[];
+ const LB=[];for(const p of g.pl)if((p.alive||p.cells)&&p.lr>0&&p.lx>=0&&!p.gone)LB.push(p);LB.sort((a,b)=>(b.i===V.me)-(a.i===V.me)||b.lr-a.lr);if(LB.length>(V.cw<600?36:70))LB.length=V.cw<600?36:70;const used=[];
  for(const p of LB){const cx=ox+(p.lx+.5)*s,cy=oy+(p.ly+.5)*s;if(cx<-200||cy<-80||cx>V.cw+200||cy>V.ch+80)continue;let fs=Math.min(p.lr*s*.62,52);const fs0=fs;
   const nm=p.name+(p.ov>=0?" (vasal)":""),tr=nf(p.troops+p.front),fl=!!p.flag,tw0=tr.length*fs*.62,nw0=nmW(x,nm,font)*fs*.62/100*(fl?1.25:1);
   const maxw=p.lr*s*2.5,tw=Math.max(tw0,nw0);if(tw>maxw)fs*=maxw/tw;if(fs<(p.i===V.me?9:11))continue;
@@ -1057,18 +1061,26 @@ function drawAir(x,b,age,ox,oy,s,W){if(age>3000||b.ax==null)return;const px=ox+(
 function drawFronts(x,g,s,ox,oy,now_,font,mono,solo){const list=[];for(const a of g.att){if(!a.fp||a.fp.length<4)continue;const mine=a.o===V.me||a.t===V.me;if(!mine&&(s<1.1||a.t<0))continue;list.push(a)}
  list.sort((p,q)=>((q.o===V.me||q.t===V.me)-(p.o===V.me||p.t===V.me))||(q.n+(q.d||0))-(p.n+(p.d||0)));
  const tw=clamp(9+s*1.4,13,22),th=tw*.68,sp=tw*1.25,red=typeof kbReduce==="function"&&kbReduce(),boxes=[];
- for(const a of list.slice(0,V.cw<600?5:10)){const A=g.pl[a.o],T=a.t>=0?g.pl[a.t]:null,fp=a.fp,P=fp.length/4;
+ for(const a of list.slice(0,V.cw<600?4:8)){const A=g.pl[a.o],T=a.t>=0?g.pl[a.t]:null,fp=a.fp,P=fp.length/4;
   let cx=0,cy=0,mx=0,my=0;for(let i=0;i<P;i++){cx+=fp[i*4];cy+=fp[i*4+1];mx+=fp[i*4+2];my+=fp[i*4+3]}cx=ox+(cx/P+.5)*s;cy=oy+(cy/P+.5)*s;let ml=Math.hypot(mx,my);if(ml<.01){mx=1;my=0;ml=1}mx/=ml;my/=ml;
   if(cx<-160||cy<-160||cx>V.cw+160||cy>V.ch+160)continue;const ux=-my,uy=mx;let lo=1e9,hi=-1e9;for(let i=0;i<P;i++){const px=(fp[i*4]+.5)*s+ox-cx,py=(fp[i*4+1]+.5)*s+oy-cy,pr=px*ux+py*uy;if(pr<lo)lo=pr;if(pr>hi)hi=pr}
   const span=clamp(hi-lo,sp*3,sp*9),perRow=Math.max(3,Math.floor(span/sp)),mid=(lo+hi)/2;
-  const mineF=a.o===V.me||a.t===V.me;const army=(Q,n,dir,inc)=>{if(!Q||n<1)return;const k=Math.min(mineF?24:12,Math.max(1,Math.ceil(n/1000))),rows=Math.ceil(k/perRow),fc=Q.flag?flagCanvas(Q.flag,24,16):null;
-   for(let i=0;i<k;i++){const row=(i/perRow)|0,col=i%perRow,inRow=Math.min(perRow,k-row*perRow),o=(col-(inRow-1)/2)*sp+mid+(row%2?sp*.35:0),back=(row+.9)*sp*.95;
-    const march=red?0:Math.sin(now_/220+i*1.3+(dir>0?1.5:0))*1.4;const px=cx+ux*o+mx*back*dir,py=cy+uy*o+my*back*dir+(red?0:Math.abs(march)*-.6);
-    x.fillStyle="rgba(0,0,0,.3)";x.beginPath();x.ellipse(px,py+th*.55,tw*.45,tw*.14,0,0,7);x.fill();
-    x.strokeStyle="rgba(25,20,15,.9)";x.lineWidth=1.4;x.beginPath();x.moveTo(px-tw/2,py-th+march*.3);x.lineTo(px-tw/2,py+th*.55);x.stroke();
-    if(fc)x.drawImage(fc,px-tw/2,py-th+march*.3,tw,th);else{x.fillStyle=Q.hex;x.fillRect(px-tw/2,py-th+march*.3,tw,th)}x.strokeStyle="rgba(255,255,255,.95)";x.lineWidth=1;x.strokeRect(px-tw/2+.5,py-th+march*.3+.5,tw-1,th-1)}
-   const dist=(rows+.9)*sp*.95+tw*1.25,lx=cx+mx*dist*dir+ux*mid,ly=cy+my*dist*dir+uy*mid;const fz=clamp(12+Math.log10(n+10),13,18),t=nf(n),sub=`güç ${power(Q)}${Q.gens.length?` · ${Q.gens.length} general`:""}`;
-   x.font=`900 ${fz}px ${mono}`;const w=Math.max(t.length*fz*.62+fz*1.6,fz*5.2),hh=fz*2.15,bx=[lx-w/2,ly-hh/2,lx+w/2,ly+hh/2];if(!inc&&boxes.some(u=>bx[0]<u[2]&&bx[2]>u[0]&&bx[1]<u[3]&&bx[3]>u[1]))return;boxes.push(bx);
+  const mineF=a.o===V.me||a.t===V.me;
+  /* 7.1: bayraklar direksiz. Sıra: cephe hattı → asker sayısı (bayrakların önünde) → dik bayraklar (cephedeki asker) → yere serili bayraklar (yedekteki asker). */
+  const army=(Q,n,dir,inc)=>{if(!Q||n<1)return;const k=Math.min(mineF?14:7,Math.max(1,Math.ceil(n/1000))),rows=Math.ceil(k/perRow),fc=Q.flag?flagCanvas(Q.flag,24,16):null;
+   const fz=clamp(12+Math.log10(n+10),13,18),t=nf(n),sub=`güç ${power(Q)}${Q.gens.length?` · ${Q.gens.length} general`:""}`,hh=fz*2.15,gap=hh*.5+tw*.55;
+   x.font=`900 ${fz}px ${mono}`;const w=Math.max(t.length*fz*.62+fz*1.6,fz*5.2),lx=cx+mx*gap*dir+ux*mid,ly=cy+my*gap*dir+uy*mid,bx=[lx-w/2,ly-hh/2,lx+w/2,ly+hh/2];
+   const lab=inc||!boxes.some(u=>bx[0]<u[2]&&bx[2]>u[0]&&bx[1]<u[3]&&bx[3]>u[1]);if(lab)boxes.push(bx);const off=hh+tw*.5;
+   for(let i=0;i<k;i++){const row=(i/perRow)|0,col=i%perRow,inRow=Math.min(perRow,k-row*perRow),o=(col-(inRow-1)/2)*sp+mid+(row%2?sp*.35:0),back=off+(row+.6)*sp*.95;
+    const wv=red?0:Math.sin(now_/260+i*1.3+(dir>0?1.5:0))*1.2;const px=cx+ux*o+mx*back*dir,py=cy+uy*o+my*back*dir;
+    x.fillStyle="rgba(0,0,0,.28)";x.beginPath();x.ellipse(px,py+th*.62,tw*.42,tw*.12,0,0,7);x.fill();
+    if(fc)x.drawImage(fc,px-tw/2,py-th/2+wv*.5,tw,th);else{x.fillStyle=Q.hex;x.fillRect(px-tw/2,py-th/2+wv*.5,tw,th)}x.strokeStyle="rgba(255,255,255,.95)";x.lineWidth=1;x.strokeRect(px-tw/2+.5,py-th/2+wv*.5+.5,tw-1,th-1)}
+   /* yedek: yere serili (basık, soluk) bayraklar ve altında yedek sayısı */
+   const rs=Math.round(Q.troops||0);if(rs>=1000){const kr=Math.min(perRow,Math.max(1,Math.ceil(rs/Math.max(1000,n/k)))),back=off+(rows+.75)*sp*.95,lh=th*.42;
+    x.globalAlpha=.8;for(let i=0;i<kr;i++){const o=(i-(kr-1)/2)*sp+mid,px=cx+ux*o+mx*back*dir,py=cy+uy*o+my*back*dir;
+     x.fillStyle="rgba(0,0,0,.22)";x.fillRect(px-tw/2+1.5,py-lh/2+1.5,tw,lh);if(fc)x.drawImage(fc,px-tw/2,py-lh/2,tw,lh);else{x.fillStyle=Q.hex;x.fillRect(px-tw/2,py-lh/2,tw,lh)}x.strokeStyle="rgba(255,255,255,.6)";x.lineWidth=1;x.strokeRect(px-tw/2+.5,py-lh/2+.5,tw-1,lh-1)}
+    x.globalAlpha=1;if(mineF&&lab){const rx=cx+mx*(back+sp*.75)*dir+ux*mid,ry=cy+my*(back+sp*.75)*dir+uy*mid,rt="yedek "+nf(rs);x.font=`800 ${Math.round(fz*.62)}px ${mono}`;x.textAlign="center";x.textBaseline="middle";x.lineWidth=3;x.strokeStyle="rgba(10,16,26,.8)";x.strokeText(rt,rx,ry);x.fillStyle="#dfe8f5";x.fillText(rt,rx,ry)}}
+   if(!lab)return;x.font=`900 ${fz}px ${mono}`;
    rr(x,lx-w/2,ly-hh/2,w,hh,8);x.fillStyle=inc?"rgba(150,18,18,.92)":"rgba(14,22,36,.88)";x.fill();x.lineWidth=2;x.strokeStyle=Q.hex;x.stroke();
    if(Q.flag)x.drawImage(flagCanvas(Q.flag,24,16),lx-w/2+5,ly-fz*.62,fz*1.05,fz*.7);else{x.fillStyle=Q.hex;x.fillRect(lx-w/2+5,ly-fz*.62,fz*1.05,fz*.7)}
    x.fillStyle="#fff";x.textAlign="center";x.textBaseline="middle";x.fillText(t,lx+fz*.5,ly-fz*.22);x.font=`700 ${Math.round(fz*.55)}px ${font}`;x.fillStyle="#c9d6e8";x.fillText(sub,lx+fz*.5,ly+fz*.55)};
