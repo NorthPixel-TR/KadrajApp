@@ -2,9 +2,9 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="kadraj-version" content="70030">
+<meta name="kadraj-version" content="70100">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
-<meta name="theme-color" content="#0A110F">
+<meta name="theme-color" content="#000000">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" href="icon-192.png?v=730">
 <link rel="apple-touch-icon" href="icon-192.png?v=730">
@@ -14,10 +14,11 @@
 <meta name="apple-mobile-web-app-title" content="Kadraj">
 <title>Kadraj</title>
 <meta name="description" content="Kadraj: arkadaşlarla fotoğraf, Klaket, not, anket ve sohbet">
+<link rel="preload" href="fonts/pjs-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
-<link rel="stylesheet" href="app.css?v=70030">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+<link rel="stylesheet" href="app.css?v=70100">
 </head>
 <body>
 
@@ -29,7 +30,7 @@ window.kFail=function(n){var o=document.querySelector('script[src*="app.js"]');i
 window.kStuck=function(why){if(document.getElementById("kStuck")||document.documentElement.classList.contains("k-live"))return;var d=document.createElement("div"),b=document.createElement("button"),t=document.createElement("div"),x=document.createElement("div");d.id="kStuck";d.setAttribute("role","alert");
 d.style.cssText="position:fixed;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));z-index:2147483647;max-width:420px;margin:0 auto;background:#14201c;color:#fff;border-radius:18px;padding:16px;font:15px/1.4 system-ui,sans-serif;box-shadow:0 10px 34px rgba(0,0,0,.45)";
 t.innerHTML="<b>Kadraj açılamadı</b>";var w=document.createElement("div");w.style.cssText="opacity:.85;margin:4px 0 12px";w.textContent=why;t.appendChild(w);
-b.textContent="Yeniden aç";b.style.cssText="width:100%;padding:12px;border:0;border-radius:12px;background:#0C7A63;color:#fff;font:600 15px system-ui,sans-serif";
+b.textContent="Yeniden aç";b.style.cssText="width:100%;padding:12px;border:0;border-radius:12px;background:#4F46E5;color:#fff;font:600 15px system-ui,sans-serif";
 b.onclick=function(){b.disabled=true;b.textContent="Açılıyor…";var go=function(){location.replace(location.pathname+"?v="+Date.now())};var j=[];try{if(window.caches)j.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}))}catch(e){}try{if(navigator.serviceWorker)j.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister()}))}))}catch(e){}Promise.race([Promise.all(j),new Promise(function(r){setTimeout(r,3000)})]).then(go,go)};
 x.style.cssText="opacity:.5;font-size:12px;margin-top:10px;word-break:break-word";x.textContent=__kerr.slice(-2).join(" · ");d.appendChild(t);d.appendChild(b);d.appendChild(x);document.body.appendChild(d);
 var iv=setInterval(function(){if(document.documentElement.classList.contains("k-live")){clearInterval(iv);d.remove()}},1000)};
@@ -42,7 +43,7 @@ setTimeout(function(){if(!document.documentElement.classList.contains("k-live"))
 <div id="overlay"></div>
 <div id="toasts" aria-live="polite"></div>
 
-<script src="app.js?v=70030" onerror="kFail(1)"></script>
+<script src="app.js?v=70100" onerror="kFail(1)"></script>
 
 </body>
 </html>
