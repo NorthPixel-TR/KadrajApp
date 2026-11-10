@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70104,APP_VER="7.1.4";
+const APP_V=70105,APP_VER="7.1.5";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={71:"Uludağ",70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -10618,7 +10618,7 @@ try{if(typeof ADM_EXTRA!=="undefined"&&Array.isArray(ADM_EXTRA))ADM_EXTRA.push({
    - npFrom(): "from" + logo + NorthPixel. Açılış ekranının altında (index.html #intro .in-foot, aynı çizim elle yazılı),
      giriş/kayıt ekranlarının altında (authShell sarıldı) ve Ayarlar'ın en altında (#main sonuna, Önbelleği temizle'den sonra; HOOKS.after). */
 const NP_PX=[[3,0],[3,1],[2,2],[3,2],[4,2],[0,3],[1,3],[2,3],[3,3],[4,3],[5,3],[6,3],[2,4],[3,4],[4,4],[3,5],[3,6]];let NP_N=0;
-function npLogo(cls="np-logo"){const id="npg"+(++NP_N);return`<svg class="${cls}" viewBox="0 0 7 7" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#0C7A63"/><stop offset="1" stop-color="#2BC48E"/></linearGradient></defs>${NP_PX.map(([x,y])=>`<rect x="${x+.07}" y="${y+.07}" width=".86" height=".86" rx=".2" fill="${y===0?"#F59E0B":`url(#${id})`}"/>`).join("")}</svg>`}
+function npLogo(cls="np-logo"){const id="npg"+(++NP_N);return`<svg class="${cls}" viewBox="0 0 7 7" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#4F46E5"/><stop offset="1" stop-color="#8B7CF6"/></linearGradient></defs>${NP_PX.map(([x,y])=>`<rect x="${x+.07}" y="${y+.07}" width=".86" height=".86" rx=".2" fill="${y===0?"#FF8A4C":`url(#${id})`}"/>`).join("")}</svg>`}
 function npFrom(){return`<div class="np-from" role="note" aria-label="NorthPixel"><span class="np-f">from</span><span class="np-l">${npLogo()}<b>NorthPixel</b></span></div>`}
 {const f=authShell;authShell=function(...a){const r=f.apply(this,a);try{const box=$("#main .auth");if(box&&!box.querySelector(".np-from"))box.insertAdjacentHTML("beforeend",npFrom())}catch(e){}return r}}
 HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector(".np-from"))return;m.insertAdjacentHTML("beforeend",npFrom())}catch(e){}});
@@ -10745,4 +10745,27 @@ HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.qu
  const k=m.querySelector("#k718C");if(k)k.before(d);else m.appendChild(d)}catch(e){}});
 ACT.k714=()=>k714Sheet();
 /*}@js:714*/
+/*@js:715{*/
+/* 7.1.5 NorthPixel'e özel sayfa (yol haritası "NorthPixel'i özelleştir"). "from NorthPixel" imzasına (Ayarlar ve giriş ekranı) ya da
+   Ayarlar'daki "NorthPixel hakkında" satırına (#k715N) dokununca tam ekran pencere `npAbout`: pikseller tek tek gelip kuzey yıldızını
+   kurar (bir kez, hareket azaltılmışsa yok), slogan, kısa hikâye, ürünler (Kadraj sürümü, Cephe, Masa Oyunları, Satranç), kurucu
+   (@bilolotr, profil varsa dokununca açılır), Kadraj'ın yolu (VER_NAMES'ten güncelleme adları, sonda 31 Mart 2027 Zirve). Firebase yok. */
+function npAbout(){const own=Object.values(S.profiles||{}).find(p=>p&&p.username===K51_OWNER);
+ const big=`<svg class="np-big${kbReduce()?" np-rm":""}" viewBox="0 0 7 7" aria-hidden="true">${NP_PX.map(([x,y],i)=>`<rect x="${x+.07}" y="${y+.07}" width=".86" height=".86" rx=".2" style="--i:${i}" fill="${y===0?"#FF8A4C":"var(--accent)"}"/>`).join("")}</svg>`;
+ const vers=Object.keys(VER_NAMES).map(Number).sort((a,b)=>a-b).map(k=>`<li><b>${Math.floor(k/10)}.${k%10}</b> ${esc(VER_NAMES[k])}</li>`).join("")+`<li class="zr"><b>31 Mart 2027</b> Zirve</li>`;
+ const prod=[["Kadraj",APP_FULL,"image"],["Cephe","Piksel savaş oyunu","flag"],["Masa Oyunları","Okey, Dörtrenk, Pişti, Amiral Battı","grid"],["Kadraj Satrancı","Bulmacalar ve analiz tahtası","knight"]];
+ const l=openLayer("npabout",`<div class="full np-ab" role="dialog" aria-label="NorthPixel"><button class="np-x" type="button" data-act="close" aria-label="Kapat">${I("close")}</button>
+  <div class="np-hero">${big}<h2>NorthPixel</h2><p>Kuzeyi gösteren küçük piksel.</p></div>
+  <div class="np-sec"><p>NorthPixel, Kadraj'ı yapan küçük bir Türk yazılım stüdyosu. 2026'da bir grup arkadaş kendi sosyal uygulamaları olsun diye kuruldu: reklam yok, takip yok, yalnızca arkadaşlar.</p></div>
+  <div class="np-sec"><h3>Ürünler</h3>${prod.map(([a,b,ic])=>`<div class="np-pr"><span class="sic" style="--c:var(--accent)">${I(ic)}</span><span><b>${esc(a)}</b><small>${esc(b)}</small></span></div>`).join("")}</div>
+  <div class="np-sec"><h3>Kurucu</h3>${own?`<button class="np-pr" type="button" data-prof="${esc(own.uid)}">${avatar(own.uid,36,{ring:false,online:false})}<span><b>@${esc(K51_OWNER)}</b><small>NorthPixel kurucusu</small></span></button>`:`<div class="np-pr"><span><b>@${esc(K51_OWNER)}</b><small>NorthPixel kurucusu</small></span></div>`}<small class="np-cr">${esc(K51_CRED)}</small></div>
+  <div class="np-sec"><h3>Kadraj'ın yolu</h3><ol class="np-tl">${vers}</ol></div>
+  <div class="np-ft">© ${new Date().getFullYear()} NorthPixel</div></div>`);
+ return l}
+ACT.npAbout=()=>npAbout();
+document.addEventListener("click",e=>{const f=e.target.closest&&e.target.closest("#main .np-from");if(f){e.preventDefault();npAbout()}},true);
+HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector("#k715N"))return;const d=document.createElement("div");d.className="box";d.id="k715N";d.style.margin="12px 0";
+ d.innerHTML=`<button class="srow" type="button" data-act="npAbout"><span class="sic" style="--c:var(--accent)">${npLogo("np-logo")}</span><span class="t">NorthPixel hakkında<small>Kadraj'ı yapan stüdyo, ürünler ve Kadraj'ın yolu</small></span>${I("next","chev")}</button>`;
+ const k=m.querySelector("#k714I")||m.querySelector("#k718C");if(k)k.before(d);else m.appendChild(d)}catch(e){}});
+/*}@js:715*/
 boot();

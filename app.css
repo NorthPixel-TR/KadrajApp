@@ -4671,3 +4671,28 @@ html[data-accent] .call{background:radial-gradient(120% 80% at 50% 0%,color-mix(
 /*@css:711{*/
 .c6play .c6an{grid-column:1/-1;min-height:60px}
 /*}@css:711*/
+
+/*@css:715{*/
+#main .np-from{cursor:pointer}
+.np-ab{overflow-y:auto;background:var(--bg);color:var(--fg);padding:calc(env(safe-area-inset-top,0px) + 20px) 18px calc(env(safe-area-inset-bottom,0px) + 28px);max-width:560px;margin:0 auto}
+.np-ab .np-x{position:absolute;right:14px;top:calc(env(safe-area-inset-top,0px) + 12px);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--fg)}
+.np-hero{display:grid;justify-items:center;text-align:center;gap:6px;margin:18px 0 10px}
+.np-hero h2{margin:6px 0 0;font:800 1.7rem/1.1 var(--f-body);letter-spacing:-.02em}
+.np-hero p{margin:0;color:var(--muted)}
+.np-big{width:118px;height:118px}
+.np-big rect{animation:npPx .42s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--i)*55ms);transform-box:fill-box;transform-origin:center}
+@keyframes npPx{from{opacity:0;transform:translateY(-1.4px) scale(.3)}to{opacity:1;transform:none}}
+.np-sec{margin-top:16px;padding:14px;border-radius:var(--r,18px);background:var(--surface);display:grid;gap:10px;line-height:1.45}
+.np-sec h3{margin:0;font:700 .78rem var(--f-body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.np-sec p{margin:0}
+.np-pr{display:flex;align-items:center;gap:12px;text-align:left;width:100%;color:var(--fg);background:none;border:0;padding:0}
+.np-pr span:last-child{display:grid;min-width:0}.np-pr small{color:var(--muted);font-size:.8rem}
+.np-cr{color:var(--muted);font-size:.78rem}
+.np-tl{list-style:none;margin:0;padding:0 0 0 14px;border-left:2px solid var(--line);display:grid;gap:6px}
+.np-tl li{position:relative;font-size:.9rem}.np-tl li::before{content:"";position:absolute;left:-19px;top:.45em;width:8px;height:8px;border-radius:2px;background:var(--accent)}
+.np-tl li b{display:inline-block;min-width:3.4em}.np-tl li.zr::before{background:#FF8A4C}.np-tl li.zr{color:#FF8A4C;font-weight:700}
+.np-ft{margin-top:20px;text-align:center;color:var(--muted);font-size:.78rem}
+#k715N .np-logo{width:1.1rem;height:1.1rem}
+@media (prefers-reduced-motion:reduce){.np-big rect{animation:none}}
+.np-big.np-rm rect{animation:none}
+/*}@css:715*/
