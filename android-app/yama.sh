@@ -35,7 +35,7 @@ for d in "$R"/mipmap-*; do
   cp ../icon-192.png "$d/ic_launcher.png"; cp ../icon-192.png "$d/ic_launcher_round.png"
   [ -f "$d/ic_launcher_foreground.png" ] && cp ../icon-192.png "$d/ic_launcher_foreground.png" || true
 done
-VER=$(grep -o 'APP_VER="[0-9.]*"' ../app.js | head -1 | cut -d'"' -f2)
+VER=$(grep -o 'APP_VER_RAW="[0-9.]*"' ../app.js | head -1 | cut -d'"' -f2 | awk -F. '{printf "%d.%s.%s", ($1>3?$1-3:0), $2, $3}')
 G=android/app/build.gradle
 # 6.8.25: paket adı io.github.kadrajsosyalmedya.kadrajapp. Eski paket (…kadraj) farklı imzayla kurulmuş telefonlarda kaldırınca bile
 # "paket çakışıyor" hatası veriyordu (veri saklanarak kaldırma, ikinci alan vb.); yeni ad eskisinin yanına sorunsuz kurulur.
