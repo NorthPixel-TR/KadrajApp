@@ -17,6 +17,7 @@ L=(
  # m702/intro.js sahte Firebase SDK ister (eski scratchpad/fbsdk/fake), konteyner sıfırlanınca yok
  "m702/wn.js"
  "np/np.js 390"
+ "v714/t.js"
 )
 [ "${1:-}" = "hizli" ] || L+=("hunt/crawl.js 360 koyu klasik" "t69.js 800" "m70/70chat_t70.js 390" "m70/av704.js 390" "m70/fx703.js 390" "kn.js" "kln.js" "kln2.js" "rz.js" "gu.js" "pk.js")
 bad=0; ok=0

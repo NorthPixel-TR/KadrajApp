@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70103,APP_VER="7.1.3";
+const APP_V=70104,APP_VER="7.1.4";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={71:"Uludağ",70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -10727,4 +10727,22 @@ IP.anboard='<rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M3.5
  const i=h.indexOf('<div class="c6play">');if(i>=0){const j=h.indexOf("</div>",h.indexOf('data-chs="pass',i));if(j>0)h=h.slice(0,j)+t+h.slice(j)}}catch(e){console.warn("an711",e)}return h}}
 {const f=ch60End;ch60End=function(...a){const r=f.apply(this,a);try{const b=$("#cOv .c6end .cbtns");if(b&&CH&&CH.moves.length&&!b.querySelector('[data-act="anGame"]')){const x=document.createElement("button");x.className="btn ghost";x.dataset.act="anGame";x.innerHTML=I("anboard")+"Analiz et";const two=b.querySelector(".c6e-2");if(two)two.after(x);else b.appendChild(x)}}catch(e){console.warn("an711e",e)}return r}}
 /*}@js:711*/
+/*@js:714{*/
+/* 7.1.4 Ayarlar › "Uygulama simgesini güncelle" (#k714I). Ana ekran simgesi telefonda saklanır, site güncellemesiyle değişmez.
+   - Android uygulaması (kgal()): simge APK'nın içinde; yeni APK gelince Güncelle düğmesi (apkOpen) yeni simgeyi getirir.
+   - Ana ekrana eklenmiş site (isStandalone) ya da tarayıcı: adımlar + tarayıcı ekleme penceresi (INSTALL) varsa "Ana ekrana ekle". */
+function k714Sheet(){const app=!!kgal(),sa=isStandalone();
+ const ic=`<img src="icon-192.png?v=712" alt="" width="72" height="72" style="border-radius:18px;display:block;margin:4px auto 10px">`;
+ const steps=app?`<p>Simge uygulamanın içinde durur. Yeni simge, Kadraj uygulamasının bir sonraki güncellemesiyle gelir.</p><p>Güncelleme hazır olduğunda Ayarlar › Uygulama'da <b>Güncelle</b> düğmesi çıkar; ona basınca uygulama üstüne kurulur, girişin ve verilerin kalır.</p>`
+  :`<ol style="padding-left:18px;display:grid;gap:6px;margin:0"><li>Ana ekrandaki eski Kadraj simgesine basılı tut ve <b>Kaldır</b>'a bas (hesabın silinmez).</li><li>Chrome'da <b>northpixel-tr.github.io/KadrajApp</b> adresini aç.</li><li>Sağ üstteki ⋮ menüsünden <b>Ana ekrana ekle</b>'ye bas.</li></ol><p style="margin-top:8px">Yeni simge böyle gelir. Telefon simgeyi kendisi sakladığı için site güncellemesiyle değişmez.</p>`;
+ const btns=(app?`<button class="btn" type="button" id="k714U">Güncellemeye bak</button>`:"")+(!app&&INSTALL?`<button class="btn" type="button" id="k714A">Ana ekrana ekle</button>`:"")+(!app?`<button class="btn ghost" type="button" id="k714C">Adresi kopyala</button>`:"");
+ const l=sheet("k714","Uygulama simgesini güncelle",`<div style="padding:0 16px 16px;font-size:.92rem;line-height:1.45">${ic}${steps}<div style="display:grid;gap:8px;margin-top:12px">${btns}</div></div>`);
+ const u=l.querySelector("#k714U");if(u)u.onclick=async()=>{const v=await apkNative();if(v!=null&&v<APK_NATIVE){closeLayer("k714");apkOpen()}else toast("Şu an yeni uygulama güncellemesi yok. Hazır olunca Ayarlar'da Güncelle çıkar.")};
+ const a=l.querySelector("#k714A");if(a)a.onclick=()=>{closeLayer("k714");installApp()};
+ const c=l.querySelector("#k714C");if(c)c.onclick=()=>{copyText("https://northpixel-tr.github.io/KadrajApp/","Adres kopyalandı")}}
+HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector("#k714I"))return;const d=document.createElement("div");d.className="box";d.id="k714I";d.style.margin="12px 0";
+ d.innerHTML=`<button class="srow" type="button" data-act="k714"><span class="sic" style="--c:#FF8A4C">${I("image")}</span><span class="t">Uygulama simgesini güncelle<small>Ana ekrandaki eski Kadraj simgesini yenisiyle değiştir</small></span>${I("next","chev")}</button>`;
+ const k=m.querySelector("#k718C");if(k)k.before(d);else m.appendChild(d)}catch(e){}});
+ACT.k714=()=>k714Sheet();
+/*}@js:714*/
 boot();
