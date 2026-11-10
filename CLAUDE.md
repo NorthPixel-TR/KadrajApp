@@ -1,4 +1,4 @@
-# Kadraj: kod haritası (sürüm 7.0.26; 3.9 haritası + sonraki sürüm notları aşağıda)
+# Kadraj: kod haritası (sürüm 7.0.27; 3.9 haritası + sonraki sürüm notları aşağıda)
 
 Bu dosya, `index.html` okunarak çıkarılmış ayrıntılı bir haritadır. Yeni bir oturumda önce bunu oku, sonra gerekli fonksiyonu `grep` ile bul (satır numaraları değişir, isimlerle ara).
 
@@ -10,6 +10,19 @@ Bu dosya, `index.html` okunarak çıkarılmış ayrıntılı bir haritadır. Yen
 - 5.7.4'ten beri `const ASSETS={}` boş: Kadraj galerisinin 10 fotoğrafı ve Rota'nın örnek Klaketleri (video + kapak) `img/` ve `reels/` klasörlerinde ayrı dosyalar. Kodun içine yeniden base64 resim/video gömme; yeni hazır dosya gerekirse bu klasörlere koy.
 - Yayın: GitHub Pages, `main` dalı. https://northpixel-tr.github.io/KadrajApp/ (depo NorthPixel-TR/KadrajApp)
 - Arayüz metinleri Türkçe. Emoji yok; ikonlar SVG.
+
+## Yol haritası (sahibinin 9 Kasım 2026 isteği; sırayla yap, her parçadan sonra yayınla)
+Sahibi: "sık sık yükle", "hiçbir şeyi atlama", "kendi kafandan büyük şeyler ekle". Sürüm numarası geri gitmez (5.0'a dönülmez): küçük parçalar 7.0.x yaması, birkaç parça birikince ara sürüm (7.1, 7.2… dağ adlarıyla: Uludağ, Erciyes, Kaçkar, Ağrı; "Zirve" 31 Mart 2027'ye ayrılı) + WN_ITEMS.
+- [x] Cephe: asker yavaş artsın (3 milyona zor ulaşsın), direksiz bayraklar, önünde asker sayısı, arkada yerde yedek bayrakları, daha az kasma (7.0.26)
+- [x] 4 oyun: Okey (4 kişilik), Dörtrenk (UNO benzeri özgün), Pişti, Amiral Battı (`masa.js`, 7.0.27)
+- [ ] Clawd geri gelsin: daha iyi, sakin hali (espri yok; genel davranış ve duruş), eski `arsiv/clawd/` silinsin; gerekirse yapay zekâ köprüsüyle
+- [ ] İstiklal Marşı: 31 Mart 2027'den sonra her pazartesi; kurucu başlatır, unutursa 4 kişi aktifken kendiliğinden; üstte "1 dakikaya okunacak" uyarısı
+- [ ] Arayüz baştan (eski Kadraj'a benzemesin, animasyonlu, Instagram'a yakın), yeni Kadraj simgesi ve logosu
+- [ ] Gelişmiş satranç
+- [ ] Optimizasyon ve gereksiz kod temizliği (silinmemesi gerekenlere dikkat)
+- [ ] NorthPixel'i özelleştir (imza, hakkında sayfası vb.)
+- [ ] Okey/Dörtrenk arkadaşlarla çevrim içi (games/ms-<KOD>, kural değişikliği yok)
+- [ ] Büyük hata avı (hunt/crawl.js + oyunlar)
 
 ## Dosyalar
 - `index.html`: Uygulamanın tamamı (HTML, CSS ve JS; ~1,4 MB). Saf JS, kütüphane yok, `"use strict"`.
@@ -334,3 +347,4 @@ Bu dosya, `index.html` okunarak çıkarılmış ayrıntılı bir haritadır. Yen
 - 7.0.25: Sahibinin isteğiyle 0.0-2.5 tahmini sürümler silindi (`arsiv/eski/` ve `VER_ARCHIVE`'deki 4. alanlı kayıtlar); arşivde yalnızca gerçek sürümler (3.0-7.0.18 `arsiv` dalı + 7.0.19 sonrası main). `archFetch`'teki `yol:` dalı ve panelin "tahmini" etiketi kodda zararsız duruyor. Sahibi NorthPixel'in askıya alınmadığını söyledi.
   - 7.0.25 ek: `ACT.k724adm` bulutta önce `admin/k724`'e yazmayı dener (kurallar yalnızca sahibine izin verir); yazamayan paneli açamaz. **Test betikleri artık depoda: `testler/betikler/`** (eskiden yalnızca `/home/user/kadraj-test`'teydi; konteyner sıfırlanırsa buradan geri kopyala; betikler `/home/user/Kadraj/index.html` yolunu bekler, resim/video/mp dosyaları kopyalanmadı).
 - 7.0.26 (sahibi Fable'a geçti ve büyük bir yol haritası verdi; ilk parça **Cephe**): asker sınırı `troopCap` büyüdükçe yavaşlar (500 bine kadar tam, sonra %35, 2 milyondan sonra %10; 3 milyona ancak dev imparatorluk ulaşır), `troopRate` `(150+C/260)` × en çok 2,5 (boşken ~4 dk'da dolar). Cephe bayrakları direksiz (`drawFronts` `army`): cephe hattı → asker sayısı etiketi (bayrakların önünde) → dik bayraklar (en çok 14/7) → yere serili soluk bayraklar = yedek (`Q.troops`) + "yedek N". Çizim hızı: tam hız (50 ms) yalnızca dokunurken/benim cephemde/füze varken, başkaları savaşırken 125 ms, boşta 200 ms; hud 400 ms; etiket en çok 36/70. Ölçüm `kadraj-test/cephe8/prof.js` (Dünya, 141 ülke, 4x: meşgul %47 → %30), test `cephe8/front.js` (5). Betik: `scratchpad/bump.py <sürüm> <not>` sürümü dört yerde artırır.
+- 7.0.27 **Masa Oyunları** (sahibinin yol haritası: "4 oyun ekle, biri 4 kişilik okey, uno da"): yeni dosya `masa.js` (`window.MASA`, başındaki yorum ayrıntılı), app.js bölge 71M (`msLoad`/`msGo`, `ACT.masa`, `IP.mstile/mscard/msship`), girişler `gmHub` içinde yerinde (`data-gm="ms:<oyun>"`). **Okey** (4 kişilik, üç bot; 106 taş, gösterge, okey taşı joker, sahte okey; `okBest` geri izlemeli per/seri çözücü (12-13-1 geçerli, 13-1-2 değil), `okSolve` 14 taş ya da 7 çift, bot `okPick`; ıstaka 2x12, taşa dokun sonra yere dokun = taşı/yer değiştir, Diz/Çift diz), **Dörtrenk** (UNO benzeri özgün oyun; UNO adı ve görseli kullanılmaz: 108 kart, atla/yön/+2/renk seç/+4, 4 kişi), **Pişti** (Rota'ya karşı), **Amiral Battı** (8x8, 5 gemi). Hepsi botlara karşı, yalnızca cihazda (Firebase yok), galibiyet `kadraj_masa_<uid>`; geri tuşu oyun sürerken sorar (`l._guard`). APP_GUIDE/FAQ güncel. Test `kadraj-test/masa/t.js <genişlik>` (24; 360/390/800).
