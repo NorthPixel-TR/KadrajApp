@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70029,APP_VER="7.0.29";
+const APP_V=70030,APP_VER="7.0.30";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -105,7 +105,7 @@ prev:'<path d="m15 6-6 6 6 6"/>',
 next:'<path d="m9 6 6 6-6 6"/>'};
 const I=(n,cls="")=>`<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IP[n]||""}</svg>`;
 /* 4.4.4: uygulama simgesiyle aynı: vizör köşeleri içinde K ve turuncu nokta */
-const VF=`<svg class="vfmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 8V5a2.5 2.5 0 0 1 2.5-2.5h3M16 2.5h3A2.5 2.5 0 0 1 21.5 5v3M21.5 16v3a2.5 2.5 0 0 1-2.5 2.5h-3M8 21.5H5A2.5 2.5 0 0 1 2.5 19v-3"/><path d="M9.7 8.1v7.8M9.7 12.3l4-4.2M11.1 10.9l2.9 5" stroke-width="2.5"/><circle cx="15.5" cy="8.5" r="1.2" fill="#FF8A4C" stroke="none"/></svg>`;
+const VF=`<svg class="vfmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.2v15.6M7 13.2l6.4-6.4M10.3 10l6.5 9.8"/><rect x="15.2" y="2.6" width="5" height="5" rx="1.2" fill="#FF8A4C" stroke="none"/></svg>`;
 
 /* ============ Avatarlar ============ */
 const ROTA_AV="data:image/svg+xml,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16a585"/><stop offset="1" stop-color="#0a4f73"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/><circle cx="50" cy="50" r="31" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/><g stroke="#fff" stroke-opacity=".6" stroke-width="2.5"><path d="M50 13v8M50 79v8M13 50h8M79 50h8"/></g><path d="M50 22 58 50H42z" fill="#ffcf4d"/><path d="M50 78 42 50h16z" fill="#fff"/><circle cx="50" cy="50" r="4.5" fill="#0a4f73" stroke="#fff" stroke-width="2"/></svg>`);
@@ -1931,8 +1931,8 @@ HOOKS.after.push(r=>{if(r!=="admin")return;archWire();if(S.archTried)return;S.ar
   for(const c of list||[]){const m=String(c&&c.commit&&c.commit.message||"").match(/^(\d+\.\d+\.\d+):/);if(!m||seen.has(m[1])||/^(750f2d81|97475240)/.test(c.sha||""))continue;seen.add(m[1]);ex.push([m[1],c.sha,String(c.commit.author&&c.commit.author.date||"").slice(0,10)])}
   if(!ex.length)return;S.archExtra=ex;const el=$("#archBox");if(el){el.outerHTML=archBox();archWire()}}).catch(()=>{})});
 /* 4.4.6: ana ekrandaki simgeyi telefon tutar ve kendisi yenilemez. Uygulamadan (ana ekrandan) girenlere yeni logo için bir kez yol gösterilir. */
-HOOKS.enter.push(()=>setTimeout(()=>{try{if(!isStandalone()||kgal()||LS.get("kadraj_icon_tip_442"))return;if($("#overlay")&&$("#overlay").children.length)return;LS.set("kadraj_icon_tip_442",now());
- dialog("Kadraj'ın yeni logosu",`Uygulamanın içindeki logo yenilendi. Ana ekrandaki simgeyi ise telefonun kendisi saklar ve kendiliğinden değiştirmez.<br><br>Yeni simge için:<br>1. Ana ekranda Kadraj simgesine basılı tut, <b>Kaldır</b>'a dokun.<br>2. Chrome'da <b>northpixel-tr.github.io/KadrajApp</b> adresini aç.<br>3. Sağ üstteki ⋮ menüsünden <b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>'ye dokun.<br><br>Hesabın ve mesajların silinmez.`,[{label:"Tamam"}])}catch(e){}},4000));
+HOOKS.enter.push(()=>setTimeout(()=>{try{if(!isStandalone()||kgal()||LS.get("kadraj_icon_tip_730"))return;if($("#overlay")&&$("#overlay").children.length)return;LS.set("kadraj_icon_tip_730",now());
+ dialog("Kadraj'ın yeni logosu",`Kadraj'ın logosu ve simgesi yenilendi (siyah zemin, beyaz K, turuncu piksel). Ana ekrandaki simgeyi ise telefonun kendisi saklar ve kendiliğinden değiştirmez.<br><br>Yeni simge için:<br>1. Ana ekranda Kadraj simgesine basılı tut, <b>Kaldır</b>'a dokun.<br>2. Chrome'da <b>northpixel-tr.github.io/KadrajApp</b> adresini aç.<br>3. Sağ üstteki ⋮ menüsünden <b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>'ye dokun.<br><br>Hesabın ve mesajların silinmez.`,[{label:"Tamam"}])}catch(e){}},4000));
 /* ===== 4.5: sohbette arama, mesaj iletme, sohbet sabitleme, hikâyeye tepki, sesli mesaj hızı, Klaket süresi ===== */
 /* Klaket ilerleme çubuğu: bulut videoyu ilk açılışta parça parça hazırlarken süre yanlış (kısa) görünür; kayıtlı süre ya da sabitlenmiş süre kullanılır */
 /* 4.5.1: kayıtlı süre yoksa süre 1,5 sn değişmeden kalınca kullanılır (her karede çağrılır) */
@@ -2508,7 +2508,7 @@ const WN_ITEMS=[
   {v:70000,ic:"chat",g:"linear-gradient(135deg,#0A84FF,#5E5CE6)",t:"Sohbetler yenilendi",d:"Sohbet listesinde arama ve her sohbete doğrudan kamera, birleşik balonlar, 'Görüldü' yazısı, çift dokununca büyük kalp",go:"chats"},
   {v:70000,ic:"flag",g:"linear-gradient(135deg,#f97316,#7c3aed)",t:"Zirve'ye geri sayım",d:"31 Mart 2027'de Kadraj Zirve'ye çıkıyor. Akış'ta geri sayım; Ayarlar › Yardım ve hakkında › Zirve'ye mesaj ile kendine mektup ve 2027 hedeflerini yaz, mektup o gün açılır",go:"feed"},
   {v:70000,ic:"spark",g:"linear-gradient(135deg,#0c7a63,#f59e0b)",t:"Yeni açılış",d:"Kadraj açılırken logo çizilerek gelir, beklemezsin; dokununca atlanır. Neler yeni de artık hikâye gibi kaydırılıyor",go:"feed"}];
-const WN_MARK=`<svg class="wn-mark" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M2.5 8V5a2.5 2.5 0 0 1 2.5-2.5h3"/><path pathLength="1" d="M16 2.5h3A2.5 2.5 0 0 1 21.5 5v3"/><path pathLength="1" d="M21.5 16v3a2.5 2.5 0 0 1-2.5 2.5h-3"/><path pathLength="1" d="M8 21.5H5A2.5 2.5 0 0 1 2.5 19v-3"/><circle cx="12" cy="12" r="3.4"/></svg>`;
+const WN_MARK=`<svg class="wn-mark" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M7 4.2v15.6"/><path pathLength="1" d="M7 13.2l6.4-6.4"/><path pathLength="1" d="M10.3 10l6.5 9.8"/><rect x="15.2" y="2.6" width="5" height="5" rx="1.2"/></svg>`;
 function showWhatsNew(force){if($('#overlay [data-layer="whatsnew"]'))return;if(!force&&verLvl(LS.get("kadraj_seen_ver",0)||0)>=verLvl(APP_V))return;
  const items=WN_ITEMS.filter(x=>verLvl(x.v)===verLvl(APP_V)).map((x,i)=>`<button type="button" class="wn-item" data-act="wnGo" data-r="${x.go}" style="--i:${i};--g:${x.g}"><span class="wn-ic">${I(x.ic)}</span><span class="wn-t"><b>${esc(x.t)}</b><span>${esc(x.d)}</span></span>${I("next")}</button>`).join("");
  openLayer("whatsnew",`<div class="full wn" role="dialog" aria-modal="true" aria-label="Kadraj ${esc(APP_VER)} ile gelenler"><button class="ib plain wn-x" data-act="close" aria-label="Kapat">${I("close")}</button>
@@ -10080,7 +10080,7 @@ const K70W={list:0,st:null};
  if(!K70W.list&&!kbReduce()){try{if(wnStory())return}catch(e){console.warn("wn70",e);closeLayer("whatsnew")}}
  return f.call(this,force,...a)}}
 function wnItems(){return WN_ITEMS.filter(x=>verLvl(x.v)===verLvl(APP_V))}
-const K70_MARK=`<svg class="k70s-vf" viewBox="0 0 24 24" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M2.5 8V5a2.5 2.5 0 0 1 2.5-2.5h3"/><path pathLength="1" d="M16 2.5h3A2.5 2.5 0 0 1 21.5 5v3"/><path pathLength="1" d="M21.5 16v3a2.5 2.5 0 0 1-2.5 2.5h-3"/><path pathLength="1" d="M8 21.5H5A2.5 2.5 0 0 1 2.5 19v-3"/><path pathLength="1" d="M9.7 8.1v7.8"/><path pathLength="1" d="M9.7 12.3l4-4.2"/><path pathLength="1" d="M11.1 10.9l2.9 5"/><circle class="k70s-dot" cx="15.5" cy="8.5" r="1.25"/></svg>`;
+const K70_MARK=`<svg class="k70s-vf" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M7 4.2v15.6"/><path pathLength="1" d="M7 13.2l6.4-6.4"/><path pathLength="1" d="M10.3 10l6.5 9.8"/><rect class="k70s-dot" x="15.2" y="2.6" width="5" height="5" rx="1.2"/></svg>`;
 function wnStory(){const items=wnItems();if(!items.length)return false;
  const n=items.length;const cards=[{k:"cover",g:"linear-gradient(150deg,#0C7A63,#0a4f73 60%,#1b1340)"},...items.map((x,i)=>({k:"item",x,i,g:x.g||"linear-gradient(135deg,#0C7A63,#22c55e)"})),{k:"end",g:"linear-gradient(160deg,#1b1340,#0C7A63)"}];
  const spk=`<i class="k70s-sp s1"></i><i class="k70s-sp s2"></i><i class="k70s-sp s3"></i><i class="k70s-sp s4"></i>`;

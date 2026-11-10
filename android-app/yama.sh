@@ -16,9 +16,8 @@ mkdir -p "$R/drawable" "$R/values"
 # 6.9.0: bildirim simgesi Kadraj logosu (vizör köşeleri + K + nokta), Android bunu beyaz gösterir; büyük simge renkli logo (KadrajGaleri.goster).
 cat > "$R/drawable/ic_stat_kadraj.xml" <<'XML'
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
-    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="M2.5,8V5a2.5,2.5 0,0 1,2.5 -2.5h3M16,2.5h3A2.5,2.5 0,0 1,21.5 5v3M21.5,16v3a2.5,2.5 0,0 1,-2.5 2.5h-3M8,21.5H5A2.5,2.5 0,0 1,2.5 19v-3" />
-    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="M9.7,8.1v7.8M9.7,12.3l4,-4.2M11.1,10.9l2.9,5" />
-    <path android:fillColor="#FFFFFFFF" android:pathData="M14.1,8.5a1.4,1.4 0,1 0,2.8 0a1.4,1.4 0,1 0,-2.8 0z" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="M7,4.2v15.6M7,13.2l6.4,-6.4M10.3,10l6.5,9.8" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M16.4,2.6h2.6a1.2,1.2 0,0 1,1.2 1.2v2.6a1.2,1.2 0,0 1,-1.2 1.2h-2.6a1.2,1.2 0,0 1,-1.2 -1.2v-2.6a1.2,1.2 0,0 1,1.2 -1.2z" />
 </vector>
 XML
 cat > "$R/values/kadraj_bildirim.xml" <<'XML'

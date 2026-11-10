@@ -4642,3 +4642,8 @@ html.reduce-motion .k70s *{animation:none!important;transition:none!important}
 #intro .np-from .np-l{font-size:1.02rem}
 @keyframes npIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 /*}@css:7020*/
+/*@css:7030{*/
+/* 7.0.30 yeni logo: K + turuncu piksel. Eski işaretlerdeki nokta daireydi; yeni işarette kare (rect). */
+.wn-mark rect{fill:var(--sun);transform-box:fill-box;transform-origin:center;animation:inDot .6s cubic-bezier(.3,1.7,.5,1) .3s both}
+#intro .in-vf{stroke-linejoin:round}
+/*}@css:7030*/
