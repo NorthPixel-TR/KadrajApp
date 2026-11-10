@@ -4690,3 +4690,6 @@ html[data-accent] .cmk .sel{background:color-mix(in srgb,var(--accent) 52%,trans
 html[data-accent] .call{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--accent) 42%,#06060d),#06060d 70%)}
 :root[data-ui] .chips .chip{border-radius:10px}
 /*}@css:71UI*/
+/*@css:711{*/
+.c6play .c6an{grid-column:1/-1;min-height:60px}
+/*}@css:711*/
