@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70027,APP_VER="7.0.27";
+const APP_V=70028,APP_VER="7.0.28";
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
 const VER_NAMES={70:"Samyeli",60:"Poyraz",61:"Lodos",62:"Karayel",63:"Yıldız",64:"Keşişleme",65:"Kıble",66:"Gündoğusu",67:"Günbatısı",68:"Meltem",69:"Bora"};
 const APP_NAME=VER_NAMES[Math.floor(APP_V/10000)*10+Math.floor(APP_V/100)%100]||"";
@@ -2190,6 +2190,7 @@ const APP_GUIDE=`Kadraj bir sosyal uygulamadır (Firebase üzerinde çalışır,
 - 7.0.8 indirme: sohbette videoya ya da fotoğrafa basılı tut › İndir; Klaketin ve fotoğraf paylaşımının ⋯ menüsünde İndir. Telefona kaydedilir.
 - 7.0.4 profil fotoğrafları ve hesap: Profilinde en çok 5 fotoğraf olabilir: Profili düzenle › fotoğrafın altındaki şeritte + ile ekle, birine dokununca Ana fotoğraf yap ya da Kaldır. Profil açılınca fotoğraflar bir kez sırayla dönerek gösterilir, sonra ana fotoğrafta durur; altta noktalar var. Birden çok hesabın varsa alttaki Ben'e iki kez hızlıca bas, diğer hesaba geçersin (basılı tutunca hesap listesi açılır).
 - Kadraj bir NorthPixel uygulamasıdır (NorthPixel, Kadraj'ı yapan şirketin adı). Açılış ekranının, giriş ekranının ve Ayarlar'ın en altında "from NorthPixel" yazar.
+- Clawd: Alt menünün üstünde duran küçük turuncu piksel yardımcı. Sakindir: etrafına bakar, arada yürür, oturur, kitap okur, gece yarısından sabah 7'ye kadar uyur. Dokununca Clawd penceresi açılır (hazır sorular ve soru kutusu; kısa yanıt verir). Sürükleyerek yeri değiştirilir. Sohbette, Klakette ve satranç oyununda görünmez. Açıp kapatma: Ayarlar › Kadraj'a özel › Clawd.
 - Masa Oyunları: Sohbet sayfasının üstündeki oyun kolu › Oyunlar penceresinde Okey (4 kişilik, üç bota karşı; ortadan çek ya da sana atılanı al, bir taş seçip at, el bitince kazanırsın; Diz ve Çift diz düğmeleri), Dörtrenk (rengi ya da sayıyı tuttur, elini ilk bitiren kazanır), Pişti (Rota'ya karşı) ve Amiral Battı. Hepsi botlara karşı, internet gerekmez.
 - 7.0 Samyeli: Yeni görünüm (Instagram düzeni). Akış kartında beğeni satırına dokununca Beğenenler, 'Yorum ekle…' satırı. Hikâyeye dokununca sağdan açılır; son hikâye bitince sıradaki kişiye geçer, sola/sağa kaydırınca kişi değişir, aşağı kaydırınca kapanır. Ayarlar'da gruplar kayarak açılır. Sohbette mesajı zamanlamak için yaz ve gönder tuşuna basılı tut (⊕ menüsünde artık yok). Yazma çubuğu: solda kamera, sağda mikrofon, galeri, GIF/çıkartma ve ⊕ (tek seferlik fotoğraf, oyunlar, şarkı, paylaşım, sohbette ara). Sohbet listesinin üstündeki kutuyla sohbet ve kişi ara; satırdaki kamera o kişiye doğrudan fotoğraf çeker.
 - Zirve (31 Mart 2027): Akış'ta ve Ayarlar › Yardım ve hakkında'da geri sayım. 'Zirve'ye mesaj' ile kendine mektup ve en çok 3 tane 2027 hedefi yazılır; mektup 31 Mart 2027'ye kadar mühürlü (yazan bile okuyamaz), hedefler her zaman görünür ve işaretlenir. O gün açılışta kutlama, profilde 'Zirve'deydim' rozeti ve Ayarlar'da Zirve teması gelir. Kadraj açılırken logo çizilerek gelir, dokununca atlanır; Neler yeni hikâye gibi kaydırılır (son kartta 'Liste olarak gör').
@@ -2209,7 +2210,7 @@ const APP_GUIDE=`Kadraj bir sosyal uygulamadır (Firebase üzerinde çalışır,
 - Sürüm: yeni sürüm çıkınca "Yeni sürüm hazır" yazar; iki sürüm geride kalan eski sürüm kapanır ve güncellemen istenir.
 - Mesajlar uygulamanın Firebase veritabanında durur, uygulamaya giren herkes teknik olarak erişebilir; şifre ya da kişisel bilgi paylaşılmamalı.`;
 const ROTA_SYS=`Sen "Rota"sın: Kadraj uygulamasının yapay zekâ rehberisin. Türkçe, samimi, akıllı ve doğal konuş; karşındakinin sorusunu gerçekten anla ve düşünerek yanıtla. Uzunluğu soruya göre ayarla: selamlaşma ve kısa sohbette birkaç cümle; bir şey açıklaman, anlatman, tavsiye vermen, ödev ya da ders sorusu çözmen, bir şeyi karşılaştırman istenirse ayrıntılı, adım adım, örnekli ve gerektiğinde başlıklı/maddeli anlat. Soruyu tek cümleyle geçiştirme; bilmediğin şeyi uydurma, emin değilsen söyle. Önceki mesajları hatırla ve sohbetin akışına uy. Uygulama sorularında aşağıdaki rehbere dayan, olmayan özellik uydurma. Fotoğrafçılık, sosyal medya ve yazılım/kod konularında da bilgilisin; kod istenirse kısa, çalışır örnekleri üç ters tırnaklı kod bloğunda ver. Emoji kullanma.\n\nUYGULAMA REHBERİ:\n${APP_GUIDE}`;
-const FAQ=[[/okey|pişti|pisti|amiral|dörtrenk|dortrenk|masa oyun|kart oyun/i,"Sohbet sayfasının üstündeki **oyun kolu**na dokun: **Okey** (4 kişilik, üç bota karşı), **Dörtrenk**, **Pişti** ve **Amiral Battı** orada. Okey'de ortadan çek ya da sana atılan taşı al, sonra bir taş seçip at; elin bitince kazanırsın."],[/(indir|kaydet).*(video|fotoğraf|klaket)|(video|fotoğraf|klaket).*(indir)/i,"Sohbette videoya ya da fotoğrafa **basılı tut › İndir**. Klaket ya da fotoğraf paylaşımında **⋯ › İndir**. Dosya telefonuna kaydedilir."],[/(profil fotoğraf(lar)?ı?n?a? (ekle|birden|çok|çoklu)|çoklu profil|birden (çok|fazla) profil fotoğraf)/i,"Profilinde en çok 5 fotoğraf olabilir: **Profili düzenle** › fotoğrafın altındaki şeritte **+** ile ekle; birine dokununca **Ana fotoğraf yap** ya da **Kaldır**. Profilin açılınca fotoğrafların bir kez dönerek gösterilir, sonra ana fotoğrafta durur."],[/(hesap(lar)? arası|hesap değiştir|diğer hesab|öbür hesab)/i,"Alttaki **Ben**'e iki kez hızlıca bas, diğer hesabına geçersin. Basılı tutarsan hesap listesi açılır (ekle, ana hesap yap, çıkar)."],[/(zirve|31 mart|geleceğe mektup|mühürlü mektup)/i,"31 Mart 2027'de Kadraj **Zirve**'ye çıkıyor. **Ayarlar › Yardım ve hakkında › Zirve'ye mesaj** ile kendine mektup ve 2027 hedeflerini yaz. Mektup o güne kadar mühürlü, sen bile okuyamazsın; hedeflerini her zaman görür ve işaretlersin."],
+const FAQ=[[/clawd|maskot|turuncu (şey|yaratık|piksel)/i,"**Clawd**, alt menünün üstünde duran küçük piksel yardımcı. Dokunursan soru sorabilirsin, sürüklersen yeri değişir. Gece uyur. Kapatmak ya da açmak için **Ayarlar › Kadraj'a özel › Clawd**."],[/okey|pişti|pisti|amiral|dörtrenk|dortrenk|masa oyun|kart oyun/i,"Sohbet sayfasının üstündeki **oyun kolu**na dokun: **Okey** (4 kişilik, üç bota karşı), **Dörtrenk**, **Pişti** ve **Amiral Battı** orada. Okey'de ortadan çek ya da sana atılan taşı al, sonra bir taş seçip at; elin bitince kazanırsın."],[/(indir|kaydet).*(video|fotoğraf|klaket)|(video|fotoğraf|klaket).*(indir)/i,"Sohbette videoya ya da fotoğrafa **basılı tut › İndir**. Klaket ya da fotoğraf paylaşımında **⋯ › İndir**. Dosya telefonuna kaydedilir."],[/(profil fotoğraf(lar)?ı?n?a? (ekle|birden|çok|çoklu)|çoklu profil|birden (çok|fazla) profil fotoğraf)/i,"Profilinde en çok 5 fotoğraf olabilir: **Profili düzenle** › fotoğrafın altındaki şeritte **+** ile ekle; birine dokununca **Ana fotoğraf yap** ya da **Kaldır**. Profilin açılınca fotoğrafların bir kez dönerek gösterilir, sonra ana fotoğrafta durur."],[/(hesap(lar)? arası|hesap değiştir|diğer hesab|öbür hesab)/i,"Alttaki **Ben**'e iki kez hızlıca bas, diğer hesabına geçersin. Basılı tutarsan hesap listesi açılır (ekle, ana hesap yap, çıkar)."],[/(zirve|31 mart|geleceğe mektup|mühürlü mektup)/i,"31 Mart 2027'de Kadraj **Zirve**'ye çıkıyor. **Ayarlar › Yardım ve hakkında › Zirve'ye mesaj** ile kendine mektup ve 2027 hedeflerini yaz. Mektup o güne kadar mühürlü, sen bile okuyamazsın; hedeflerini her zaman görür ve işaretlersin."],
  [/(zamanla|zamanlı mesaj|sonra gönder|ileri tarihli)/i,"Mesajı yaz, sonra **gönder tuşuna basılı tut**; zamanlama penceresi açılır, saati seç."],
  [/(birden (çok|fazla) hesap|hesap (ekle|değiştir|geç)|ikinci hesap|çoklu (hesap|profil))/i,"En çok **5 hesap** ekleyebilirsin: profilinde adının yanındaki **oka** dokun (ya da alttaki **Ben**'e basılı tut) › **Hesap ekle**. Listeden bir hesaba dokununca ona geçersin. ⋯ › **Ana hesap yap** dersen Kadraj açılınca o hesap açılır."],
  [/(gif|çıkartma|sticker)/i,"Sohbette yazma çubuğundaki **çıkartma/GIF** düğmesiyle GIF arar ya da telefondan hareketli GIF gönderirsin. Aynı düğmede **Benim** › **Çıkartma oluştur**: fotoğraf seç, **Otomatik** fotoğraftaki kişiyi ya da hayvanı kendisi kırpar (ya da daire, kalp, yıldız seç), yazı ekle, **Kaydet ve gönder**. Sohbetteki bir fotoğrafa basılı tutup **Çıkartma yap** da diyebilirsin. Birinin çıkartmasına dokunup kendine ekleyebilirsin."],
@@ -4424,8 +4425,8 @@ try{if(typeof ADM_EXTRA!=="undefined"&&Array.isArray(ADM_EXTRA))ADM_EXTRA.push({
 /*}@js:50AI*/
 
 /*@js:50PIKO{*/
-/* 6.4.4: Clawd maskotu sahibinin isteğiyle kaldırıldı (kodu arsiv/clawd/ klasöründe). Burada yalnızca piksel yüz çizimi (cwSvg) kaldı:
-   satranç rakibi Clawd (51CHS, chcFace) ve Clawd–Rota maçı bunu kullanır. */
+/* Piksel Clawd çizimi (cwSvg). Kullananlar: satranç rakibi Clawd (51CHS, chcFace), Clawd–Rota maçı ve 7.0.28'de geri gelen sakin Clawd (clawd.js, bölge 7028).
+   Eski maskot (6.4.5'te kaldırılan) ve arsiv/clawd/ klasörü 7.0.28'de silindi; eski kod GitHub geçmişinde. */
 Object.assign(IP,{clawd:'<path d="M6.5 5.5h11v8h-11zM2.5 9h4M17.5 9h4M7.5 13.5v4M10.5 13.5v3M13.5 13.5v3M16.5 13.5v4"/><path d="M9.5 8v1.4M14.5 8v1.4"/>'});
 
 /* --- sprite --- */
@@ -9724,7 +9725,7 @@ HOOKS.after.push(r=>{try{if(r!=="profile"||S.route.params.uid!==S.uid||S.mode!==
  document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest('#dock [data-tab="profile"]');if(b&&b._k69){e.preventDefault();e.stopPropagation();b._k69=0}},true)}
 
 /* ================= Ayarlar › Kadraj'a özel ================= */
-SG.splice(2,0,{k:"k69",t:"Kadraj'a özel",ic:"spark",s:["Kadraj'a özel"],d:"Animasyonlar, sohbet balonu, çift dokunma, hesaplar, çıkartmalar"});
+SG.splice(2,0,{k:"k69",t:"Kadraj'a özel",ic:"spark",s:["Kadraj'a özel"],d:"Clawd, animasyonlar, sohbet balonu, çift dokunma, hesaplar, çıkartmalar"});
 {const f=vSettings;vSettings=function(...a){let h=f.apply(this,a);try{
  h=h.replace(/<label class="srow [^"]*" data-k="[^"]*">(?:(?!<\/label>).)*data-set="reduceMotion"(?:(?!<\/label>).)*<\/label>/s,"");
  const ic=(n,c)=>`<span class="sic" style="--c:${c}">${I(n)}</span>`;const seg=(lbl,ics,c,key,opts,cur,kw)=>`<div class="srow sblk" data-k="${esc(kbFold(lbl+" "+kw+" "+opts.map(o=>o[1]).join(" ")))}"><div class="sbh">${ic(ics,c)}<span class="t">${lbl}</span></div><div class="seg" role="group" aria-label="${esc(lbl)}">${opts.map(([v,n])=>`<button type="button" data-k69s="${key}" data-v="${v}" aria-pressed="${cur===v}">${n}</button>`).join("")}</div></div>`;
@@ -10644,4 +10645,21 @@ IP.mstile='<rect x="6" y="3" width="12" height="18" rx="2.5"/><path d="M10 9.5l2
 IP.mscard='<rect x="4" y="5" width="10" height="14" rx="2" transform="rotate(-10 9 12)"/><rect x="10" y="5" width="10" height="14" rx="2" transform="rotate(10 15 12)"/>';
 IP.msship='<path d="M3 15h18l-2.5 5h-13z"/><path d="M12 15V4M12 5l6 6h-6"/>';
 /*}@js:71M*/
+/*@js:7028{*/
+/* 7.0.28 Clawd geri geldi (sahibi: "daha iyi haliyle, eskiyi sil, genel Clawd davranışı ve duruşu olsun, espri kalmasın"). Kod clawd.js'te (window.CLAWD,
+   başındaki yorum ayrıntılı): kare döngüsü yok, tek zamanlayıcı; alt menünün üstünde durur. Burada yalnızca yükleyici, Ayarlar anahtarı ve çıkışta durdurma.
+   settings.clawd (false = kapalı; varsayılan açık). Girişten 2,5 sn sonra yüklenir, açılışı yavaşlatmaz. */
+let cw2P=null;
+function cw2Load(){return cw2P||(cw2P=new Promise((res,rej)=>{if(window.CLAWD)return res();const sc=document.createElement("script");sc.src="clawd.js?v="+APP_V;sc.onload=()=>window.CLAWD?res():rej(new Error("yok"));sc.onerror=()=>{cw2P=null;rej(new Error("indirilemedi"))};document.head.appendChild(sc)}))}
+const cw2Want=()=>settings.clawd!==false&&!!S.authed&&!S.guest;
+function cw2Go(){if(!cw2Want())return;cw2Load().then(()=>{if(cw2Want())window.CLAWD.start()}).catch(()=>{})}
+HOOKS.enter.push(()=>setTimeout(cw2Go,2500));
+HOOKS.after.push(()=>{try{if(window.CLAWD){if(cw2Want())window.CLAWD.page();else window.CLAWD.stop()}}catch(e){}});
+{const f=endSession;endSession=function(...a){try{window.CLAWD&&window.CLAWD.stop()}catch(e){}return f.apply(this,a)}}
+{const f=vSettings;vSettings=function(...a){let h=f.apply(this,a);try{
+ const row=`<label class="srow" data-k="${esc(kbFold("clawd maskot yardımcı piksel turuncu"))}"><span class="sic" style="--c:#D97757">${I("clawd")}</span><span class="t">Clawd<small>Alt menünün üstünde duran küçük yardımcı</small></span><span class="sw"><input type="checkbox" data-cw2="1" ${settings.clawd!==false?"checked":""} aria-label="Clawd"><span></span></span></label>`;
+ const m=h.match(/<section class="sxs" data-sec="k69"[^>]*>[\s\S]*?<div class="set">/);if(m)h=h.replace(m[0],()=>m[0]+row)}catch(e){console.warn("cw2 set",e)}return h}}
+document.addEventListener("change",e=>{const b=e.target;if(!b||!b.matches||!b.matches("[data-cw2]"))return;settings.clawd=!!b.checked;saveSettings();vib(6);if(b.checked)cw2Go();else if(window.CLAWD)window.CLAWD.stop()});
+ACT.clawd=()=>{cw2Load().then(()=>window.CLAWD.open()).catch(()=>toast("Clawd yüklenemedi"))};
+/*}@js:7028*/
 boot();
