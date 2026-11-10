@@ -1,6 +1,6 @@
 /* 7.0.22 sürüm arşivi: 0.0-2.5 tahmini (sitenin kendisinden) ve 3.0-7.0.18 eski sürümler (NorthPixel-TR/KadrajApp arsiv dalı, gerçek GitHub) */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:860}});const p=await ctx.newPage();const err=[];p.on('pageerror',e=>err.push(e.message));
  await ctx.route('**/*',r=>{const u=r.request().url();
   if(u.startsWith(BASE)){const q=decodeURIComponent(new URL(u).pathname);if(q==='/'||q==='/index.html')return r.fulfill({body:fs.readFileSync(HTML),contentType:'text/html; charset=utf-8'});

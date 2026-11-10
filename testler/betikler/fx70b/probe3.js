@@ -1,6 +1,6 @@
 /* 70FXB keşif: eski alanlar (Klaket, Oluştur, Kurgu, yönetici). node probe3.js <w> <light|dark> <vizor|klasik> */
 const sd=require('/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/a60ui/seed.js');
-const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/.claude/worktrees/agent-a493c6425937c90fc/index.html';
+const HTML=process.env.KADRAJ_HTML||'/home/user/kadrajapp/.claude/worktrees/agent-a493c6425937c90fc/index.html';
 const OUT='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/70FXB/p3';require('fs').mkdirSync(OUT,{recursive:true});
 const [,,W='390',TH='light',UI='vizor']=process.argv;const tag=W+TH[0]+UI[0];
 (async()=>{const {page:p,errors,close}=await sd.open(HTML,{width:+W,height:+W>600?1000:844,dark:TH==="dark",ui:UI});

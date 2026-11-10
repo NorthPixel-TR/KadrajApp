@@ -1,6 +1,6 @@
 /* 70FXC ortak düzenek */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/.claude/worktrees/agent-a3b2f14b534c80de8/index.html',BASE='http://kadraj.test/';
+const HTML=process.env.KADRAJ_HTML||'/home/user/kadrajapp/.claude/worktrees/agent-a3b2f14b534c80de8/index.html',BASE='http://kadraj.test/';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m);return c};
 async function open(W=390,o={}){const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:W,height:o.h||860},hasTouch:true,colorScheme:o.dark?'dark':'light',deviceScaleFactor:1});const p=await ctx.newPage();
  const errors=[];p.on('pageerror',e=>errors.push(e.message));if(o.log)p.on('console',m=>console.log("[c]",m.text()));

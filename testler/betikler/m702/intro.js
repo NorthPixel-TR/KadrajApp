@@ -1,7 +1,7 @@
 /* 7.0 Zirve: açılış animasyonu ve açılış emniyeti. node intro.js [kök] */
 const {chromium}=require('playwright');const fs=require('fs');
 const FK='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/fbsdk/fake/';
-const R=(process.argv[2]||'/home/user/Kadraj')+'/';
+const R=(process.argv[2]||'/home/user/kadrajapp')+'/';
 const SH='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/70ZIRVE/shots/';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 async function run(mode,{logged=true,wait=4000,rm=false,slowFb=0,tapAt=0,shots=null}={}){const b=await chromium.launch();const c=await b.newContext({viewport:{width:390,height:844},reducedMotion:rm?'reduce':'no-preference'});const p=await c.newPage();

@@ -1,6 +1,6 @@
 /* 7.0.11: parçalı MP4 → normal MP4 ve WebM süre düzeltmesi (vidFix bölgesinden) */
 const fs=require('fs'),{execSync}=require('child_process');
-const src=fs.readFileSync('/home/user/Kadraj/app.js','utf8');const a=src.indexOf('/*@js:7011{*/'),b=src.indexOf('/*}@js:7011*/');
+const src=fs.readFileSync('/home/user/kadrajapp/app.js','utf8');const a=src.indexOf('/*@js:7011{*/'),b=src.indexOf('/*}@js:7011*/');
 let code=src.slice(a,b);code=code.replace(/\{const f=storeVideo;[\s\S]*$/,"");
 const ctx={};new Function('ctx',code+";ctx.mp4Defrag=mp4Defrag;ctx.mp4IsFrag=mp4IsFrag;ctx.mp4Boxes=mp4Boxes;ctx.webmDur=webmDur;ctx.webmLastMs=webmLastMs;")(ctx);
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};

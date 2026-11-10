@@ -1,6 +1,6 @@
 /* 7.0.20 NorthPixel imzası: açılış, karşılama, giriş, ayarlar; açık/koyu; taşma ve hata */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/',OUT=process.argv[3]||'/tmp/claude-0/-home-user/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/np/';fs.mkdirSync(OUT,{recursive:true});
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/',OUT=process.argv[3]||'/tmp/claude-0/-home-user/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/np/';fs.mkdirSync(OUT,{recursive:true});
 const W=+process.argv[2]||390;let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const b=await chromium.launch();
  for(const dark of [false,true]){const ctx=await b.newContext({viewport:{width:W,height:820},colorScheme:dark?"dark":"light",deviceScaleFactor:2});const p=await ctx.newPage();const err=[];p.on('pageerror',e=>err.push(e.message));

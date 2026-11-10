@@ -1,5 +1,5 @@
 /* webmLastMs'yi Node'da diskteki webm üzerinde dene */
-const fs=require('fs');const src=fs.readFileSync(process.env.APPJS||'/home/user/Kadraj/.claude/worktrees/agent-a0942c59d363ea730/app.js','utf8');
+const fs=require('fs');const src=fs.readFileSync(process.env.APPJS||'/home/user/kadrajapp/.claude/worktrees/agent-a0942c59d363ea730/app.js','utf8');
 const pick=n=>{const i=src.indexOf('function '+n+'(');let d=0,j=src.indexOf('{',i);for(let k=j;k<src.length;k++){if(src[k]==='{')d++;else if(src[k]==='}'){d--;if(!d)return src.slice(i,k+1)}}};
 eval(['ebmlVint','ebmlId','ebmlSize','webmLastMs','webmDur'].map(pick).join('\n'));
 const u8=new Uint8Array(fs.readFileSync(process.argv[2]));

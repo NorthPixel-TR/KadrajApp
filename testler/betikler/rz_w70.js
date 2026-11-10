@@ -1,6 +1,6 @@
 /* 6.8.23 rozet kısayolu */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/.claude/worktrees/agent-a3b2f14b534c80de8/index.html',BASE='http://kadraj.test/';
+const HTML='/home/user/kadrajapp/.claude/worktrees/agent-a3b2f14b534c80de8/index.html',BASE='http://kadraj.test/';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:390,height:844}});const errors=[];p.on('pageerror',e=>errors.push(e.message));
  await p.route('**/*',r=>{const u=r.request().url();if(u.startsWith(BASE)){const q=decodeURIComponent(new URL(u).pathname);if(q==='/'||q==='/index.html')return r.fulfill({body:fs.readFileSync(HTML),contentType:'text/html; charset=utf-8'});const f=path.join(path.dirname(HTML),q);if(fs.existsSync(f)&&fs.statSync(f).isFile())return r.fulfill({body:fs.readFileSync(f)});return r.fulfill({status:404,body:''})}if(u.startsWith('data:')||u.startsWith('blob:'))return r.continue();return r.abort()});

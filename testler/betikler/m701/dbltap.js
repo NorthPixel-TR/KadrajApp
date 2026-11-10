@@ -1,6 +1,6 @@
 /* 70FXB: hikâye halkasına hızlı çift dokunma. node dbltap.js <w> [vizor|klasik] */
 const sd=require('/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/a60ui/seed.js');
-const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/index.html';
+const HTML=process.env.KADRAJ_HTML||'/home/user/kadrajapp/index.html';
 const [,,W='390',UI='vizor']=process.argv;let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const {page:p,errors,close}=await sd.open(HTML,{width:+W,height:844,ui:UI});
  await p.evaluate(async()=>{const T=Date.now();await DB.set("stories/s1b",{uid:"u2",at:T-36e5,img:"img/kahve.jpg",views:{}});localStorage.removeItem("kadraj_seen");tab("feed");window.__cl=[];window.addEventListener("click",e=>{const l=document.querySelector(`#overlay [data-layer="story"]`);window.__cl.push((e.target.id||e.target.className)+"@"+(l&&l._fxT?Math.round(performance.now()-l._fxT):"-"))},true);window.addEventListener("pointerdown",e=>window.__cl.push("pd:"+(e.target.id||e.target.className)),true)});await p.waitForTimeout(1200);

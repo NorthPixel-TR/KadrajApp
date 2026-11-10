@@ -1,6 +1,6 @@
 /* 7.0.12: tarayıcıda video indirme penceresi (Cloudinary gibi uzak adres, parçalı MP4 → düzeltilmiş indirme) */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';const MP4=fs.readFileSync('/home/user/kadraj-test/vf/chrome.mp4');
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';const MP4=fs.readFileSync('/home/user/kadraj-test/vf/chrome.mp4');
 const CLD='https://res.cloudinary.com/jw9koecu/video/upload/v1700000000/abc.mp4';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:844},hasTouch:true,acceptDownloads:true});const p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));

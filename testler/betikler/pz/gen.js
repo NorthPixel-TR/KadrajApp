@@ -1,5 +1,5 @@
 /* Bulmaca üretici: motorla kendi kendine oyun, tek çözümlü mat-1 ve mat-2 konumları. node gen.js <mat1> <mat2> <tohum> */
-const fs=require('fs');const src=fs.readFileSync('/home/user/Kadraj/app.js','utf8');
+const fs=require('fs');const src=fs.readFileSync('/home/user/kadrajapp/app.js','utf8');
 const i=src.indexOf('function ChessCore(){');const j=src.indexOf('\nfunction pieceSvgs(){',i);const C=eval('('+src.slice(i,j).trim()+')')();
 let seed=+process.argv[4]||7;const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff};
 const W1=+process.argv[2]||20,W2=+process.argv[3]||40;

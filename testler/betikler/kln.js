@@ -1,6 +1,6 @@
 /* 6.8.22: Android uygulamasında yerel bildirim + No.1 Hayran rozeti (sahte Capacitor) */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 const FAKE=(surum)=>`window.__kn=[];window.__ks=[];window.__ask=0;window.Capacitor={isNativePlatform:()=>true,getPlatform:()=>"android",Plugins:{KadrajGaleri:{
  surum:async()=>({surum:${surum},yerel:${surum>=4},fcm:false,ad:"x"}),bildirimIzin:async(o)=>{if(o&&o.sor)window.__ask++;return{ok:!!(o&&o.sor)||window.__granted}},

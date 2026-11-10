@@ -1,6 +1,6 @@
 // Yönetici › Kadraj testi: bölüm görünür, Hızlı test sandbox'ta çalışır ve sonuç listesi gelir, Test Kadraj'ı açılır (Bilal Kara, demo veri)
 const kt=require('../k40/kt.js');
-(async()=>{const {page,errors,close}=await kt.openApp('/home/user/Kadraj/.claude/worktrees/agent-a09f38aae79f5ac26/index.html',{width:390,height:844});
+(async()=>{const {page,errors,close}=await kt.openApp('/home/user/kadrajapp/.claude/worktrees/agent-a09f38aae79f5ac26/index.html',{width:390,height:844});
 page.on('response',r=>{if(r.status()>=400)console.log('R',r.status(),r.url().slice(0,120))});page.on('requestfailed',r=>console.log('F',r.url().slice(0,120)));
 await kt.login(page,{uid:'u9',name:'Sahip',un:'sahip'});
 await page.evaluate(()=>{S.admin=true;go("admin")});await page.waitForTimeout(800);

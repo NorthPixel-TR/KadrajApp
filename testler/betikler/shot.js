@@ -1,6 +1,6 @@
 /* 6.9 ekran görüntüsü: node shot.js <gen> <yük> <sayfa> <çıktı> [js] */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';
 const [W,Hh,page,out,extra]=[+process.argv[2]||800,+process.argv[3]||1280,process.argv[4]||"feed",process.argv[5]||"/tmp/claude-0/s.png",process.argv[6]||""];
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:W,height:Hh},deviceScaleFactor:1,hasTouch:true,isMobile:W<700});const p=await ctx.newPage();
  const errors=[];p.on('pageerror',e=>errors.push(e.message));

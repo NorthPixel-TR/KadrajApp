@@ -1,6 +1,6 @@
 /* 7.0 Zirve: node zirve.js <genişlik> [koyu] */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';const W=+process.argv[2]||390;const DARK=process.argv[3]==="koyu";
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';const W=+process.argv[2]||390;const DARK=process.argv[3]==="koyu";
 const SH='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/70ZIRVE/shots/';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:W,height:860},colorScheme:DARK?'dark':'light'});const p=await ctx.newPage();

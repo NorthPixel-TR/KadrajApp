@@ -1,6 +1,6 @@
 /* 6.9 Bora: node t69.js <genişlik> */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/.claude/worktrees/agent-a814d3297f0c28720/index.html',BASE='http://kadraj.test/';const W=+process.argv[2]||390;
+const HTML='/home/user/kadrajapp/.claude/worktrees/agent-a814d3297f0c28720/index.html',BASE='http://kadraj.test/';const W=+process.argv[2]||390;
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 const GIF="R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:W,height:860},hasTouch:true});const p=await ctx.newPage();

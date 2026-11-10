@@ -216,11 +216,7 @@ textarea.in{min-height:5.5rem;padding:12px 14px;resize:vertical}
 .square b{font:600 1.05rem/1.2 var(--f-display);display:block}
 .square small{opacity:.88;font-size:.84rem;display:block;margin-top:2px}
 .square .live{margin-left:auto;font:600 .7rem/1 var(--f-mono);background:rgba(255,255,255,.2);padding:6px 8px;border-radius:8px;white-space:nowrap}
-.here{display:flex;gap:12px;overflow-x:auto;padding:0 16px 14px;scrollbar-width:none}
-.here::-webkit-scrollbar{display:none}
-.here .p{flex:none;display:grid;justify-items:center;gap:5px;width:4.4rem;font-size:.74rem;font-weight:600;text-align:center}
-.here .p .n{max-width:4.4rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.here .nudge{font-size:.68rem;color:var(--accent);font-weight:700}
+
 .quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 12px 14px}
 .quick button{display:grid;justify-items:center;gap:6px;padding:12px 6px;border-radius:18px;background:var(--surface);border:1px solid var(--line);font-size:.8rem;font-weight:700;text-align:center}
 .quick svg.i{color:var(--accent)}
@@ -255,10 +251,7 @@ textarea.in{min-height:5.5rem;padding:12px 14px;resize:vertical}
 .msgs.wp .stamp,.msgs.wp .seen{background:var(--surface);padding:4px 9px;border-radius:9px;opacity:.95}
 .msgs.wp .sender{background:var(--surface);border-radius:8px;padding:1px 7px;justify-self:start}
 .msgs.wp .hero{background:var(--surface);border-radius:22px;margin:0 6px;opacity:.96}
-.wpgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px 16px 12px}
-.wpgrid button{aspect-ratio:9/14;border-radius:14px;border:1px solid var(--line);background-color:var(--bg);display:grid;place-items:end center;padding-bottom:5px;font-size:.66rem;font-weight:700;overflow:hidden}
-.wpgrid button.on{box-shadow:0 0 0 3px var(--accent)}
-.wpgrid button span{background:var(--surface);border-radius:6px;padding:1px 5px}
+
 .tile .pn{position:absolute;top:6px;left:6px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
 .tile .pn svg.i{width:1rem;height:1rem}
 .mrow.has-react{margin-bottom:8px}
@@ -1984,7 +1977,7 @@ html[data-mode="dark"] :is(.ctray,.cside,.cps,.cpromo,.pzside) img{filter:drop-s
 .pzsub.pop{animation:pzSay .35s cubic-bezier(.3,1.4,.5,1)}
 @keyframes pzSay{from{transform:translateY(5px);opacity:0}}
 .pzhead{min-height:60px}
-.pzn{margin-left:auto;flex:none;font:700 .8rem/1 var(--f-mono);padding:7px 10px;border-radius:10px;background:var(--surface-2)}
+
 .pzsteps{display:flex;gap:5px;align-items:center;min-height:18px}
 .pzsteps i{width:20px;height:6px;border-radius:3px;background:var(--line);transition:background .3s}
 .pzsteps i.ok{background:var(--accent)}
@@ -2001,7 +1994,7 @@ html[data-mode="dark"] :is(.ctray,.cside,.cps,.cpromo,.pzside) img{filter:drop-s
 :root[data-ui="vizor"] .cclk.on::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--vz-rec);box-shadow:0 0 0 3px color-mix(in srgb,var(--vz-rec) 25%,transparent);animation:vzRec 1.8s ease-in-out infinite}
 :root[data-ui="vizor"] .cclk.on svg.i,:root[data-ui="vizor"] .cclk.low svg.i{display:none}
 :root[data-ui="vizor"] .cclk.low{background:var(--heart);color:#fff}
-:root[data-ui="vizor"] .pzn{border-radius:999px;letter-spacing:.06em}
+
 :root[data-ui="vizor"] .cps,:root[data-ui="vizor"] .pzit{border-radius:18px}
 :root[data-ui="vizor"] .ctray .cadv{border-radius:999px}
 html.reduce-motion .chess .cmk .chk::before,html.reduce-motion .chess .cmk .chk::after,html.reduce-motion .cclk.low,html.reduce-motion[data-ui="vizor"] .cclk.on::before{animation:none!important}
@@ -2016,10 +2009,7 @@ html.reduce-motion .chess .cmk .chk::after{opacity:.8}
 .kai-box .kai-help{display:inline-block;margin-top:8px;font-size:.85rem;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
 /*}@css:50AI*/
 
-
-
 /* ===== 5.1 bölgeleri ===== */
-
 
 /*@css:51CHS{*/
 /* ===== 5.1 · Satranç: Clawd rakip (.cwav, .cwface), lobide rakip seçimi (.copp), Clawd–Rota kartı ve şeridi (.chwcard, .chwbar),
@@ -2921,7 +2911,7 @@ html.reduce-motion .c6tile:active{transform:none}
 .gl-sp{flex:none;pointer-events:none}
 #msgs .mn-ty.gl-in{animation:glTy .34s cubic-bezier(.2,1.3,.4,1) both;transform-origin:left bottom}
 @keyframes glTy{from{opacity:0;transform:scale(.55)}}
-.pill.kpop svg.i,.rside .kpop svg.i{animation:kPop .42s cubic-bezier(.2,1.6,.4,1) both}
+.pill.kpop svg.i{animation:kPop .42s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes kPop{0%{transform:scale(1)}35%{transform:scale(1.45) rotate(-8deg)}70%{transform:scale(.92)}100%{transform:scale(1)}}
 #msgs .seenrow:not(.sr-ph) .seenav{animation:glSeen .3s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes glSeen{from{opacity:0;transform:scale(.3)}}
@@ -3099,11 +3089,8 @@ textarea.in.k1l{box-sizing:border-box;height:3rem;min-height:3rem!important;padd
 .nm-row .ic{width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);flex:none}
 .nm-row .t{flex:1;min-width:0}.nm-row b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nm-row small{color:var(--muted);font-size:.78rem}
 .nm-sh{display:flex;flex-direction:column;gap:10px;padding:0 16px 16px}
-.nm-l{display:flex;flex-direction:column;gap:4px}
-.nm-r{display:flex;align-items:center;gap:6px;padding:4px;border-radius:14px}.nm-r.on{background:var(--accent-soft)}
-.nm-t{flex:1;min-width:0;text-align:left;border:0;background:none;padding:6px 4px;cursor:pointer;color:var(--fg)}.nm-t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.nm-t small{color:var(--muted);font-size:.74rem}
-.nm-add{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:16px;background:var(--surface-2);border:1px solid var(--line)}.nm-add small{color:var(--muted);font-size:.78rem;margin-top:-4px}.nm-add .btn.sec{align-self:flex-start}
-.nm-v{display:flex;flex-direction:column;gap:8px;margin-top:4px}.nm-vh{display:flex;align-items:center;gap:6px;color:var(--accent)}.nm-vh .i{width:16px;height:16px}
+
+.nm-v{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .sh-st{margin-bottom:10px}
 .square.okc{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:6px;padding:14px 10px;cursor:default}
 .okc-i{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;min-width:0;padding:4px 2px}
@@ -3156,7 +3143,7 @@ html.reduce-motion #main .sg-h>.i:last-child{transition:none}
 .nm-v .it-pl{margin-top:10px}
 /*}@css:64*/
 /*@css:61TEST{*/
-.kt-btns{display:grid;gap:8px}.kt-box{margin-top:10px}.kt-box:empty{display:none}.kt-h{margin:16px 0 6px;font:700 .9rem var(--f-body)}
+.kt-box{margin-top:10px}.kt-box:empty{display:none}
 .kt-busy{display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--muted)}
 .kt-sum{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:14px;background:var(--surface-2)}.kt-sum.ok{color:var(--ok)}.kt-sum.bad{color:var(--heart)}
 .kt-sum b{color:var(--fg)}.kt-sum span{font-size:.78rem;color:var(--muted);flex-basis:100%}
@@ -3187,19 +3174,11 @@ html.reduce-motion #main .sg-h>.i:last-child{transition:none}
 @media (prefers-reduced-motion:reduce){.pmus.on .eq i{animation:none;height:70%}}html.reduce-motion .pmus.on .eq i{animation:none;height:70%}
 .pm-sh{display:grid;gap:12px;padding:4px 16px calc(18px + env(safe-area-inset-bottom,0px))}.pm-sh .field{margin:0}.pm-sh .field[hidden]{display:none}
 .pm-sh input[type=range]{width:100%;accent-color:var(--accent)}
-.pm-bt{display:flex;gap:8px;flex-wrap:wrap}.pm-bt .btn{flex:1 1 auto}
+
 #pmEdit{width:100%}
-.pm-sel{display:grid;gap:10px;padding:12px;border-radius:18px;background:var(--surface-2)}.pm-sel .field{margin:0}
-.pm-empty{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:.86rem}.pm-empty .i{flex:none}
-.pm-lh{display:grid;gap:2px;margin-top:4px}.pm-lh small{color:var(--muted);font-size:.78rem}
-.pm-tools{display:flex;gap:8px}.pm-tools .in{flex:1;min-width:0}.pm-tools .btn{flex:none}
-.pm-list{display:grid;gap:2px}
-.pm-row{display:flex;align-items:center;gap:6px;padding:4px;border-radius:14px}.pm-row.on{background:var(--accent-soft)}
-.pm-row .pm-t{flex:1;min-width:0;display:grid;text-align:left;padding:6px 4px;color:var(--fg)}
-.pm-row .pm-t b,.pm-row .pm-t small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.pm-row .pm-t small{color:var(--muted);font-size:.78rem}
+
 [data-pmpv].on{color:var(--accent)}
 
-.pm-th{width:3.6rem;height:2.4rem;border-radius:8px;object-fit:cover;flex:none;background:var(--surface-2);display:grid;place-items:center;color:var(--muted)}
 #pmPvY:empty{display:none}
 /* 6.1.1 Kadraj kütüphanesi (kmlOpen) */
 .kmp{min-width:0;max-width:100%}.kmp>*{min-width:0}.kmp-tiles>.kmp-t{min-width:0}.kmp-tiles>.kmp-t small,.kmp-tiles>.kmp-t b{overflow-wrap:anywhere}.kmp-rb{display:flex;gap:12px}
@@ -3304,7 +3283,7 @@ html.reduce-motion .reel .rdisc img{animation:none}
 .ci-row .ic svg.i{width:1.15rem;height:1.15rem}
 .ci-row .t{flex:1;min-width:0}.ci-row .t b{display:block;font-weight:600}.ci-row .t small{color:var(--muted);font-size:.8rem}
 .ci-row>svg.i{color:var(--muted);width:1.1rem;height:1.1rem}
-.ci-sw{width:1.4rem;height:1.4rem;border-radius:50%;box-shadow:0 0 0 2px var(--surface),0 0 0 3px var(--line)}
+
 .ci-tabs{display:flex;justify-content:center;gap:6px;margin:18px 12px 0;border-bottom:1px solid var(--line)}
 .ci-tabs button{flex:1;max-width:9rem;display:grid;justify-items:center;gap:4px;padding:10px 0;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);font-size:.78rem;font-weight:600;cursor:pointer}
 .ci-tabs button[aria-pressed="true"]{color:var(--fg);border-bottom-color:var(--fg)}
@@ -3721,7 +3700,7 @@ html.k-lite .scrim{background:rgba(0,0,0,.42)}
 /*}@css:61PERF*/
 /*@css:580{*/
 /* 5.8.0 Cephe kartı ve sohbetteki savaşa katıl düğmesi */
-.square.cpcard{background:linear-gradient(135deg,#7f1d1d,#0c7a63 70%,#0a5a8a)}
+
 .msg .cpj{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:8px;padding:9px 12px;border-radius:12px;background:linear-gradient(135deg,#b91c1c,#0C7A63);color:#fff;font-weight:700;font-size:.86rem}
 .msg .cpj svg.i{width:1.05rem;height:1.05rem}
 /*}@css:580*/
@@ -3731,7 +3710,6 @@ html.k-lite .scrim{background:rgba(0,0,0,.42)}
 .msg .ogj svg{width:1.05rem;height:1.05rem;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .src .ic svg.ogi{width:1.25rem;height:1.25rem;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 /*}@css:61GAME*/
-
 
 /* 6.4.12 şarkı başlangıcı */
 .it-st{display:grid;gap:10px;margin-top:6px}.it-sl{display:flex;justify-content:space-between;align-items:baseline;margin:6px 2px 0;font-size:.85rem}.it-sl b{font-family:var(--f-mono);font-size:1rem}
@@ -4193,7 +4171,7 @@ html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-i
 :root[data-ui] #shell[data-r="profile"] #main .grid>.tile{aspect-ratio:4/5}
 :root[data-ui] #main .tile:active{transform:none;opacity:.8}
 :root[data-ui] #main .tile::before{height:30%}
-:root[data-ui] #main .ptabs+.grid,:root[data-ui] #main .ptabs+.kolc+.grid{margin-top:2px}
+:root[data-ui] #main .ptabs+.grid{margin-top:2px}
 
 /* --- Keşfet --- */
 :root[data-ui] #shell[data-r="explore"] #main .search .in,:root[data-ui] #shell[data-r="explore"] #main #q{border:0;border-radius:12px;background-color:var(--surface-2);box-shadow:none}

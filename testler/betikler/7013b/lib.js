@@ -1,6 +1,6 @@
 /* 7.0 sohbet testleri için ortak düzenek. KADRAJ_HTML ile index.html yolu verilebilir. */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/.claude/worktrees/agent-a6d5b3bca914906d1/index.html',BASE='http://kadraj.test/';
+const HTML=process.env.KADRAJ_HTML||'/home/user/kadrajapp/.claude/worktrees/agent-a6d5b3bca914906d1/index.html',BASE='http://kadraj.test/';
 const OUT='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/7013B/';
 async function open(W,H,{dark=false,ui="vizor",touch=true,anim="akici"}={}){const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:W,height:H||860},hasTouch:touch,deviceScaleFactor:1,colorScheme:dark?"dark":"light"});const p=await ctx.newPage();
  const errors=[];p.on('pageerror',e=>errors.push(e.message));

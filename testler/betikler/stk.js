@@ -1,6 +1,6 @@
 /* 6.9.1 otomatik kırpma: node stk.js <resim> <çıktı.png> */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/',MP='/home/user/kadraj-test/mp/';
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/',MP='/home/user/kadraj-test/mp/';
 const IMG=process.argv[2]||'img/kedi.jpg',OUT=process.argv[3]||'/tmp/claude-0/stk.png';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:844}});const p=await ctx.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(/kırp|Error|error|warn/i.test(m.type()+m.text()))console.log('CON',m.type(),m.text().slice(0,300))});p.on('requestfailed',r=>console.log('RF',r.url().slice(0,120)));

@@ -1,6 +1,6 @@
 /* 70UI ekran görüntüleri: node shots.js <outdir> <w> <light|dark> <vizor|klasik> [ekranlar] */
 const sd=require('/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/a60ui/seed.js');
-const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/index.html';
+const HTML=process.env.KADRAJ_HTML||'/home/user/kadrajapp/index.html';
 const [,,OUT,W,TH,UI,ONLY]=process.argv;const H=+W>600?1000:844;
 (async()=>{const {page,errors,close}=await sd.open(HTML,{width:+W,height:H,dark:TH==="dark",ui:UI});
  const tag=`${W}${TH[0]}${UI[0]}`;const res={};

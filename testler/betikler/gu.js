@@ -1,6 +1,6 @@
 /* 6.8.24: bildirim düğmeleri (yanıt, kalp, görüldü) ve açılışta izin penceresi */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 const FAKE=(surum,granted)=>`window.__kn=[];window.__ks=[];window.__L={};window.__ask=0;window.__granted=${granted};window.__ayar=0;window.Capacitor={isNativePlatform:()=>true,getPlatform:()=>"android",Plugins:{KadrajGaleri:{
  surum:async()=>({surum:${surum},yerel:${surum>=4},eylem:${surum>=5},fcm:false,ad:"x",paket:window.__pk||undefined}),bildirimIzin:async(o)=>{if(o&&o.sor){window.__ask++;return{ok:window.__grantOnAsk!==false}}return{ok:window.__granted}},

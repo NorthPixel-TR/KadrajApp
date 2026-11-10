@@ -1,6 +1,6 @@
 /* 70FXA hata avı test yardımcısı: yerel mod (LocalDB), ağ kapalı */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/.claude/worktrees/agent-ab664686c3f847d34/index.html';const BASE=process.env.KHTTP?'http://kadraj.test/':'https://kadraj.test/';
+const HTML=process.env.KADRAJ_HTML||'/home/user/kadrajapp/.claude/worktrees/agent-ab664686c3f847d34/index.html';const BASE=process.env.KHTTP?'http://kadraj.test/':'https://kadraj.test/';
 const SHOT='/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/70fxa/';
 async function open({w=390,h=844,dark=false,touch=true,init,rm=false,ctx:ctx0,browser:b0}={}){
  const browser=b0||await chromium.launch();const ctx=ctx0||await browser.newContext({viewport:{width:w,height:h},hasTouch:touch,colorScheme:dark?'dark':'light',reducedMotion:rm?'reduce':'no-preference',deviceScaleFactor:1});

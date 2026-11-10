@@ -1,10 +1,10 @@
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';const D=process.argv[2];
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';const D=process.argv[2];
 const GIF="R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
 (async()=>{const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:390,height:800},deviceScaleFactor:1,hasTouch:true});const p=await ctx.newPage();
  await p.route('**/*',r=>{const u=r.request().url();
   if(u.startsWith('https://api.giphy.com/'))return r.fulfill({contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({data:[1,2,3,4,5,6].map(i=>({images:{fixed_width:{url:`https://media${i}.giphy.com/media/abc${i}/200w.gif`,width:"200",height:"150"}}}))})});
-  if(u.includes('giphy.com/media'))return r.fulfill({contentType:'image/jpeg',body:fs.readFileSync('/home/user/Kadraj/img/kahve.jpg')});
+  if(u.includes('giphy.com/media'))return r.fulfill({contentType:'image/jpeg',body:fs.readFileSync('/home/user/kadrajapp/img/kahve.jpg')});
   if(u.startsWith(BASE)){const q=decodeURIComponent(new URL(u).pathname);if(q==='/'||q==='/index.html')return r.fulfill({body:fs.readFileSync(HTML),contentType:'text/html; charset=utf-8'});
   const f=path.join(path.dirname(HTML),q);if(fs.existsSync(f)&&fs.statSync(f).isFile())return r.fulfill({body:fs.readFileSync(f)});return r.fulfill({status:404,body:''})}
   if(u.startsWith('data:')||u.startsWith('blob:'))return r.continue();return r.abort()});

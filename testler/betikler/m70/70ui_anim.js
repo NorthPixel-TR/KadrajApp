@@ -1,6 +1,6 @@
 /* 70UI animasyon kareleri: node anim.js <outdir> <w> <light|dark> <vizor|klasik> */
 const sd=require('/tmp/claude-0/-home-user-Kadraj/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/a60ui/seed.js');
-const HTML=process.env.KADRAJ_HTML||'/home/user/Kadraj/index.html';
+const HTML=process.env.KADRAJ_HTML||'/home/user/kadrajapp/index.html';
 const [,,OUT,W,TH,UI]=process.argv;const H=+W>600?1000:844;
 let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 (async()=>{const {page:p,errors,close}=await sd.open(HTML,{width:+W,height:H,dark:TH==="dark",ui:UI});

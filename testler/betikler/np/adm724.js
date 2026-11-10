@@ -1,6 +1,6 @@
 /* 7.0.24 kurucuya tek dokunuşla yönetici paneli: yalnızca bilolotr görür, profil ve Ayarlar'dan açılır */
 const {chromium}=require('playwright');const fs=require('fs'),path=require('path');
-const HTML='/home/user/Kadraj/index.html',BASE='http://kadraj.test/';let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
+const HTML='/home/user/kadrajapp/index.html',BASE='http://kadraj.test/';let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 const W=+process.argv[2]||390;
 (async()=>{const b=await chromium.launch();
  for(const un of ["bilolotr","ayse"]){const p=await b.newPage({viewport:{width:W,height:860}});const err=[];p.on('pageerror',e=>err.push(e.message));
