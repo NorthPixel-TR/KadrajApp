@@ -4707,3 +4707,23 @@ html[data-accent] .call{background:radial-gradient(120% 80% at 50% 0%,color-mix(
 @media (prefers-reduced-motion:reduce){#intro .in-vf *{animation:none!important}#intro .in-vf .in-ring{display:none}}
 html.reduce-motion #intro .in-vf .in-ring{display:none}
 /*}@css:7110*/
+/*@css:7117{*/
+.albv .alb-intro{margin:10px 16px;color:var(--muted);font-size:.86rem}
+.alb-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:4px 16px 24px}
+.alb-card{display:grid;gap:3px;text-align:left;min-width:0;color:var(--fg)}
+.alb-card .alb-cv{aspect-ratio:1;border-radius:14px;overflow:hidden;background:var(--surface-2);display:grid;place-items:center;transition:transform .15s}
+.alb-card:active .alb-cv{transform:scale(.97)}
+.alb-card .alb-cv img{width:100%;height:100%;object-fit:cover;display:block}
+.alb-card .alb-cv svg{width:30px;height:30px;color:var(--accent)}
+.alb-card.alb-new .alb-cv{border:2px dashed var(--line);background:transparent}
+.alb-card b{font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alb-card small{color:var(--muted);font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.alb-head{display:grid;gap:2px;padding:10px 16px}.alb-head small{color:var(--muted);font-size:.8rem}
+.alb-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}
+.alb-ph{position:relative;aspect-ratio:1;overflow:hidden;background:var(--surface-2);display:block}
+.alb-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.alb-ph .alb-by{position:absolute;left:5px;bottom:5px;pointer-events:none;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
+.alb-add{position:sticky;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 35%)}
+.alb-chip{display:inline-flex;align-items:center;gap:5px;margin-top:6px;padding:4px 10px 4px 7px;border-radius:99px;background:color-mix(in srgb,var(--sun) 18%,transparent);color:var(--fg);font-size:.76rem;font-weight:700;max-width:100%}
+.alb-chip svg{width:14px;height:14px;flex:none}.alb-chip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/*}@css:7117*/

@@ -25,6 +25,7 @@ L=(
  "v7112/t.js 390"
  "v7113/t.js"
  "v7114/t.js"
+ "v7117/t.js 390"
 )
 [ "${1:-}" = "hizli" ] || L+=("hunt/crawl.js 360 koyu klasik" "t69.js 800" "m70/70chat_t70.js 390" "m70/av704.js 390" "m70/fx703.js 390" "kn.js" "kln.js" "kln2.js" "rz.js" "gu.js" "pk.js" "hunt/oyun.js 390" "v7112/t.js 360")
 bad=0; ok=0
