@@ -1,4 +1,5 @@
 /* 7.0.29 İstiklal Marşı töreni: tarih kapısı, kendiliğinden (4 kişi), kurucu saati, uyarı şeridi, tören, geç katılma, yönetici bölümü. node t.js <genişlik> */
+process.env.KBLOCK="/ses/istiklal.mp3"; /* bu test dosyasız (telefonun sesiyle) yolu dener; dosyalı yol v7114 */
 const {open}=require('../m70/lib.js');const W=+process.argv[2]||390;let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 const OUT='/tmp/claude-0/-home-user/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/marsi/';require('fs').mkdirSync(OUT,{recursive:true});
 (async()=>{const {b,p,errors}=await open(W,820);

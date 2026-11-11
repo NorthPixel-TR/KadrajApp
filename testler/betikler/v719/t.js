@@ -1,4 +1,5 @@
 // 7.1.9: Ayarlar'dan İstiklal Marşı dinle + sözler; uygulamada (sahte KadrajGaleri.oku) yerel sesle okuma
+process.env.KBLOCK="/ses/istiklal.mp3"; /* bu test dosyasız (telefonun sesiyle) yolu dener; dosyalı yol v7114 */
 const {open}=require('/home/user/kadraj-test/m70/lib.js');let pass=0,fail=0;const ok=(c,m)=>{console.log((c?"OK  ":"FAIL")+" "+m);c?pass++:fail++};
 (async()=>{const {b,p,errors}=await open(390);
  await p.evaluate(()=>{window.__oku=[];window.Capacitor={isNativePlatform:()=>true,Plugins:{KadrajGaleri:{oku:o=>{__oku.push(o.text);return Promise.resolve()},sus:()=>Promise.resolve(),surum:()=>Promise.resolve({surum:10})}}};go("settings")});await p.waitForTimeout(900);
