@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70109,APP_VER_RAW="7.1.9";
+const APP_V=70110,APP_VER_RAW="7.1.10";
 /* 7.1.7: sahibinin isteğiyle görünen sürüm numaraları 3 eksik (3.0 → 0.0, 7.1.7 → 4.1.7, iç 8.0 → görünen 5.0). APP_V, VER_NAMES anahtarları, kayıt mesajları ("7.1.7: …") ve meta/_surum iç numarayla devam eder (sürüm denetimi geri gitmesin); yalnızca ekranda verShow/verStr ile 3 çıkarılır. */
 const VER_OFF=3,verShow=s=>String(s).replace(/^(\d+)/,(m,a)=>String(Math.max(0,+a-VER_OFF)));const APP_VER=verShow(APP_VER_RAW);
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
@@ -107,7 +107,7 @@ prev:'<path d="m15 6-6 6 6 6"/>',
 next:'<path d="m9 6 6 6-6 6"/>'};
 const I=(n,cls="")=>`<svg class="i ${cls}" viewBox="0 0 24 24" aria-hidden="true">${IP[n]||""}</svg>`;
 /* 4.4.4: uygulama simgesiyle aynı: vizör köşeleri içinde K ve turuncu nokta */
-const VF=`<svg class="vfmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 4H6v16h3.5M18.5 4.5 11 12l7.5 7.5"/><rect x="15.6" y="10" width="4" height="4" rx="1" fill="#FF8A4C" stroke="none"/></svg>`;
+const VF=`<svg class="vfmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.2v13.6M8 14.6 16 8M11.3 11.9 16.8 18.8"/><rect x="13.85" y="5.85" width="4.3" height="4.3" rx="2.15" fill="#FF8A4C" stroke="none"/></svg>`;
 
 /* ============ Avatarlar ============ */
 const ROTA_AV="data:image/svg+xml,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#16a585"/><stop offset="1" stop-color="#0a4f73"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/><circle cx="50" cy="50" r="31" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/><g stroke="#fff" stroke-opacity=".6" stroke-width="2.5"><path d="M50 13v8M50 79v8M13 50h8M79 50h8"/></g><path d="M50 22 58 50H42z" fill="#ffcf4d"/><path d="M50 78 42 50h16z" fill="#fff"/><circle cx="50" cy="50" r="4.5" fill="#0a4f73" stroke="#fff" stroke-width="2"/></svg>`);
@@ -1933,7 +1933,7 @@ HOOKS.after.push(r=>{if(r!=="admin")return;archWire();if(S.archTried)return;S.ar
   for(const c of list||[]){const m=String(c&&c.commit&&c.commit.message||"").match(/^(\d+\.\d+\.\d+):/);if(!m||seen.has(m[1])||/^(750f2d81|97475240)/.test(c.sha||""))continue;seen.add(m[1]);ex.push([m[1],c.sha,String(c.commit.author&&c.commit.author.date||"").slice(0,10)])}
   if(!ex.length)return;S.archExtra=ex;const el=$("#archBox");if(el){el.outerHTML=archBox();archWire()}}).catch(()=>{})});
 /* 4.4.6: ana ekrandaki simgeyi telefon tutar ve kendisi yenilemez. Uygulamadan (ana ekrandan) girenlere yeni logo için bir kez yol gösterilir. */
-HOOKS.enter.push(()=>setTimeout(()=>{try{if(!isStandalone()||kgal()||LS.get("kadraj_icon_tip_712"))return;if($("#overlay")&&$("#overlay").children.length)return;LS.set("kadraj_icon_tip_712",now());
+HOOKS.enter.push(()=>setTimeout(()=>{try{if(!isStandalone()||kgal()||LS.get("kadraj_icon_tip_7110"))return;if($("#overlay")&&$("#overlay").children.length)return;LS.set("kadraj_icon_tip_7110",now());
  dialog("Kadraj'ın yeni logosu",`Kadraj'ın logosu ve simgesi yenilendi (siyah zemin, beyaz K, turuncu piksel). Ana ekrandaki simgeyi ise telefonun kendisi saklar ve kendiliğinden değiştirmez.<br><br>Yeni simge için:<br>1. Ana ekranda Kadraj simgesine basılı tut, <b>Kaldır</b>'a dokun.<br>2. Chrome'da <b>northpixel-tr.github.io/KadrajApp</b> adresini aç.<br>3. Sağ üstteki ⋮ menüsünden <b>Ana ekrana ekle</b> ya da <b>Uygulamayı yükle</b>'ye dokun.<br><br>Hesabın ve mesajların silinmez.`,[{label:"Tamam"}])}catch(e){}},4000));
 /* ===== 4.5: sohbette arama, mesaj iletme, sohbet sabitleme, hikâyeye tepki, sesli mesaj hızı, Klaket süresi ===== */
 /* Klaket ilerleme çubuğu: bulut videoyu ilk açılışta parça parça hazırlarken süre yanlış (kısa) görünür; kayıtlı süre ya da sabitlenmiş süre kullanılır */
@@ -2478,7 +2478,7 @@ function verBar(v,force){let el=$("#verBar");
 const VB_ART=`<svg viewBox="0 0 176 150" aria-hidden="true"><circle class="a1" cx="88" cy="78" r="64"/>
  <path class="a8 tw" d="M26 34l2.4 6 6 2.4-6 2.4-2.4 6-2.4-6-6-2.4 6-2.4z"/><path class="a5 tw" style="animation-delay:.7s" d="M150 46l1.8 4.4 4.4 1.8-4.4 1.8-1.8 4.4-1.8-4.4-4.4-1.8 4.4-1.8z"/><circle class="a9 tw" style="animation-delay:1.2s" cx="152" cy="130" r="3.5"/><circle class="a5 tw" style="animation-delay:.3s" cx="30" cy="110" r="3"/>
  <rect class="a2" x="58" y="18" width="60" height="108" rx="15"/><rect class="a3" x="77" y="25" width="22" height="4.5" rx="2.25"/>
- <svg x="68" y="50" width="40" height="40" viewBox="0 0 24 24"><path class="a4" d="M9.5 4H6v16h3.5M18.5 4.5 11 12l7.5 7.5"/><rect class="a5" x="15.6" y="10" width="4" height="4" rx="1" style="fill:var(--sun)"/></svg>
+ <svg x="68" y="50" width="40" height="40" viewBox="0 0 24 24"><path class="a4" d="M8 5.2v13.6M8 14.6 16 8M11.3 11.9 16.8 18.8"/><rect class="a5" x="13.85" y="5.85" width="4.3" height="4.3" rx="2.15" style="fill:var(--sun)"/></svg>
  <rect class="a3" x="72" y="101" width="32" height="5" rx="2.5"/><rect class="a3" x="78" y="111" width="20" height="5" rx="2.5"/>
  <circle class="a6" cx="118" cy="110" r="22"/><svg x="104" y="96" width="28" height="28" viewBox="0 0 24 24"><g class="bob"><path class="a7" d="M12 18.5V6M6.5 11.5 12 6l5.5 5.5"/></g></svg></svg>`;
 function showVersionBlock(r){if(VER.skip)return;VER.blocked=true;verBar(null);if(VER.unsub){try{VER.unsub()}catch{}VER.unsub=null}
@@ -2513,7 +2513,7 @@ const WN_ITEMS=[
   {v:70100,ic:"flag",g:"linear-gradient(135deg,#E30A17,#7F1D1D)",t:"İstiklal Marşı",d:"31 Mart 2027'den sonra her pazartesi Kadraj'da İstiklal Marşı okunur. Bir dakika önce üstte uyarı çıkar, sonra bayrak ve sözler ekrana gelir",go:"feed"},
   {v:70100,ic:"trophy",g:"linear-gradient(135deg,#9a3412,#0E7490)",t:"Cephe hafifledi",d:"Askerler daha yavaş artar, bayraklar direksiz, cephedeki asker sayısı bayrakların önünde yazar; oyun daha az kasar",go:"chats"},
 ];
-const WN_MARK=`<svg class="wn-mark" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M9.5 4H6v16h3.5"/><path pathLength="1" d="M18.5 4.5 11 12l7.5 7.5"/><rect x="15.6" y="10" width="4" height="4" rx="1"/></svg>`;
+const WN_MARK=`<svg class="wn-mark" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M8 5.2v13.6"/><path pathLength="1" d="M8 14.6 16 8M11.3 11.9 16.8 18.8"/><rect x="13.85" y="5.85" width="4.3" height="4.3" rx="2.15"/></svg>`;
 function showWhatsNew(force){if($('#overlay [data-layer="whatsnew"]'))return;if(!force&&verLvl(LS.get("kadraj_seen_ver",0)||0)>=verLvl(APP_V))return;
  const items=WN_ITEMS.filter(x=>verLvl(x.v)===verLvl(APP_V)).map((x,i)=>`<button type="button" class="wn-item" data-act="wnGo" data-r="${x.go}" style="--i:${i};--g:${x.g}"><span class="wn-ic">${I(x.ic)}</span><span class="wn-t"><b>${esc(x.t)}</b><span>${esc(x.d)}</span></span>${I("next")}</button>`).join("");
  openLayer("whatsnew",`<div class="full wn" role="dialog" aria-modal="true" aria-label="Kadraj ${esc(APP_VER)} ile gelenler"><button class="ib plain wn-x" data-act="close" aria-label="Kapat">${I("close")}</button>
@@ -10086,7 +10086,7 @@ const K70W={list:0,st:null};
  if(!K70W.list&&!kbReduce()){try{if(wnStory())return}catch(e){console.warn("wn70",e);closeLayer("whatsnew")}}
  return f.call(this,force,...a)}}
 function wnItems(){return WN_ITEMS.filter(x=>verLvl(x.v)===verLvl(APP_V))}
-const K70_MARK=`<svg class="k70s-vf" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M9.5 4H6v16h3.5"/><path pathLength="1" d="M18.5 4.5 11 12l7.5 7.5"/><rect class="k70s-dot" x="15.6" y="10" width="4" height="4" rx="1"/></svg>`;
+const K70_MARK=`<svg class="k70s-vf" viewBox="0 0 24 24" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path pathLength="1" d="M8 5.2v13.6"/><path pathLength="1" d="M8 14.6 16 8M11.3 11.9 16.8 18.8"/><rect class="k70s-dot" x="13.85" y="5.85" width="4.3" height="4.3" rx="2.15"/></svg>`;
 function wnStory(){const items=wnItems();if(!items.length)return false;
  const n=items.length;const cards=[{k:"cover",g:"linear-gradient(150deg,#4F46E5,#2A1F7A 55%,#0B0B10)"},...items.map((x,i)=>({k:"item",x,i,g:x.g||"linear-gradient(135deg,#4F46E5,#7C5CFF)"})),{k:"end",g:"linear-gradient(160deg,#1b1340,#0C7A63)"}];
  const spk=`<i class="k70s-sp s1"></i><i class="k70s-sp s2"></i><i class="k70s-sp s3"></i><i class="k70s-sp s4"></i>`;

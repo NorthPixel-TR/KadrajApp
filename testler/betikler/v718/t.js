@@ -30,8 +30,8 @@ async function page(ctx,errors){const p=await ctx.newPage();p.on('pageerror',e=>
  // sıra B'ye gelene kadar bekle (botlar kurucuda oynar)
  let gotB=false;for(let i=0;i<60&&!gotB;i++){await B.waitForTimeout(400);if(await A.evaluate(()=>{const G=MASA._t.G();return G.turn===0&&!G.over}))await playA(A);gotB=await B.evaluate(()=>{const G=MASA._t.G();return G&&(G.turn===1||G.over)})}
  ok(gotB,"sıra katılana geldi (arada botlar oynadı)");
- if(await B.evaluate(()=>!MASA._t.G().over)){for(let k=0;k<6&&await B.evaluate(()=>{const G=MASA._t.G();return G.turn===1&&!G.over});k++){await playA(B);await B.waitForTimeout(400)}await B.waitForTimeout(1500);
-  ok(await A.evaluate(()=>{const G=MASA._t.G();return G.turn!==1||G.over}),"katılanın hamlesi kurucuya geçti")}
+ if(await B.evaluate(()=>!MASA._t.G().over)){const s0=await A.evaluate(()=>MASA._t.G().seq);for(let k=0;k<6&&await B.evaluate(()=>{const G=MASA._t.G();return G.turn===1&&!G.over});k++){await playA(B);await B.waitForTimeout(400)}await B.waitForTimeout(1500);
+  ok(await A.evaluate(s0=>{const G=MASA._t.G();return G.seq>s0||G.over},s0),"katılanın hamlesi kurucuya geçti")}
  // katılan çıkar: kurucuda bot olur
  await B.evaluate(()=>{MASA._t.G().moved=0;closeAll()});await B.waitForTimeout(1500);
  const hu=await A.evaluate(()=>MASA._t.G().human[1]);ok(hu===0,"çıkan oyuncunun yerine bot geçti");

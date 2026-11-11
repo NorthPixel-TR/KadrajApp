@@ -4696,3 +4696,22 @@ html[data-accent] .call{background:radial-gradient(120% 80% at 50% 0%,color-mix(
 @media (prefers-reduced-motion:reduce){.np-big rect{animation:none}}
 .np-big.np-rm rect{animation:none}
 /*}@css:715*/
+
+/*@css:7110{*/
+/* 7.1.10 yeni logo: "kadraj" = üçte bir kuralı. K'nın gövdesi sol üçte bir çizgisinde, turuncu odak noktası çizgilerin kesiştiği güçlü noktada.
+   Açılış: ızgara belirir, çerçeve çizilir, k çizilir, odak halkası büyükten küçülüp noktaya kilitlenir (otomatik odak), nokta belirir. Sonsuz animasyon yok. */
+#intro .in-vf{animation:k711Mark .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes k711Mark{from{transform:scale(.86)}}
+#intro .in-vf path.in-g{stroke:var(--fg);stroke-opacity:.16;stroke-width:.22;stroke-dasharray:none;animation:k711Fade .5s ease .02s both}
+#intro .in-vf .in-f{fill:none;stroke:var(--accent);stroke-opacity:.5;stroke-width:.4;stroke-dasharray:1 1;animation:k70Draw .55s cubic-bezier(.65,0,.35,1) .08s both}
+#intro .in-vf path.in-k{stroke:var(--accent);stroke-width:2.7;animation:k70Draw .3s cubic-bezier(.65,0,.35,1) .26s both}
+#intro .in-vf path.in-k2{animation-delay:.42s}#intro .in-vf path.in-k3{animation-delay:.52s}
+#intro .in-vf .in-ring{fill:none;stroke:var(--sun);stroke-width:.5;opacity:0;transform-box:fill-box;transform-origin:center;animation:k711Focus .55s cubic-bezier(.2,.7,.3,1) .62s both}
+#intro .in-vf .in-dot{fill:var(--sun);transform-box:fill-box;transform-origin:center;animation:k711Dot .42s cubic-bezier(.3,1.7,.5,1) .98s both}
+@keyframes k711Fade{from{opacity:0}}
+@keyframes k711Focus{0%{opacity:0;transform:scale(3.4)}25%{opacity:.95}80%{opacity:.95;transform:scale(1.45)}100%{opacity:0;transform:scale(1.45)}}
+@keyframes k711Dot{from{opacity:0;transform:scale(0)}}
+.wn-mark rect,.k70s-dot{rx:2.15}
+@media (prefers-reduced-motion:reduce){#intro .in-vf *{animation:none!important}#intro .in-vf .in-ring{display:none}}
+html.reduce-motion #intro .in-vf .in-ring{display:none}
+/*}@css:7110*/

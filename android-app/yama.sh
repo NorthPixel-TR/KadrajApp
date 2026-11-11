@@ -18,8 +18,8 @@ mkdir -p "$R/drawable" "$R/values"
 # 6.9.0: bildirim simgesi Kadraj logosu (vizör köşeleri + K + nokta), Android bunu beyaz gösterir; büyük simge renkli logo (KadrajGaleri.goster).
 cat > "$R/drawable/ic_stat_kadraj.xml" <<'XML'
 <vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
-    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="3" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="M9.5,4H6v16h3.5M18.5,4.5L11,12l7.5,7.5" />
-    <path android:fillColor="#FFFFFFFF" android:pathData="M16.6,10h2a1,1 0,0 1,1 1v2a1,1 0,0 1,-1 1h-2a1,1 0,0 1,-1 -1v-2a1,1 0,0 1,1 -1z" />
+    <path android:strokeColor="#FFFFFFFF" android:strokeWidth="2.8" android:strokeLineCap="round" android:strokeLineJoin="round" android:fillColor="#00000000" android:pathData="M8,5.2v13.6M8,14.6L16,8M11.3,11.9L16.8,18.8" />
+    <path android:fillColor="#FFFFFFFF" android:pathData="M16,5.75a2.25,2.25 0 1,1 0,4.5a2.25,2.25 0 1,1 0,-4.5z" />
 </vector>
 XML
 cat > "$R/values/kadraj_bildirim.xml" <<'XML'
