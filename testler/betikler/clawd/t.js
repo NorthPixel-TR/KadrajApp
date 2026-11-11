@@ -1,21 +1,25 @@
-/* 7.0.28 Clawd: yükleme, yer, sayfalar, tepkiler, pencere, sürükleme, ayar, yük. node t.js <genişlik> [koyu] */
+/* 7.0.28 + 7.1.19 Clawd: yükleme, oda (Akış/Sohbet), alt menüdeki yer, sayfalar, tepkiler, hareketler, pencere, sürükleme, ayar, yük. node t.js <genişlik> [koyu] */
 const {open}=require('../m70/lib.js');const W=+process.argv[2]||390;const dark=process.argv.includes("koyu");let pass=0,fail=0;const ok=(c,m)=>{c?pass++:fail++;console.log((c?"OK  ":"FAIL")+" "+m)};
 const OUT='/tmp/claude-0/-home-user/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratchpad/clawd/';require('fs').mkdirSync(OUT,{recursive:true});
 (async()=>{const {b,p,errors}=await open(W,820,{dark});
  await p.evaluate(()=>{go("feed")});
  let s=await p.evaluate(()=>!!window.CLAWD);ok(!s,"açılışta yüklenmez (gecikmeli)");
- await p.evaluate(()=>cw2Go());await p.waitForFunction(()=>window.CLAWD&&CLAWD._s.vis,null,{timeout:8000});await p.waitForTimeout(400);
- const geo=()=>p.evaluate(()=>{const e=document.getElementById("cwd"),r=e.getBoundingClientRect(),n=document.querySelector("#dock nav").getBoundingClientRect(),sh=document.getElementById("shell").getBoundingClientRect();return{on:e.classList.contains("on"),l:Math.round(r.left),r:Math.round(r.right),b:Math.round(r.bottom),navTop:Math.round(n.top),shL:Math.round(sh.left),shR:Math.round(sh.right),svg:!!e.querySelector("svg"),par:e.parentElement.id,vis:CLAWD._s.vis,mode:CLAWD._s.mode}});
- s=await geo();ok(s.on&&s.svg&&s.par==="shell","Clawd görünür, #shell içinde");ok(Math.abs(s.b-s.navTop)<=8&&s.l>=s.shL&&s.r<=s.shR,`alt menünün üstünde duruyor (alt ${s.b}, menü ${s.navTop}; sol ${s.l})`);
- await p.waitForTimeout(1300);const tip=await p.evaluate(()=>{const b=document.querySelector(".cwd-bub");return b.hidden?"":b.textContent});ok(/Günaydın|İyi (günler|akşamlar|geceler)/.test(tip)||s.mode==="sleep","Akış'ta selam: "+(tip||"(uyuyor)"));
+ await p.evaluate(()=>cw2Go());await p.waitForFunction(()=>window.CLAWD&&CLAWD._room()&&CLAWD._room().isConnected,null,{timeout:8000});await p.waitForTimeout(400);
+ s=await p.evaluate(()=>{const w=document.querySelector("#main .stories .cwr-w"),st=document.querySelector("#main .stories");return{room:!!w,inStrip:!!(w&&st.contains(w)),second:w&&w.previousElementSibling&&w.previousElementSibling.classList.contains("story"),dock:CLAWD._s.vis,svg:!!document.querySelector(".cwr-sc svg")&&!!document.querySelector(".cwr-cl svg"),mode:CLAWD._s.mode}});
+ ok(s.room&&s.inStrip&&s.second&&s.svg,"Akış'ta Clawd'ın odası hikâye şeridinde (kendi hikâyenin yanında)");ok(!s.dock,"odası olan sayfada alt menüdeki Clawd gizli");
+ await p.waitForTimeout(1300);const tip=await p.evaluate(()=>{const b=document.querySelector(".cwb");return b&&!b.hidden?b.textContent:""});ok(/Günaydın|İyi (günler|akşamlar|geceler)/.test(tip)||s.mode==="sleep","Akış'ta piksel balonla selam: "+(tip||"(uyuyor)"));
  await p.screenshot({path:OUT+"feed-"+W+(dark?"-k":"")+".png"});
+ const geo=()=>p.evaluate(()=>{const e=document.getElementById("cwd"),r=e.getBoundingClientRect(),n=document.querySelector("#dock nav").getBoundingClientRect(),sh=document.getElementById("shell").getBoundingClientRect();return{on:e.classList.contains("on"),l:Math.round(r.left),r:Math.round(r.right),b:Math.round(r.bottom),navTop:Math.round(n.top),shL:Math.round(sh.left),shR:Math.round(sh.right),svg:!!e.querySelector("svg"),par:e.parentElement.id,mode:CLAWD._s.mode}});
+ await p.evaluate(()=>go("explore"));await p.waitForTimeout(700);
+ s=await geo();ok(s.on&&s.svg&&s.par==="shell","Keşfet'te Clawd alt menüde görünür, #shell içinde");ok(Math.abs(s.b-s.navTop)<=8&&s.l>=s.shL&&s.r<=s.shR,`alt menünün üstünde duruyor (alt ${s.b}, menü ${s.navTop}; sol ${s.l})`);
+ ok(s.r-s.l>=58,"eskisinden büyük ("+(s.r-s.l)+" px)");
  /* uyanık kipe al (test saatinden bağımsız) */
  await p.evaluate(()=>{CLAWD._s.wakeUntil=Date.now()+6e5;CLAWD._mode("up")});
  /* sayfalar */
  const vis=async r=>{await p.evaluate(r=>{if(r==="chat")openChat("u:u2");else go(r)},r);await p.waitForTimeout(700);return p.evaluate(()=>CLAWD._s.vis)};
- ok(await vis("explore")&&await vis("chats")&&await vis("profile")&&await vis("settings"),"Keşfet, Sohbetler, Profil ve Ayarlar'da görünür");
+ ok(await vis("explore")&&await vis("profile")&&await vis("settings"),"Keşfet, Profil ve Ayarlar'da alt menüde görünür");await vis("chats");ok(await p.evaluate(()=>!!document.querySelector("#main .notes .cwr-w")&&!CLAWD._s.vis),"Sohbetler'de odası notlar şeridinde");
  ok(!(await vis("chat")),"sohbette görünmez");await p.evaluate(()=>back());await p.waitForTimeout(600);ok(!(await vis("reels")),"Klakette görünmez");
- ok(await vis("feed"),"Akış'a dönünce yeniden görünür");await p.waitForTimeout(2600);const tip2=await p.evaluate(()=>{const b=document.querySelector(".cwd-bub");return b.hidden?"":b.textContent});ok(/Günaydın|İyi (günler|akşamlar|geceler)/.test(tip2)||/Günaydın|İyi (günler|akşamlar|geceler)/.test(tip),"uyanıkken Akış'ta selam (günde bir kez): "+(tip2||tip));await p.screenshot({path:OUT+"hi-"+W+(dark?"-k":"")+".png"});await p.evaluate(()=>{CLAWD._s.t&&clearTimeout(CLAWD._s.t)});await p.waitForTimeout(1500);
+ await vis("feed");ok(await p.evaluate(()=>!!document.querySelector("#main .stories .cwr-w")),"Akış'a dönünce odası yine şeritte");await p.evaluate(()=>go("explore"));await p.waitForTimeout(600);await p.screenshot({path:OUT+"hi-"+W+(dark?"-k":"")+".png"});await p.evaluate(()=>{CLAWD._s.t&&clearTimeout(CLAWD._s.t)});await p.waitForTimeout(1500);
  /* tepkiler: poz değişir ve geri döner */
  const svg=()=>p.evaluate(()=>document.querySelector("#cwd .cwd-sp").innerHTML);
  const rest=await svg();await p.evaluate(()=>CLAWD._react("like"));const liked=await svg();await p.waitForTimeout(1200);const back2=await svg();ok(liked!==rest&&back2===rest,"beğenide sevinir, sonra eski duruşuna döner");
@@ -47,11 +51,28 @@ const OUT='/tmp/claude-0/-home-user/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratch
  await p.evaluate(()=>{const D=Date;window.__D=D;const fake=new D();fake.setHours(3);const off=fake.getTime()-D.now();window.Date=class extends D{constructor(...a){if(a.length)super(...a);else super(D.now()+off)}static now(){return D.now()+off}};CLAWD._s.wakeUntil=0;CLAWD._act()});await p.waitForTimeout(200);
  s=await p.evaluate(()=>CLAWD._s.mode);ok(s==="sleep","gece 03:00'te uyur");await p.screenshot({path:OUT+"sleep-"+W+".png"});
  await p.evaluate(()=>{window.Date=window.__D;CLAWD._s.wakeUntil=Date.now()+6e5;CLAWD._mode("up")});
+ /* 7.1.19: hareketler, oda gece/gündüz, odaya dokunma */
+ await p.evaluate(()=>{window.Date=window.__D||Date;go("feed")});await p.waitForTimeout(700);await p.evaluate(()=>{CLAWD._s.wakeUntil=Date.now()+6e5;CLAWD._mode("up");CLAWD.page()});await p.waitForTimeout(300);
+ const rsvg=()=>p.evaluate(()=>document.querySelector(".cwr-cl").innerHTML);
+ let r0=await rsvg();await p.evaluate(()=>CLAWD._play("dance"));await p.waitForTimeout(250);let r1=await rsvg();const an=await p.evaluate(()=>!!CLAWD._s.an);await p.waitForTimeout(2800);let r2=await rsvg();const an2=await p.evaluate(()=>!!CLAWD._s.an);
+ ok(r1!==r0&&an&&!an2&&r2===r0,"odada dans eder ve dans biter (sonsuz değil)");
+ for(const m of["guitar","wave","clap","spin","look","stretch","read"])await p.evaluate(m=>CLAWD._play(m),m);await p.waitForTimeout(3600);ok(await p.evaluate(()=>!CLAWD._s.an),"bütün hareketler kendiliğinden biter");
+ await p.evaluate(()=>{const D=Date;window.__D=D;const fake=new D();fake.setHours(2);const off=fake.getTime()-D.now();window.Date=class extends D{constructor(...a){if(a.length)super(...a);else super(D.now()+off)}static now(){return D.now()+off}};CLAWD._s.wakeUntil=0;CLAWD.page()});await p.waitForTimeout(400);
+ s=await p.evaluate(()=>{const r=CLAWD._room();return{bed:r.classList.contains("bed"),dark:r.classList.contains("dark"),mode:CLAWD._s.mode,moon:/#F4F1D0/i.test(r.querySelector(".cwr-sc").innerHTML)}});ok(s.bed&&s.dark&&s.mode==="sleep"&&s.moon,"gece odası: lamba söner, pencerede ay, yatakta uyur");
+ await p.screenshot({path:OUT+"room-night-"+W+".png"});
+ await p.evaluate(()=>document.querySelector(".cwr").click());await p.waitForTimeout(500);s=await p.evaluate(()=>({mode:CLAWD._s.mode,b:(document.querySelector(".cwb")||{}).textContent||"",sheet:!!document.querySelector('#overlay [data-layer="clawd"]')}));
+ ok(s.mode==="up"&&!s.sheet,"uyurken odaya dokununca uyanır ("+s.b.slice(0,30)+")");
+ await p.evaluate(()=>{window.Date=window.__D;CLAWD._s.wakeUntil=Date.now()+6e5;CLAWD._mode("up");CLAWD.page()});await p.waitForTimeout(300);
+ s=await p.evaluate(()=>({bed:CLAWD._room().classList.contains("bed"),sun:/#FFD34D/i.test(CLAWD._room().querySelector(".cwr-sc").innerHTML)}));ok(!s.bed&&s.sun,"gündüz odası: pencerede güneş");
+ await p.evaluate(()=>document.querySelector(".cwr").click());await p.waitForTimeout(500);ok(await p.evaluate(()=>!!document.querySelector('#overlay [data-layer="clawd"]')),"odaya dokununca Clawd penceresi açılır");
+ s=await p.evaluate(()=>[...document.querySelectorAll("[data-cwq]")].map(b=>b.textContent).join(","));ok(/Dans et/.test(s)&&/Gitar çal/.test(s),"pencerede Dans et / Gitar çal: "+s);
+ await p.evaluate(()=>closeAll());await p.waitForTimeout(300);
+ const ov=await p.evaluate(()=>{const st=document.querySelector("#main .stories");return document.documentElement.scrollWidth-innerWidth});ok(ov<=0,"oda sayfayı yana taşırmıyor");
  /* ayar */
  await p.evaluate(()=>go("settings"));await p.waitForTimeout(700);
  s=await p.evaluate(()=>{const i=document.querySelector("[data-cw2]");if(!i)return{i:false};const g=i.closest(".sg-g,section");i.checked=false;i.dispatchEvent(new Event("change",{bubbles:true}));return{i:true,set:settings.clawd,vis:CLAWD._s.vis,on:document.getElementById("cwd").classList.contains("on")}});ok(s.i&&s.set===false&&!s.vis&&!s.on,"Ayarlar'da Clawd anahtarı kapatınca kaybolur");
  await p.evaluate(()=>{go("feed")});await p.waitForTimeout(600);ok(!(await p.evaluate(()=>CLAWD._s.vis)),"kapalıyken sayfa değişince geri gelmez");
- await p.evaluate(()=>{settings.clawd=true;saveSettings();cw2Go()});await p.waitForTimeout(600);ok(await p.evaluate(()=>CLAWD._s.vis),"yeniden açınca gelir");
+ await p.evaluate(()=>{settings.clawd=true;saveSettings();cw2Go()});await p.waitForTimeout(600);ok(await p.evaluate(()=>CLAWD._s.vis||!!(CLAWD._room()&&CLAWD._room().isConnected)),"yeniden açınca gelir (Akış'ta odasında)");
  /* çıkış */
- await p.evaluate(()=>{try{endSession()}catch(e){}});await p.waitForTimeout(500);ok(!(await p.evaluate(()=>CLAWD._s.vis)),"çıkışta kaybolur");
+ await p.evaluate(()=>{try{endSession()}catch(e){}});await p.waitForTimeout(500);ok(!(await p.evaluate(()=>CLAWD._s.vis||!!(CLAWD._room()&&CLAWD._room().isConnected))),"çıkışta kaybolur (oda da)");
  ok(errors.length===0,"sayfa hatası yok "+errors.join(" | "));console.log(pass+"/"+(pass+fail));await b.close()})().catch(e=>{console.error(e);process.exit(1)});
