@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70108,APP_VER_RAW="7.1.8";
+const APP_V=70109,APP_VER_RAW="7.1.9";
 /* 7.1.7: sahibinin isteğiyle görünen sürüm numaraları 3 eksik (3.0 → 0.0, 7.1.7 → 4.1.7, iç 8.0 → görünen 5.0). APP_V, VER_NAMES anahtarları, kayıt mesajları ("7.1.7: …") ve meta/_surum iç numarayla devam eder (sürüm denetimi geri gitmesin); yalnızca ekranda verShow/verStr ile 3 çıkarılır. */
 const VER_OFF=3,verShow=s=>String(s).replace(/^(\d+)/,(m,a)=>String(Math.max(0,+a-VER_OFF)));const APP_VER=verShow(APP_VER_RAW);
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
@@ -10771,4 +10771,12 @@ HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.qu
  d.innerHTML=`<button class="srow" type="button" data-act="npAbout"><span class="sic" style="--c:var(--accent)">${npLogo("np-logo")}</span><span class="t">NorthPixel hakkında<small>Kadraj'ı yapan stüdyo, ürünler ve Kadraj'ın yolu</small></span>${I("next","chev")}</button>`;
  const k=m.querySelector("#k714I")||m.querySelector("#k718C");if(k)k.before(d);else m.appendChild(d)}catch(e){}});
 /*}@js:715*/
+/*@js:719{*/
+/* 7.1.9 Ayarlar › İstiklal Marşı (#k719M): herkes istediği an dinler (tören ekranı, sözler, telefonun Türkçe sesi + cihazda üretilen müzik; Android uygulamasında KadrajGaleri.oku) ya da bütün sözleri okur. Pazartesi töreni (7029) aynen sürer. */
+ACT.k719im=()=>imLoad().then(()=>{closeAll();MARSI.run(Date.now())}).catch(()=>toast("Marş açılamadı, internetini kontrol et."));
+ACT.k719soz=()=>imLoad().then(()=>MARSI.lyrics()).catch(()=>toast("Sözler açılamadı."));
+HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector("#k719M"))return;const d=document.createElement("div");d.className="box";d.id="k719M";d.style.margin="12px 0";
+ d.innerHTML=`<button class="srow" type="button" data-act="k719im"><span class="sic" style="--c:#E30A17">${I("flag")}</span><span class="t">İstiklal Marşı'nı dinle<small>Sözleriyle, sesli okunur, arkada müzik çalar</small></span>${I("next","chev")}</button><button class="srow" type="button" data-act="k719soz"><span class="sic" style="--c:#E30A17">${I("type")}</span><span class="t">İstiklal Marşı sözleri<small>10 kıtanın hepsi</small></span>${I("next","chev")}</button>`;
+ const k=m.querySelector("#k715N")||m.querySelector("#k714I")||m.querySelector("#k718C");if(k)k.before(d);else m.appendChild(d)}catch(e){}});
+/*}@js:719*/
 boot();

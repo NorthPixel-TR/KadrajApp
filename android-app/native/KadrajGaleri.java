@@ -244,7 +244,7 @@ public class KadrajGaleri extends Plugin {
 
     /* Uygulamanın yerel sürümü: Java tarafı değişince SURUM'u artır, index.html'deki APK_NATIVE da aynı sayı olsun.
        Sayfa küçükse "Güncelleme var" penceresi çıkar. */
-    static final int SURUM = 9;
+    static final int SURUM = 10;
 
     @PluginMethod
     public void surum(PluginCall call) {
@@ -255,6 +255,7 @@ public class KadrajGaleri extends Plugin {
         r.put("eylem", true);
         r.put("paket", getContext().getPackageName());
         r.put("guncelle", true);
+        r.put("oku", true);
         try { r.put("ad", getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0).versionName); } catch (Exception e) { r.put("ad", ""); }
         call.resolve(r);
     }
@@ -496,4 +497,27 @@ public class KadrajGaleri extends Plugin {
             } finally { gIniyor = false; }
         }).start();
     }
+
+    /* 7.1.9: Android WebView'da speechSynthesis yok; İstiklal Marşı'nın sözleri telefonun Türkçe sesiyle buradan okunur.
+       oku({text, hiz}) sırayı boşaltıp okur (QUEUE_FLUSH), sus() durdurur. Türkçe ses yoksa telefonun varsayılanıyla okur. */
+    private android.speech.tts.TextToSpeech tts; private boolean ttsHazir = false; private String ttsBekleyen = null; private float ttsHiz = 0.85f;
+    private void ttsKur() {
+        if (tts != null) return;
+        tts = new android.speech.tts.TextToSpeech(getContext(), st -> {
+            ttsHazir = st == android.speech.tts.TextToSpeech.SUCCESS;
+            if (ttsHazir) { try { tts.setLanguage(new java.util.Locale("tr", "TR")); } catch (Exception e) {}
+                if (ttsBekleyen != null) { String t = ttsBekleyen; ttsBekleyen = null; ttsSoyle(t); } }
+        });
+    }
+    private void ttsSoyle(String t) { try { tts.setSpeechRate(ttsHiz); tts.speak(t, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, "kadraj"); } catch (Exception e) {} }
+    @PluginMethod
+    public void oku(PluginCall call) {
+        String t = call.getString("text", ""); Double h = call.getDouble("hiz", 0.85); ttsHiz = h == null ? 0.85f : h.floatValue();
+        if (t == null || t.isEmpty()) { call.resolve(); return; }
+        if (t.length() > 400) t = t.substring(0, 400);
+        ttsKur(); if (ttsHazir) ttsSoyle(t); else ttsBekleyen = t;
+        call.resolve();
+    }
+    @PluginMethod
+    public void sus(PluginCall call) { ttsBekleyen = null; try { if (tts != null) tts.stop(); } catch (Exception e) {} call.resolve(); }
 }
