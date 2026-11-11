@@ -61,11 +61,11 @@ main.chatmode{display:flex;flex-direction:column;overflow:hidden;padding:0}
 
 /* Dok */
 .dock{flex:none;padding:6px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--bg)}
-.dock nav{display:grid;grid-template-columns:repeat(5,1fr);align-items:end;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-s);padding:6px 4px}
-.dock nav>button{position:relative;display:grid;justify-items:center;gap:2px;font-size:.7rem;font-weight:600;color:var(--muted);padding:6px 0 4px;border-radius:16px}
+.dock nav{display:grid;align-items:end;background:var(--surface);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow-s);padding:6px 4px}
+.dock nav>button{position:relative;display:grid;justify-items:center;gap:2px;font-weight:600;color:var(--muted);padding:6px 0 4px;border-radius:16px}
 .dock nav>button[aria-current="page"]{color:var(--accent)}
 .dock nav>button[aria-current="page"] svg.i{stroke-width:2.4}
-.dock .create{width:3.4rem;height:3.4rem;border-radius:20px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;margin-top:-1.6rem;box-shadow:0 10px 22px rgba(12,122,99,.35)}
+.dock .create{border-radius:20px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;margin-top:-1.6rem}
 .dock .create svg.i{width:1.7rem;height:1.7rem;stroke-width:2.4}
 .dock .me{width:1.6rem;height:1.6rem;border-radius:32%;overflow:hidden;outline:2px solid transparent;outline-offset:1px}
 .dock [aria-current="page"] .me{outline-color:var(--accent)}
@@ -240,7 +240,7 @@ textarea.in{min-height:5.5rem;padding:12px 14px;resize:vertical}
 .msg .mp img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
 .msg .mp span{display:block;padding:6px 10px;font-size:.78rem;font-weight:700}
 .msg img.att{max-width:13rem;border-radius:14px;display:block;margin:-2px -4px 2px}
-.react{position:absolute;bottom:-10px;right:10px;display:inline-flex;align-items:center;gap:2px;background:var(--surface);color:var(--heart);border:1px solid var(--line);border-radius:10px;padding:1px 6px;font:700 .68rem/1.4 var(--f-body)}
+.react{position:absolute;bottom:-10px;right:10px;display:inline-flex;align-items:center;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1px 6px;font:700 .68rem/1.4 var(--f-body)}
 .react svg{width:.7rem;height:.7rem;fill:var(--heart);stroke:none}
 .react{color:var(--fg);cursor:pointer}.react svg.rx{width:.95rem;height:.95rem;margin-right:-3px}.react svg.rx:last-of-type{margin-right:1px}
 .rxpick{display:flex;justify-content:space-between;gap:4px;margin:2px 14px 8px;padding:8px 10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line)}
@@ -292,7 +292,7 @@ textarea.in{min-height:5.5rem;padding:12px 14px;resize:vertical}
 /* Reels */
 .reel{position:relative;height:100%;width:100%;scroll-snap-align:start;contain:strict;scroll-snap-stop:always;overflow:hidden;background:#000;color:#fff}
 .reel video,.reel .slide{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;object-fit:cover;background:#000;transform:translateZ(0)}
-.reel video{object-fit:contain;background:transparent}
+.reel video{background:transparent}
 .reel .rblur{position:absolute;inset:0;background:#000 center/cover no-repeat}.reel .rblur::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.45)}
 #main .reel .rprog i{width:100%;transform:scaleX(0);transform-origin:left center;will-change:transform;transition:transform .2s linear}#main .reel.scrub .rprog i{transition:none!important}
 #main .reel .rprog{pointer-events:auto;touch-action:none;transition:height .15s}#main .reel .rprog::before{content:"";position:absolute;left:0;right:0;bottom:-4px;height:30px}
@@ -309,26 +309,24 @@ textarea.in{min-height:5.5rem;padding:12px 14px;resize:vertical}
 @keyframes fxp{from{transform:scale(1.25) translateX(-7%)}to{transform:scale(1.25) translateX(7%)}}
 @keyframes fxq{from{transform:scale(1.02)}to{transform:scale(1.09)}}
 .rtext{position:absolute;left:8%;right:8%;top:38%;text-align:center;font:600 1.6rem/1.2 var(--f-display);color:#fff;text-shadow:0 2px 16px rgba(0,0,0,.55);text-wrap:balance;pointer-events:none}
-.reel .shade{position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(0,0,0,.7));pointer-events:none}
-.reel .side{position:absolute;right:10px;bottom:calc(6.5rem + env(safe-area-inset-bottom,0px));display:grid;gap:16px;justify-items:center}
-.reel .side button{display:grid;justify-items:center;gap:3px;font:700 .75rem/1 var(--f-body);color:#fff}
-.reel .side button>span:first-child{width:3rem;height:3rem;border-radius:18px;background:rgba(0,0,0,.35);display:grid;place-items:center}
-.reel .side svg.i{width:1.6rem;height:1.6rem}
+.reel .shade{position:absolute;inset:0;pointer-events:none}
+.reel .side{position:absolute;display:grid;justify-items:center}
+.reel .side button{display:grid;justify-items:center;gap:3px;color:#fff}
+.reel .side button>span:first-child{display:grid;place-items:center}
 .reel .side .liked svg.i{fill:#ff6a7f;stroke:#ff6a7f}
 .reel .side .saved svg.i{fill:#fff}
-.reel .info .ht{color:#fff;font-weight:800;text-decoration:underline;text-underline-offset:2px}
+.reel .info .ht{font-weight:800;text-decoration:underline;text-underline-offset:2px}
 .reel video{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .row .s .drf{color:var(--heart);font-weight:600}
 .reel .rfast{position:absolute;left:50%;top:calc(76px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:5;display:inline-flex;align-items:center;gap:2px;padding:7px 14px;border-radius:999px;background:rgba(0,0,0,.6);color:#fff;font:700 .9rem/1 var(--f-body);pointer-events:none}.reel .rfast svg.i{width:.8rem;height:.8rem;fill:#fff;stroke:none}.reel .rfast[hidden]{display:none}
 @media (max-width:380px){.reel-top .rnew span{display:none}.reel-top .rnew{padding-inline:10px}}
-.reel .info{position:absolute;left:14px;right:4.8rem;bottom:calc(1.4rem + env(safe-area-inset-bottom,0px));display:grid;gap:8px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
-.reel .info .u{display:flex;align-items:center;gap:10px;font-weight:700}
-.reel .fbtn{border:1.5px solid rgba(255,255,255,.85);border-radius:10px;padding:4px 10px;font-size:.8rem;font-weight:700}
+.reel .info{position:absolute;display:grid;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.reel .info .u{display:flex;align-items:center;font-weight:700}
 .reel .c{font-size:.9rem;max-height:4.4em;overflow:hidden}
 .reel .aud{display:flex;gap:6px;align-items:center;font-size:.78rem;opacity:.92}
 .reel .aud svg.i{width:.95rem;height:.95rem}
 .reel-top{position:sticky;top:0;height:0;z-index:3}
-.reel-top>div{display:flex;align-items:center;gap:10px;padding:12px 12px 12px}
+.reel-top>div{display:flex;align-items:center;gap:10px}
 .reel-top b{flex:1;font:600 1.2rem/1 var(--f-display);color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.4)}
 .reel-top .ib{background:rgba(0,0,0,.35);border:0;color:#fff}
 
@@ -360,8 +358,8 @@ main.chatmode:has(textarea:focus) .cchips{display:none}
 .dialog b{font:600 1.1rem/1.25 var(--f-display)}
 .dialog p{margin:0;color:var(--muted);font-size:.92rem}
 .dialog .btns{display:grid;gap:6px;margin-top:6px}
-.cmt{display:flex;gap:10px;padding:8px 16px;align-items:flex-start}
-.cmt .t{flex:1;min-width:0;font-size:.92rem;overflow-wrap:anywhere}
+.cmt{display:flex;gap:10px;padding:8px 16px}
+.cmt .t{min-width:0;font-size:.92rem;overflow-wrap:anywhere}
 .cmt .t small{display:block;color:var(--muted);font-size:.76rem;margin-top:2px}
 
 /* Oluştur */
@@ -418,7 +416,7 @@ main.chatmode:has(textarea:focus) .cchips{display:none}
 /* Hikâye görüntüleyici */
 .sv{position:absolute;inset:0;margin:0 auto;max-width:520px;background:#000;pointer-events:auto;color:#fff;display:flex;flex-direction:column}
 .sv .bars{display:flex;gap:4px;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 0;position:relative;z-index:2}
-.sv .bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.35);overflow:hidden}
+.sv .bars i{flex:1;border-radius:2px;background:rgba(255,255,255,.35);overflow:hidden}
 .sv .bars i b{display:block;height:100%;width:0;background:#fff}
 .sv .shd{display:flex;align-items:center;gap:10px;padding:10px 12px;position:relative;z-index:2}
 .sv .shd .n{flex:1;font-weight:700;font-size:.9rem}
@@ -455,7 +453,7 @@ main.chatmode:has(textarea:focus) .cchips{display:none}
 .steps{margin:0 16px 14px;padding-left:22px;display:grid;gap:8px;font-size:.92rem}
 
 #toasts{position:fixed;left:0;right:0;top:calc(66px + env(safe-area-inset-top,0px));z-index:80;display:grid;justify-items:center;gap:8px;pointer-events:none;padding:0 16px}
-.toast{max-width:440px;display:flex;align-items:center;gap:10px;background:var(--fg);color:var(--bg);padding:11px 15px;border-radius:16px;font-size:.9rem;box-shadow:var(--shadow);animation:up .25s ease;pointer-events:none}
+.toast{max-width:440px;display:flex;align-items:center;gap:10px;color:var(--bg);font-size:.9rem;pointer-events:none}
 .toast .av{--s:28px}
 
 /* Sesli mesaj, yanıt, arama */
@@ -503,9 +501,9 @@ main.chatmode:has(textarea:focus) .cchips{display:none}
 .netbar{position:fixed;left:0;right:0;top:0;z-index:95;text-align:center;padding:calc(6px + env(safe-area-inset-top,0px)) 10px 6px;background:#b45309;color:#fff;font-size:.8rem;font-weight:700}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
 /* Çekim ilerleme ve duraklatma */
-.reel .rprog{position:absolute;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);height:3px;background:rgba(255,255,255,.22);z-index:3;pointer-events:none}
+.reel .rprog{position:absolute;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);z-index:3;pointer-events:none}
 .reel .rprog i{display:block;height:100%;width:0;background:#fff}
-.reel .rpause{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:4.4rem;height:4.4rem;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:none;place-items:center;z-index:3;pointer-events:none}
+.reel .rpause{position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);width:4.4rem;height:4.4rem;border-radius:50%;color:#fff;display:none;place-items:center;z-index:3;pointer-events:none}
 .reel.paused .rpause{display:grid}
 .reel .rpause svg.i{width:2rem;height:2rem;fill:#fff}
 /* Uygulama içi kayıt */
@@ -523,7 +521,6 @@ main.chatmode:has(textarea:focus) .cchips{display:none}
 .vrec.on .vr-btn span{width:30px;height:30px;border-radius:8px}
 .vr-hint{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:0;right:0;text-align:center;font-size:.85rem;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 /* Satranç */
-main.chessmode{padding:0 0 10px}
 .chess{display:flex;flex-direction:column;gap:6px;padding:2px 10px 10px}
 .cpl{position:relative;z-index:6}
 .cpl-in{display:flex;align-items:center;gap:10px;padding:5px 8px;border-radius:16px;transition:background .25s;min-height:56px}
@@ -699,7 +696,7 @@ main.enter .nb{animation:nbin .45s cubic-bezier(.2,1.4,.4,1) both}
 .pnote{display:flex;gap:6px;align-items:center;margin-top:6px;font-size:.88rem;background:var(--accent-soft);padding:6px 10px;border-radius:12px;width:fit-content;max-width:100%}
 .pnote svg.i{width:1rem;height:1rem;color:var(--accent)}
 .tag.off{background:var(--surface-2);color:var(--muted)}
-.gm-av{position:relative}.gm-av i{position:absolute;right:-4px;bottom:-4px;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;border:2px solid var(--surface)}.gm-av i svg.i{width:.95rem;height:.95rem}
+.gm-av{position:relative}.gm-av i{position:absolute;right:-4px;bottom:-4px;width:28px;height:28px;border-radius:50%;background:var(--accent);display:grid;place-items:center;border:2px solid var(--surface)}.gm-av i svg.i{width:.95rem;height:.95rem}
 /* sahne küçültme */
 .vbusy{display:grid;justify-items:center;gap:8px;padding:34px 20px;text-align:center}
 .vbusy .spin{width:38px;height:38px}
@@ -709,7 +706,7 @@ main.enter .nb{animation:nbin .45s cubic-bezier(.2,1.4,.4,1) both}
 .banner.inst{align-items:center}.banner.inst .btn{margin-left:auto}
 .adm-log .row{padding:9px 14px}.adm-log .t>div:first-child{font-size:.88rem}
 .dotx{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
-.reel-top .rnew{display:inline-flex;align-items:center;gap:6px;height:2.6rem;padding:0 .9rem;border-radius:14px;background:#fff;color:#111;font-weight:700;font-size:.85rem}
+.reel-top .rnew{display:inline-flex;align-items:center;gap:6px;height:2.6rem;padding:0 .9rem;background:#fff;font-weight:700;font-size:.85rem}
 .reel-top .rnew svg.i{width:1.2rem;height:1.2rem}
 .cmt{align-items:flex-start}.cmt .t{flex:1}
 .clike{flex:none;width:2rem;height:2rem;display:grid;place-items:center;color:var(--muted)}
@@ -721,19 +718,18 @@ main.enter .nb{animation:nbin .45s cubic-bezier(.2,1.4,.4,1) both}
 /*@css:A{*/
 /* --- A · Açılış (intro) --- */
 #intro{position:fixed;inset:0;z-index:300;display:grid;place-items:center;background:var(--bg);overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation}
-#intro .in-glow{position:absolute;left:50%;top:45%;width:140vmax;height:140vmax;margin:-70vmax 0 0 -70vmax;border-radius:50%;background:radial-gradient(closest-side,var(--accent-soft),transparent 62%);pointer-events:none;animation:inGlow 1.3s cubic-bezier(.2,.8,.2,1) both,inBreathe 3.2s ease-in-out 1.3s infinite alternate}
+#intro .in-glow{position:absolute;left:50%;top:45%;width:140vmax;height:140vmax;margin:-70vmax 0 0 -70vmax;border-radius:50%;background:radial-gradient(closest-side,var(--accent-soft),transparent 62%);pointer-events:none}
 @keyframes inGlow{from{opacity:0;transform:scale(.55)}}
 @keyframes inBreathe{to{scale:1.06}}
-#intro .in-c{position:relative;display:grid;justify-items:center;gap:16px;margin-top:-5vh}
-#intro .in-vf{width:5.6rem;height:5.6rem;overflow:visible;animation:inMark 1s cubic-bezier(.2,.8,.2,1) both}
+#intro .in-c{position:relative;display:grid;justify-items:center;gap:16px}
+#intro .in-vf{overflow:visible}
 @keyframes inMark{from{transform:rotate(-14deg) scale(.82)}}
-#intro .in-vf path{fill:none;stroke:var(--accent);stroke-dasharray:1 1;stroke-dashoffset:0;animation:inDraw .48s cubic-bezier(.65,0,.35,1) both}
-#intro .in-vf path:nth-of-type(1){animation-delay:.04s}#intro .in-vf path:nth-of-type(2){animation-delay:.1s}#intro .in-vf path:nth-of-type(3){animation-delay:.16s}#intro .in-vf path:nth-of-type(4){animation-delay:.22s}#intro .in-vf path:nth-of-type(5){animation-delay:.3s}#intro .in-vf path:nth-of-type(6){animation-delay:.4s}#intro .in-vf path:nth-of-type(7){animation-delay:.48s}#intro .in-vf .in-dot{fill:var(--sun)}
+#intro .in-vf path{fill:none;stroke:var(--accent);stroke-dasharray:1 1;stroke-dashoffset:0}
 @keyframes inDraw{from{stroke-dashoffset:1;opacity:0}15%{opacity:1}}
 #intro .in-dot{fill:var(--accent);transform-box:fill-box;transform-origin:center;animation:inDot .6s cubic-bezier(.3,1.7,.5,1) .4s both,inPulse 2.4s ease-in-out 1.4s infinite}
 @keyframes inDot{from{transform:scale(0)}}
 @keyframes inPulse{50%{scale:1.14}}
-#intro .in-ring{fill:none;stroke:var(--sun);stroke-width:.7;opacity:0;transform-box:fill-box;transform-origin:center;animation:inRing .8s cubic-bezier(.2,.7,.3,1) .5s both}
+#intro .in-ring{fill:none;stroke:var(--sun);stroke-width:.7;opacity:0;transform-box:fill-box;transform-origin:center}
 @keyframes inRing{0%{opacity:0;transform:scale(1)}1%{opacity:.95}to{opacity:0;transform:scale(3.4)}}
 #intro .in-wm{display:flex;font:700 2.7rem/1 var(--f-display);letter-spacing:-.04em;color:var(--fg);overflow:hidden;padding:.06em .06em .2em;margin-bottom:-.14em}
 #intro .in-wm span{display:inline-block;animation:inLet .52s cubic-bezier(.2,.9,.25,1.12) both}
@@ -743,7 +739,6 @@ main.enter .nb{animation:nbin .45s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes inUp{from{opacity:0;transform:translateY(8px)}}
 #intro .in-foot{position:absolute;left:0;right:0;bottom:calc(40px + env(safe-area-inset-bottom,0px));display:grid;justify-items:center;gap:12px;padding:0 24px;text-align:center}
 #intro #splashMsg{font-size:.8rem;color:var(--muted);min-height:1.2em;opacity:0;transition:opacity .4s}
-#intro.slow #splashMsg{opacity:1}
 #intro.out #splashMsg{visibility:hidden}
 #intro .in-bar{width:8.5rem;height:3px;border-radius:3px;background:var(--line);overflow:hidden;animation:inFade .4s ease .85s both}
 #intro .in-bar i{display:block;width:42%;height:100%;border-radius:3px;background:var(--accent);animation:inSlide 1.2s cubic-bezier(.6,0,.4,1) infinite}
@@ -1098,11 +1093,7 @@ html[data-accent]:not([data-accent="kadraj"]) .call{background:radial-gradient(1
 :root[data-ui="vizor"] .shell[data-cdk]{--vz-hp:92%;--vz-gp:72%;--vz-g2p:84%;--vz-hi:rgba(255,255,255,.07)}
 
 /* --- zemin: vurgu renginde hafif ışık sızması ve film greni --- */
-:root[data-ui="vizor"] .shell{overflow:hidden;background:
- radial-gradient(120% 55% at 108% -6%,color-mix(in srgb,var(--accent) var(--vz-leak),transparent),transparent 62%),
- radial-gradient(85% 45% at -12% 104%,color-mix(in srgb,var(--vz-rec) 9%,transparent),transparent 60%),
- var(--vz-grain) 0 0/180px 180px,var(--bg)}
-:root[data-ui="vizor"] .shell[data-ct]{background:var(--bg)}
+:root[data-ui="vizor"] .shell{overflow:hidden}
 
 /* --- üst çubuk: içeriğin üstünde yüzen HUD --- */
 :root[data-ui="vizor"] #top{position:absolute;top:0;left:0;right:0;z-index:20;background:var(--vz-glass-2);-webkit-backdrop-filter:blur(18px) saturate(1.6);backdrop-filter:blur(18px) saturate(1.6);border-bottom:1px solid transparent;transition:transform .34s var(--vz-ease),border-color .25s}
@@ -1114,7 +1105,7 @@ html[data-accent]:not([data-accent="kadraj"]) .call{background:radial-gradient(1
 :root[data-ui="vizor"] #top[hidden]~main{padding-top:0}
 :root[data-ui="vizor"] main:not(.chatmode):not(.snap){padding-bottom:calc(var(--vz-dh,0px) + 16px)}
 :root[data-ui="vizor"] .hd h1{font-size:1.22rem;letter-spacing:-.015em}
-:root[data-ui="vizor"] .hd h1[data-meta]::after,:root[data-ui="vizor"] .hd .wordmark[data-meta]::after{content:attr(data-meta);display:block;margin-top:5px;font:500 .58rem/1.1 var(--f-mono);letter-spacing:.16em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:root[data-ui="vizor"] .hd h1[data-meta]::after,:root[data-ui="vizor"] .hd .wordmark[data-meta]::after{content:attr(data-meta);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 :root[data-ui="vizor"] .hd .wordmark{font-size:1.34rem}
 :root[data-ui="vizor"] .hd .wordmark[data-meta]::after{letter-spacing:.16em;margin-top:6px}
 :root[data-ui="vizor"] .hd .brand .vfmark{width:1.55rem;height:1.55rem}
@@ -1126,9 +1117,9 @@ html[data-accent]:not([data-accent="kadraj"]) .call{background:radial-gradient(1
 /* --- dok: kenarlardan kopuk, bulanık "objektif çubuğu" ve ortada deklanşör --- */
 :root[data-ui="vizor"] .dock{position:absolute;left:0;right:0;bottom:0;z-index:20;padding:0 14px calc(12px + env(safe-area-inset-bottom,0px));background:none;pointer-events:none}
 :root[data-ui="vizor"] .dock::before{content:"";position:absolute;left:0;right:0;bottom:0;height:calc(100% + 26px);background:linear-gradient(color-mix(in srgb,var(--bg) 0%,transparent),color-mix(in srgb,var(--bg) 88%,transparent) 62%);pointer-events:none}
-:root[data-ui="vizor"] .dock nav{position:relative;pointer-events:auto;max-width:440px;margin:0 auto;grid-template-columns:1fr 1fr 4.4rem 1fr 1fr;align-items:center;padding:6px;border-radius:999px;background:color-mix(in srgb,var(--surface) 88%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);border:1px solid var(--vz-hair);box-shadow:var(--vz-lift),inset 0 1px 0 var(--vz-hi)}
+:root[data-ui="vizor"] .dock nav{position:relative;pointer-events:auto;max-width:440px;margin:0 auto;align-items:center;padding:6px;border-radius:999px;background:color-mix(in srgb,var(--surface) 88%,transparent);-webkit-backdrop-filter:blur(20px) saturate(1.8);backdrop-filter:blur(20px) saturate(1.8);border:1px solid var(--vz-hair)}
 @supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){:root[data-ui="vizor"] .dock nav{background:var(--surface)}}
-:root[data-ui="vizor"] .dock nav>button{z-index:1;gap:5px;padding:9px 0 8px;border-radius:999px;font:600 .6rem/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+:root[data-ui="vizor"] .dock nav>button{z-index:1;border-radius:999px;font:600 .6rem/1 var(--f-mono);text-transform:uppercase;color:var(--muted);transition:color .2s}
 :root[data-ui="vizor"] .dock nav>button svg.i{width:1.45rem;height:1.45rem;stroke-width:1.8}
 :root[data-ui="vizor"] .dock nav>button[aria-current="page"]{color:var(--fg)}
 :root[data-ui="vizor"] .dock nav>button[aria-current="page"] svg.i{color:var(--accent);stroke-width:2.2}
@@ -1136,9 +1127,9 @@ html[data-accent]:not([data-accent="kadraj"]) .call{background:radial-gradient(1
 :root[data-ui="vizor"] .dock [aria-current="page"] .me{box-shadow:0 0 0 2px var(--accent)}
 :root[data-ui="vizor"] .dock .cnt-badge{top:1px;right:calc(50% - 21px);background:var(--vz-rec);border-color:var(--surface)}
 /* odak köşeleri: etkin sekmeyi çerçeveler, sekmeler arasında yaylanarak kayar */
-:root[data-ui="vizor"] .vz-focus{position:absolute;left:0;top:6px;bottom:6px;width:var(--w,60px);translate:var(--x,0px) 0;color:var(--accent);pointer-events:none;transition:translate .52s var(--vz-spring),width .3s var(--vz-ease),opacity .2s}
-:root[data-ui="vizor"] .vz-focus::before{content:"";position:absolute;inset:4px 6px;background:var(--vz-brk-s);background-repeat:no-repeat}
-:root[data-ui="vizor"] .vz-focus::after{content:"";position:absolute;inset:8px 10px;border-radius:12px;background:color-mix(in srgb,var(--accent) 10%,transparent)}
+:root[data-ui="vizor"] .vz-focus{position:absolute;left:0;width:var(--w,60px);translate:var(--x,0px) 0;color:var(--accent);pointer-events:none;transition:translate .52s var(--vz-spring),width .3s var(--vz-ease),opacity .2s}
+:root[data-ui="vizor"] .vz-focus::before{content:"";position:absolute;background:var(--vz-brk-s);background-repeat:no-repeat}
+:root[data-ui="vizor"] .vz-focus::after{content:"";position:absolute;background:color-mix(in srgb,var(--accent) 10%,transparent)}
 :root[data-ui="vizor"] .vz-focus.nt{transition:none}
 :root[data-ui="vizor"] .vz-focus.off{opacity:0}
 :root[data-ui="vizor"] .vz-focus.lock::before{animation:vzLock .55s .22s var(--vz-ease)}
@@ -2117,7 +2108,7 @@ html.reduce-motion .cwface .cwf.a{opacity:1}
    Üstten kayan dikdörtgen kart: fotoğraf + tür rozeti, "Kadraj · tür · saat" satırı, ad, iki satır önizleme, eylemler, yanıt kutusu.
    Renkler tema değişkenlerinden; Vizör'de köşelerde odak işaretleri ve HUD yazısı. */
 #knStack{position:fixed;left:0;right:0;top:calc(8px + env(safe-area-inset-top,0px));z-index:85;display:flex;flex-direction:column;align-items:center;gap:8px;padding:0 12px;pointer-events:none}
-.kn{--kn-r:16px;position:relative;width:min(460px,100%);pointer-events:auto;background:color-mix(in srgb,var(--surface) 98%,transparent);color:var(--fg);border:1px solid var(--line);border-radius:var(--kn-r);box-shadow:0 18px 40px -16px rgba(0,0,0,.38),0 2px 8px rgba(0,0,0,.08);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;
+.kn{--kn-r:16px;position:relative;width:min(460px,100%);pointer-events:auto;background:color-mix(in srgb,var(--surface) 98%,transparent);color:var(--fg);border:1px solid var(--line);border-radius:var(--kn-r);box-shadow:0 18px 40px -16px rgba(0,0,0,.38),0 2px 8px rgba(0,0,0,.08);-webkit-backdrop-filter:blur(18px) saturate(1.3);backdrop-filter:blur(18px) saturate(1.3);overflow:hidden;-webkit-user-select:none;user-select:none;
  transform:translateY(calc(-100% - 24px));opacity:0;transition:transform .42s cubic-bezier(.2,1.25,.35,1),opacity .25s ease}
 .kn.in{transform:none;opacity:1}
 .kn.out{transform:translateY(calc(-100% - 24px))!important;opacity:0!important;transition:transform .26s ease-in,opacity .22s ease-in}
@@ -3358,10 +3349,9 @@ html.reduce-motion .reel .rdisc img{animation:none}
 :root[data-ui] .dock nav>button[aria-current="page"] svg.i{color:var(--accent);stroke-width:2.2}
 :root[data-ui] .dock .cnt-badge{top:2px;right:calc(50% - 22px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--heart);border:2px solid var(--surface);font:700 .62rem/14px var(--f-body)}
 :root[data-ui] .vz-focus{position:absolute;left:0;top:5px;bottom:5px;width:var(--w,60px);translate:var(--x,0px) 0;z-index:0;pointer-events:none;color:var(--accent);transition:translate .55s var(--k6-spring),width .3s var(--k6-ease),opacity .2s}
-:root[data-ui] .vz-focus::after{content:"";position:absolute;inset:0 5px;border-radius:18px;background:color-mix(in srgb,var(--accent) 12%,transparent)}
+:root[data-ui] .vz-focus::after{position:absolute;inset:0 5px;border-radius:18px;background:color-mix(in srgb,var(--accent) 12%,transparent)}
 :root[data-ui] .vz-focus.nt{transition:none}
 :root[data-ui] .vz-focus.off{opacity:0}
-:root[data-ui="vizor"] .vz-focus{top:6px;bottom:6px}
 :root[data-ui="vizor"] .vz-focus::after{inset:0 4px;border-radius:999px}
 :root[data-ui="vizor"] .vz-focus::before{inset:1px 3px;opacity:.7;z-index:1}
 :root[data-ui="vizor"] .dock nav{border-color:var(--k6-hair);box-shadow:var(--k6-e3),inset 0 1px 0 var(--vz-hi)}
@@ -3387,10 +3377,9 @@ html.reduce-motion .reel .rdisc img{animation:none}
 :root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(2){--k6i:1}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(3){--k6i:2}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(4){--k6i:3}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(5){--k6i:4}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(6){--k6i:5}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(7){--k6i:6}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(8){--k6i:7}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(9){--k6i:8}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(10){--k6i:9}:root[data-ui] main.enter :is(.stories,.hrow,.grid,.box,.notes,.hlr,.sr-flg,.sr-flr,.sr-body)>:nth-child(n+11){--k6i:10}
 
 /* --- düğmeler, girişler, anahtarlar, bölmeli seçim --- */
-:root[data-ui] .btn{border-radius:999px;letter-spacing:-.005em}
 :root[data-ui] .btn.sec{background:var(--surface-2);border:1px solid var(--k6-hair);box-shadow:none}
 :root[data-ui] .btn.line{border-color:var(--k6-hair)}
-:root[data-ui] .in{border-radius:16px;border:1.5px solid var(--k6-hair);background-color:var(--surface);transition:border-color .2s,box-shadow .2s}
+:root[data-ui] .in{border:1.5px solid var(--k6-hair);background-color:var(--surface);transition:border-color .2s,box-shadow .2s}
 :root[data-ui] .in:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}
 :root[data-ui] .sw span{background:color-mix(in srgb,var(--fg) 16%,transparent);transition:background-color .25s}
 :root[data-ui] .sw span::after{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.24),0 3px 8px -3px rgba(0,0,0,.2);transition:transform .34s var(--k6-spring)}
@@ -3418,7 +3407,7 @@ html.reduce-motion .reel .rdisc img{animation:none}
 
 /* --- süzgeç çipleri ve kayan gösterge --- */
 :root[data-ui] .chips{gap:6px;padding:4px 16px 12px}
-:root[data-ui] .chips .chip{min-height:2.3rem;padding:0 1rem;border-radius:999px;background:var(--surface);border:1px solid var(--k6-hair);box-shadow:var(--k6-e1);color:var(--muted);font:600 .86rem/1 var(--f-body);letter-spacing:0;text-transform:none;transition:color .25s,background-color .25s,transform .25s var(--k6-spring)}
+:root[data-ui] .chips .chip{min-height:2.3rem;padding:0 1rem;background:var(--surface);border:1px solid var(--k6-hair);box-shadow:var(--k6-e1);color:var(--muted);font:600 .86rem/1 var(--f-body);letter-spacing:0;text-transform:none;transition:color .25s,background-color .25s,transform .25s var(--k6-spring)}
 :root[data-ui] .chips .chip svg.i{width:1.05rem;height:1.05rem}
 :root[data-ui] .chips .chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:transparent;box-shadow:var(--k6-e2)}
 :root[data-ui] .chips .chip[aria-pressed="true"]::before{content:none}
@@ -3436,7 +3425,7 @@ html.reduce-motion .reel .rdisc img{animation:none}
 :root[data-ui] .story .n{font:600 .72rem/1.2 var(--f-body)}
 :root[data-ui] .story .plus{width:24px;height:24px;border-radius:50%;border:2.5px solid var(--bg);background:var(--accent);box-shadow:0 4px 10px -4px color-mix(in srgb,var(--accent) 80%,transparent)}
 :root[data-ui] .av.ring img,:root[data-ui] .av.ring.seen img{box-shadow:none}
-:root[data-ui] .av.ring::before{content:"";position:absolute;inset:calc(var(--s,44px) * -.085);border-radius:36%;padding:max(2px,calc(var(--s,44px) * .042));background:var(--k6-ring);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none;animation:none}
+:root[data-ui] .av.ring::before{content:"";position:absolute;background:var(--k6-ring);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none;animation:none}
 :root[data-ui] .av.ring.seen::before{background:var(--line);padding:max(1.5px,calc(var(--s,44px) * .024))}
 :root[data-ui] .stories .av.ring:not(.seen)::before{animation:none}
 :root[data-ui] .stories .av.ring:not(.seen)::after{content:none;animation:none}
@@ -3659,20 +3648,17 @@ html.reduce-motion .reel .rdisc img{animation:none}
 @keyframes k6Full{from{opacity:0;transform:translateY(28px)}}
 @keyframes k6Toast{from{opacity:0;transform:translateY(-18px) scale(.92)}}
 :root[data-ui] .scrim{animation:k6Fade .28s ease both}
-:root[data-ui] .sheet{border-radius:28px 28px 0 0;box-shadow:var(--k6-e3);animation:k6Sheet .5s var(--k6-soft) both}
-:root[data-ui] .sheet .grab{width:40px;height:5px;margin:10px auto 6px;border-radius:3px;background:var(--line)}
+:root[data-ui] .sheet{box-shadow:var(--k6-e3)}
+:root[data-ui] .sheet .grab{border-radius:3px;background:var(--line)}
 :root[data-ui] .sheet h4{margin:6px 18px 10px;font:600 1.05rem/1.2 var(--f-display);letter-spacing:-.01em}
 :root[data-ui] .opt{gap:14px;width:calc(100% - 16px);margin:0 8px;padding:10px 12px;border-radius:16px;font-weight:600}
 :root[data-ui] .opt>svg.i:first-child{width:2.35rem;height:2.35rem;padding:.55rem;border-radius:13px;background:var(--surface-2);color:var(--fg);flex:none}
 :root[data-ui] .opt.red>svg.i:first-child{background:color-mix(in srgb,var(--heart) 13%,transparent);color:var(--heart)}
 :root[data-ui] #overlay .sheet .body>.opt{animation:k6Opt .4s var(--k6-ease) both}
 :root[data-ui] #overlay .sheet .body>.opt:nth-child(2){animation-delay:.03s}:root[data-ui] #overlay .sheet .body>.opt:nth-child(3){animation-delay:.06s}:root[data-ui] #overlay .sheet .body>.opt:nth-child(4){animation-delay:.09s}:root[data-ui] #overlay .sheet .body>.opt:nth-child(5){animation-delay:.12s}:root[data-ui] #overlay .sheet .body>.opt:nth-child(n+6){animation-delay:.15s}
-:root[data-ui] .dialog{padding:24px 18px 14px;border-radius:28px;background:var(--surface);border:1px solid var(--k6-hair);box-shadow:var(--k6-e3);animation:k6Dlg .42s var(--k6-spring) both}
+:root[data-ui] .dialog{padding:24px 18px 14px;background:var(--surface);border:1px solid var(--k6-hair);box-shadow:var(--k6-e3)}
 :root[data-ui] .dialog .btn.sec{background:var(--surface-2)}
 :root[data-ui] .full{animation:k6Full .42s var(--k6-soft) both}
-:root[data-ui] #vzGhosts .scrim{animation:vzOut .22s ease forwards}
-:root[data-ui] #vzGhosts .sheet{animation:k6SheetOut .26s cubic-bezier(.4,0,1,1) forwards}
-:root[data-ui] #vzGhosts .dialog{animation:vzDlgOut .2s ease forwards}
 :root[data-ui] .toast{gap:10px;padding:10px 16px 10px 12px;border-radius:20px;font-weight:600;box-shadow:var(--k6-e3);animation:k6Toast .5s var(--k6-spring) both}
 :root[data-ui] .toast:not(:has(.av))::before{content:"";flex:none;width:8px;height:8px;margin-left:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 30%,transparent)}
 
@@ -3945,8 +3931,8 @@ html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-i
 .k69-cancel{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;margin:0 0 8px;padding:8px 12px;border-radius:12px;background:var(--surface-2);font-weight:700;font-size:.85rem}
 .k69-cancel svg.i{width:16px;height:16px}
 /* ayarlar */
-.k69-rx{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-.k69-rx button{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:2px solid transparent;transition:transform .2s}
+.k69-rx{display:flex;gap:8px;margin-top:8px}
+.k69-rx button{height:44px;border-radius:14px;display:grid;place-items:center;background:var(--surface-2);border:2px solid transparent;transition:transform .2s}
 .k69-rx button[aria-pressed="true"]{border-color:var(--accent);transform:scale(1.06)}
 .k69-rx svg.rx{width:26px;height:26px}
 /* yönetici */
@@ -4019,20 +4005,18 @@ html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-i
 :root[data-ui] #dock nav>button .dl{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0;padding:0}
 :root[data-ui] #dock nav>button{gap:0;padding:11px 0;color:var(--fg)}
 :root[data-ui] #dock nav>button svg.i{width:1.62rem;height:1.62rem;stroke-width:1.75;color:var(--fg)}
-:root[data-ui] #dock nav>button[aria-current="page"] svg.i,:root[data-ui] #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i{color:var(--accent);stroke-width:2.1}
+:root[data-ui] #dock nav>button[aria-current="page"] svg.i,:root[data-ui] #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i{stroke-width:2.1}
 :root[data-ui] #dock nav>button[aria-current="page"]:is([data-tab="feed"],[data-tab="chats"],[data-tab="activity"]) svg.i,:root[data-ui] #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i{fill:currentColor}
 :root[data-ui] #dock nav>button[aria-current="page"][data-tab="chats"] svg.i path+path,:root[data-ui] #shell[data-r="reels"] #dock nav>button[data-go="reels"] svg.i path:first-of-type{stroke:var(--surface);fill:var(--surface)}
 :root[data-ui] #dock nav>button[aria-current="page"][data-tab="explore"] svg.i{stroke-width:2.9}
 :root[data-ui] #dock nav>button.pop svg.i,:root[data-ui] #dock nav>button.pop .me{animation:k70Dock calc(var(--k70-d) * 1.1) var(--k70-sp) both}
 @keyframes k70Dock{0%{transform:scale(.72)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
 :root[data-ui] #dock .me{width:1.7rem;height:1.7rem;border-radius:50%;outline:0;box-shadow:0 0 0 1px var(--k6-hair)}
-:root[data-ui] #dock [aria-current="page"] .me{box-shadow:0 0 0 2px var(--bg),0 0 0 3.5px var(--accent)}
 :root[data-ui] #dock .cnt-badge{top:4px}
 :root[data-ui] #dock nav>button[data-act="create"]{padding:0;display:grid;place-items:center}
 :root[data-ui] #dock .create{width:2.75rem;height:2.4rem;margin:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);box-shadow:none}
 :root[data-ui] #dock .create svg.i{width:1.5rem;height:1.5rem;stroke-width:2.3;color:inherit}
 :root[data-ui] #dock [data-act="create"]:active .create{transform:scale(.88)}
-:root[data-ui] .vz-focus::after{content:none}
 :root[data-ui]:not([data-ui="vizor"]) .vz-focus{display:none}
 /* Klasik: Instagram gibi düz, tam genişlik çubuk */
 :root[data-ui]:not([data-ui="vizor"]) #dock{padding:0 0 env(safe-area-inset-bottom,0px);background:var(--bg);border-top:1px solid var(--k6-hair)}
@@ -4220,11 +4204,11 @@ html.reduce-motion #main[class*="k69-in-"],html.reduce-motion #top[class*="k69-i
 
 /* --- pencereler: süre ayardan; alttan yaylı açılış, hızlı kapanış --- */
 :root[data-ui] .scrim{animation-duration:calc(var(--k70-d) * .8)}
-:root[data-ui] .sheet{border-radius:20px 20px 0 0;animation:k70Sheet var(--k70-d) cubic-bezier(.2,.95,.25,1) both}
+:root[data-ui] .sheet{animation:k70Sheet var(--k70-d) cubic-bezier(.2,.95,.25,1) both}
 @keyframes k70Sheet{from{transform:translate3d(0,100%,0)}}
 :root[data-ui] .sheet .grab{width:36px;height:4px;margin:8px auto 4px}
 :root[data-ui] #overlay .sheet .body>.opt{animation-duration:var(--k70-d)}
-:root[data-ui] .dialog{border-radius:20px;animation:k70Dlg var(--k70-d) var(--k70-sp) both}
+:root[data-ui] .dialog{animation:k70Dlg var(--k70-d) var(--k70-sp) both}
 @keyframes k70Dlg{from{opacity:0;scale:.86}}
 :root[data-ui] .full{animation-duration:var(--k70-d)}
 :root[data-ui] #vzGhosts .sheet{animation:k6SheetOut min(.24s,var(--k70-d)) cubic-bezier(.4,0,1,1) forwards}
@@ -4362,13 +4346,11 @@ html.reduce-motion .cinfo.k70-in,html.reduce-motion .cinfo.k70-in .body>*,html.r
 /* --- 1) Açılış: köşeler çizilir, K çizilir, turuncu nokta düşüp zıplar (≈1,05 sn); sonsuz animasyon yok --- */
 #intro .in-glow{animation:k70Glow .8s cubic-bezier(.2,.8,.2,1) both}
 @keyframes k70Glow{from{opacity:0;transform:scale(.4)}}
-#intro .in-vf{animation:k70Mark .9s cubic-bezier(.2,.8,.2,1) both}
 @keyframes k70Mark{from{transform:scale(.78) rotate(-12deg)}}
 #intro .in-vf path{animation:k70Draw .36s cubic-bezier(.65,0,.35,1) both}
 #intro .in-vf path:nth-of-type(1){animation-delay:0s}#intro .in-vf path:nth-of-type(2){animation-delay:.07s}#intro .in-vf path:nth-of-type(3){animation-delay:.14s}#intro .in-vf path:nth-of-type(4){animation-delay:.21s}
 #intro .in-vf path:nth-of-type(5){animation-duration:.24s;animation-delay:.36s}#intro .in-vf path:nth-of-type(6){animation-duration:.22s;animation-delay:.5s}#intro .in-vf path:nth-of-type(7){animation-duration:.2s;animation-delay:.6s}
 @keyframes k70Draw{from{stroke-dashoffset:1;opacity:0}12%{opacity:1}}
-#intro .in-vf .in-dot{animation:k70Dot .42s cubic-bezier(.3,0,.5,1) .64s both,k70Beat 1.8s ease-in-out 1.7s 5}
 @keyframes k70Dot{0%{opacity:0;transform:translateY(-480%) scale(.5)}25%{opacity:1}58%{transform:translateY(0) scale(1.35,.7)}74%{transform:translateY(-90%) scale(.9,1.12)}88%{transform:translateY(0) scale(1.1,.92)}100%{opacity:1;transform:none}}
 @keyframes k70Beat{50%{scale:1.18}}
 #intro .in-ring{animation:k70Ring .55s cubic-bezier(.2,.7,.3,1) .9s both}

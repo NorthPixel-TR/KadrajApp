@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70117,APP_VER_RAW="7.1.17";
+const APP_V=70118,APP_VER_RAW="7.1.18";
 /* 7.1.7: sahibinin isteğiyle görünen sürüm numaraları 3 eksik (3.0 → 0.0, 7.1.7 → 4.1.7, iç 8.0 → görünen 5.0). APP_V, VER_NAMES anahtarları, kayıt mesajları ("7.1.7: …") ve meta/_surum iç numarayla devam eder (sürüm denetimi geri gitmesin); yalnızca ekranda verShow/verStr ile 3 çıkarılır. */
 const VER_OFF=3,verShow=s=>String(s).replace(/^(\d+)/,(m,a)=>String(Math.max(0,+a-VER_OFF)));const APP_VER=verShow(APP_VER_RAW);
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
@@ -38,6 +38,11 @@ const verGap=x=>verStep(x)-verStep(APP_V);
 const ACT={};
 /* Kancalar: after(routeName) her render sonrası · enter(fresh) uygulamaya girince · profiles(map) profiller gelince · boot() açılışta */
 const HOOKS={after:[],enter:[],profiles:[],boot:[]};
+/* 7.1.18 kAfter: bir fonksiyon "bittikten sonra şunu da yap" diye sarılacaksa kAfter("ad",function(sonuç,...argümanlar){…}) kullan.
+   İlk kayıtta fonksiyon bir kez sarılır, sonraki kayıtlar listeye eklenir (sırayla, her biri ayrı try/catch). Liste: kAfter.L.ad.
+   plusMenu, profMenu, postMenu ve mnAfterRender'ın 20 ayrı sarmalayıcısı buna çevrildi (kod eleştirisi: sarmalama zinciri). */
+function kAfter(name,fn){const A=kAfter.L||(kAfter.L={});let L=A[name];if(!L){L=A[name]=[];const base=globalThis[name];if(typeof base!=="function")throw new Error("kAfter: "+name);
+ globalThis[name]=function(...a){const r=base.apply(this,a);for(const h of L){try{h.call(this,r,...a)}catch(e){console.warn(name,e)}}return r}}L.push(fn)}
 function runHooks(k,...a){for(const f of HOOKS[k]||[])try{f(...a)}catch(e){console.warn("hook",k,e)}}
 
 /* ============ İkonlar ============ */
@@ -5381,10 +5386,9 @@ srCtx=function(){const c=srCtx51();try{const hid=k51Hidden();if(!Object.keys(hid
 async function k51HideToggle(pid){const l={...k51Hidden()};const p=postById(pid);const un=p?k51Un(p.uid)+" ":"";const on=!l[pid];if(on)l[pid]=now();else delete l[pid];
  for(const k of Object.keys(l))if(!S.posts[k]&&k!==pid&&now()-l[k]>30*24*H)delete l[k];
  if(await admSet("gizle",{list:l})){S.adm={...(S.adm||{}),gizle:{list:l}};admLog(`${un}paylaşımı Keşfet'ten ${on?"gizlendi":"yeniden gösterildi"}`,"icerik");toast(on?"Keşfet'ten gizlendi":"Keşfet'te yeniden görünüyor");return true}return false}
-const postMenu51=postMenu;
-postMenu=function(id,...r){const out=postMenu51.call(this,id,...r);try{if(!S.admin||!S.posts[id])return out;const l=$('#overlay [data-layer="menu"]');if(!l)return out;const anc=$("#mPin",l);if(!anc)return out;
+kAfter("postMenu",function(out,id,...r){try{if(!S.admin||!S.posts[id])return out;const l=$('#overlay [data-layer="menu"]');if(!l)return out;const anc=$("#mPin",l);if(!anc)return out;
  anc.insertAdjacentHTML("afterend",`<button class="opt" id="mK51H">${I("k51eyeoff")}${k51IsHid(id)?"Yönetici: Keşfet'te yeniden göster":"Yönetici: Keşfet'ten gizle"}</button>`);
- $("#mK51H",l).onclick=()=>{closeLayer("menu");k51HideToggle(id).then(ok=>{if(ok)render(false)})}}catch(e){console.warn(e)}return out};
+ $("#mK51H",l).onclick=()=>{closeLayer("menu");k51HideToggle(id).then(ok=>{if(ok)render(false)})}}catch(e){console.warn(e)}});
 
 /* ---------- 9 · İşlem kaydı: 100 kayıt, tür etiketi ---------- */
 admLog=function(text,kind){if(!S.admin)return;const items=[{t:now(),x:String(text||"").slice(0,220),by:S.uid,...(kind?{k:String(kind).slice(0,12)}:{})},...admLogItems()].slice(0,100);
@@ -5939,9 +5943,8 @@ renderMsgs=function(...a){const keep=kvpKeep($("#msgs"));const r=renderMsgsBaseM
 const attachPhotoOld=attachPhoto;
 attachPhoto=async function(){const key=S.route&&S.route.params&&S.route.params.key;if(!key)return attachPhotoOld();let k;try{k=keyInfo(key)}catch{return attachPhotoOld()}
  const vOk=k.type!=="bot";const r=await kmpOpen({title:vOk?"Fotoğraf ya da video gönder":"Fotoğraf gönder",accept:vOk?"both":"image",multi:true,max:10});if(r)kvChatSend(key,r)};
-const plusMenuBaseM51=plusMenu;
-plusMenu=function(...a){const r=plusMenuBaseM51.apply(this,a);try{const l=$('#overlay [data-layer="plus"]');const b=l&&$("#pph",l);const k=keyInfo(S.route.params.key);
- if(b&&k.type!=="bot"){const t=b.querySelector("b"),s=b.querySelector("small");if(t)t.textContent="Fotoğraf ya da video";if(s)s.textContent="Galeri, kamera, çizim · birden çok seçebilirsin"}}catch(e){console.warn(e)}return r};
+kAfter("plusMenu",function(r,...a){try{const l=$('#overlay [data-layer="plus"]');const b=l&&$("#pph",l);const k=keyInfo(S.route.params.key);
+ if(b&&k.type!=="bot"){const t=b.querySelector("b"),s=b.querySelector("small");if(t)t.textContent="Fotoğraf ya da video";if(s)s.textContent="Galeri, kamera, çizim · birden çok seçebilirsin"}}catch(e){console.warn(e)}});
 /* iletme: video da taşınsın */
 const fwdSheetBaseM51=fwdSheet;
 fwdSheet=function(m){const r=fwdSheetBaseM51(m);try{if(m&&m.video&&!m.del){const l=$('#overlay [data-layer="fwd"]');if(l)$$("[data-fwd]",l).forEach(b=>b.onclick=async()=>{closeLayer("fwd");const p={fwd:1,video:m.video,text:m.text||""};if(m.poster)p.poster=m.poster;if(m.dur)p.dur=m.dur;if(m.ar)p.ar=m.ar;if(await sendMessage(b.dataset.fwd,p))toast("İletildi")})}}catch(e){console.warn(e)}return r};
@@ -6417,7 +6420,7 @@ async function blkSet(uid,on){if(!guard()||!uid||uid===S.uid)return false;const 
  toast(on?`@${P(uid).username} engellendi`:`@${P(uid).username} için engel kaldırıldı`);render(false);return true}
 function blkAsk(uid){const u=P(uid);dialog(`@${u.username} engellensin mi?`,"Birbirinizin paylaşımlarını, hikâyelerini ve yorumlarını görmezsiniz; sana mesaj atamaz, arayamaz, seni takip edemez. İstediğin zaman engeli kaldırabilirsin.",[{label:"Engelle",cls:"danger",fn:()=>blkSet(uid,true)},{label:"Vazgeç"}])}
 ACT.blk=(b)=>blkAsk(b.dataset.u);ACT.blkun=(b)=>blkSet(b.dataset.u,false);
-{const f=profMenu;profMenu=function(uid){const r=f.apply(this,arguments);try{if(uid&&uid!==S.uid&&!S.guest&&!BOT[uid]){const l=$('#overlay [data-layer="menu"]');const box=l&&(l.querySelector(".opts")||l.querySelector(".sheet")||l);if(box&&!box.querySelector("[data-act=blk],[data-act=blkun]")){const on=iBlocked(uid);const bt=document.createElement("button");bt.className="opt"+(on?"":" danger");bt.dataset.act=on?"blkun":"blk";bt.dataset.u=uid;bt.innerHTML=`${I(on?"check":"lock")}${on?"Engeli kaldır":"Engelle"}`;bt.addEventListener("click",()=>closeLayer("menu"));box.appendChild(bt)}}}catch{}return r}}
+kAfter("profMenu",function(r,uid){try{if(uid&&uid!==S.uid&&!S.guest&&!BOT[uid]){const l=$('#overlay [data-layer="menu"]');const box=l&&(l.querySelector(".opts")||l.querySelector(".sheet")||l);if(box&&!box.querySelector("[data-act=blk],[data-act=blkun]")){const on=iBlocked(uid);const bt=document.createElement("button");bt.className="opt"+(on?"":" danger");bt.dataset.act=on?"blkun":"blk";bt.dataset.u=uid;bt.innerHTML=`${I(on?"check":"lock")}${on?"Engeli kaldır":"Engelle"}`;bt.addEventListener("click",()=>closeLayer("menu"));box.appendChild(bt)}}}catch{}});
 /* engellenen kişi, beni engelleyeni takip ediyorsa takibi kendi cihazında bırakır */
 HOOKS.profiles.push(()=>{if(!S.authed||S.guest||!S.uid)return;const me=S.profiles[S.uid];if(!me)return;for(const u of Object.keys(me.following||{}))if(me.following[u]&&blockedMe(u)&&!S._blkUnf){S._blkUnf=1;setTimeout(()=>{S._blkUnf=0},5000);DB.update("profiles/"+S.uid,{following:{[u]:0}}).catch(()=>{});break}});
 /* Ayarlar: engellenen hesaplar listesi */
@@ -7565,11 +7568,10 @@ async function onceDone(k,mid){const m=S.msgs.find(x=>x.id===mid);if(!m)return;c
 /* gönderen: 24 saati geçen açılmamış tek seferlik fotoğrafı siler */
 function onceSweep(){const k=pinKey();if(!k)return;for(const m of S.msgs)if(m.once&&m.img&&m.from===S.uid&&now()-m.at>ONCE_T)write(()=>DB.update(`chats/${k.cid}/msgs/${m.id}`,{img:null}),{quiet:true})}
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-once]");if(!b)return;e.preventDefault();e.stopPropagation();onceOpen(b.dataset.once)},true);
-const plusMenuBase61=plusMenu;
-plusMenu=function(...a){const r=plusMenuBase61.apply(this,a);try{const k=pinKey();const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const ph=box&&box.querySelector("#pph");
+kAfter("plusMenu",function(r,...a){try{const k=pinKey();const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const ph=box&&box.querySelector("#pph");
   if(k&&ph){const b=document.createElement("button");b.className="src";b.id="pon";b.innerHTML=`<span class="ic">${I("eye")}</span><span><b>Tek seferlik fotoğraf</b><small>Bir kez açılır, sonra kaybolur</small></span>`;b.onclick=()=>{closeLayer("plus");onceSend()};ph.after(b);
    const z=document.createElement("button");z.className="src";z.id="psch";z.innerHTML=`<span class="ic">${I("bell")}</span><span><b>Mesajı zamanla</b><small>Seçtiğin saatte görünsün</small></span>`;z.onclick=()=>{closeLayer("plus");schOpen()};b.after(z);
-   const g=document.createElement("button");g.className="src";g.id="pog";g.innerHTML=`<span class="ic">${OG_IC}</span><span><b>Oyun oyna</b><small>XOX, 4'lü Bağla ya da Kelime</small></span>`;g.onclick=()=>{closeLayer("plus");ogPick(S.route.params.key)};z.after(g)}}catch(e){console.warn(e)}return r};
+   const g=document.createElement("button");g.className="src";g.id="pog";g.innerHTML=`<span class="ic">${OG_IC}</span><span><b>Oyun oyna</b><small>XOX, 4'lü Bağla ya da Kelime</small></span>`;g.onclick=()=>{closeLayer("plus");ogPick(S.route.params.key)};z.after(g)}}catch(e){console.warn(e)}});
 /* Mesaj zamanlama: + menüsünde "Zamanla" (DM ve grup, var olan sohbet). Sunucu olmadığı için mesaj hemen gelecek zamanla yazılır
    ({at:gelecek, sch:1}); alıcının cihazı zamanı gelene kadar göstermez (renderMsgs öncesi süzülür), son mesaj özeti ve bildirim o ana kadar
    değişmez. Zamanı gelince açık sohbette görünür ve görenin cihazı chats.last'ı günceller (o zaman uygulama içi bildirim düşer). Telefon
@@ -7644,7 +7646,7 @@ function cfSheet(onDone){const l=sheet("cfl","Yakın Arkadaşlar",`<div class="c
  $("#cfQ",l).oninput=draw;$("#cfL",l).onclick=async e=>{const b=e.target.closest("[data-cfu]");if(!b||!guard())return;const u=b.dataset.cfu,on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",on);vib(10);if(!(await cfSet(u,on)))b.setAttribute("aria-pressed",!on);$("#cfN",l).textContent=cfCount()+" kişi"};draw();return l}
 ACT.cflist=()=>cfSheet();
 HOOKS.after.push(r=>{if(r!=="settings"||S.guest)return;const m=$("#main");if(!m||m.querySelector("#cfEntry"))return;const n=cfCount();const d=document.createElement("div");d.id="cfEntry";d.className="box";d.style.margin="12px 16px";d.innerHTML=`<button class="row" data-act="cflist" style="width:100%"><span class="cf-ic sm">${I("star")}</span><div class="t"><b>Yakın Arkadaşlar</b><div class="s">${n?n+" kişi":"Kimse yok"}</div></div>${I("next")}</button>`;const blk=m.querySelector("#blkEntry");if(blk)blk.before(d);else m.appendChild(d)});
-{const f=profMenu;profMenu=function(uid){const r=f.apply(this,arguments);try{if(uid&&uid!==S.uid&&!S.guest&&!BOT[uid]&&S.profiles[uid]){const l=$('#overlay [data-layer="menu"]');const box=l&&(l.querySelector(".opts")||l.querySelector(".sheet")||l);const cl=box&&box.querySelector('[data-act="close"]');if(box&&!box.querySelector("#pmCf")){const on=isClose(S.uid,uid);const bt=document.createElement("button");bt.className="opt";bt.id="pmCf";bt.innerHTML=`${I("star")}${on?"Yakın Arkadaşlardan çıkar":"Yakın Arkadaşlara ekle"}`;bt.onclick=async()=>{closeLayer("menu");if(!guard())return;if(await cfSet(uid,!on))toast(on?"Yakın Arkadaşlardan çıkarıldı":"Yakın Arkadaşlara eklendi")};if(cl)cl.before(bt);else box.appendChild(bt)}}}catch{}return r}}
+kAfter("profMenu",function(r,uid){try{if(uid&&uid!==S.uid&&!S.guest&&!BOT[uid]&&S.profiles[uid]){const l=$('#overlay [data-layer="menu"]');const box=l&&(l.querySelector(".opts")||l.querySelector(".sheet")||l);const cl=box&&box.querySelector('[data-act="close"]');if(box&&!box.querySelector("#pmCf")){const on=isClose(S.uid,uid);const bt=document.createElement("button");bt.className="opt";bt.id="pmCf";bt.innerHTML=`${I("star")}${on?"Yakın Arkadaşlardan çıkar":"Yakın Arkadaşlara ekle"}`;bt.onclick=async()=>{closeLayer("menu");if(!guard())return;if(await cfSet(uid,!on))toast(on?"Yakın Arkadaşlardan çıkarıldı":"Yakın Arkadaşlara eklendi")};if(cl)cl.before(bt);else box.appendChild(bt)}}}catch{}});
 
 /* çıkartmalar */
 const ST_MAX=8,ST_ICONS=[["heart","#E23E57"],["star","#F5B921"],["spark","#9B5CF6"],["sun","#FF8A4C"],["moon","#3B4CCA"],["music","#0C7A63"],["bulb","#E0A400"],["trophy","#C98A12"],["flag","#2A8BD8"],["camera","#333A40"]];
@@ -7861,8 +7863,8 @@ function gmFriend(){if(!guard())return;const ppl=humans();
 function gmChat(key,chess){const k=keyInfo(key);const gs=[...(chess&&k.type==="dm"?[["chess","Satranç","Davet gönder, sırayla oynayın",I("knight")]]:[]),["xox","XOX","Üçünü yan yana diz",I("pad")],["c4","4'lü Bağla","Taşları düşür, dördünü birleştir",I("pad")],["kel","Kelime","Aynı 5 harfli kelimeyi kim daha az denemede bulur",I("pad")]];
  const l=sheet("gmc","Oyunlar",`<div class="srcs">${gs.map(([t,n,d,ic])=>`<button class="src" type="button" data-gmc="${t}"><span class="ic">${ic}</span><span><b>${n}</b><small>${d}</small></span></button>`).join("")}</div>`);
  l.onclick=e=>{const b=e.target.closest("[data-gmc]");if(!b)return;closeLayer("gmc");const t=b.dataset.gmc;if(t==="chess")return chCreateOnline(k.uid);ogGo(O=>O.invite(key,t))}}
-{const f=plusMenu;plusMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");if(box){l.classList.add("pl-grid");const pch=box.querySelector("#pch"),pog=box.querySelector("#pog");
- if(pch||pog){const key=S.route.params.key;const b=document.createElement("button");b.className="src";b.id="pgm";b.type="button";b.innerHTML=`<span class="ic">${I("pad")}</span><span><b>Oyunlar</b><small>Satranç, XOX, 4'lü Bağla, Kelime</small></span>`;b.onclick=()=>{closeLayer("plus");gmChat(key,!!pch)};(pog||pch).before(b);if(pch)pch.remove();if(pog)pog.remove()}}}catch(e){console.warn(e)}return r}}
+kAfter("plusMenu",function(r,...a){try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");if(box){l.classList.add("pl-grid");const pch=box.querySelector("#pch"),pog=box.querySelector("#pog");
+ if(pch||pog){const key=S.route.params.key;const b=document.createElement("button");b.className="src";b.id="pgm";b.type="button";b.innerHTML=`<span class="ic">${I("pad")}</span><span><b>Oyunlar</b><small>Satranç, XOX, 4'lü Bağla, Kelime</small></span>`;b.onclick=()=>{closeLayer("plus");gmChat(key,!!pch)};(pog||pch).before(b);if(pch)pch.remove();if(pog)pog.remove()}}}catch(e){console.warn(e)}});
 /* notta şarkı */
 const nmOf=uid=>{const p=S.profiles[uid];const n=p&&p.note;if(!n||!noteOf(uid))return null;const m=n.music;return musOk(m)&&pmKidOk(m)?m:null};
 function nmPick(cur,onPick){return itPick(cur,onPick,"Şarkı ekle")}
@@ -7948,7 +7950,7 @@ function muSheet(u){const un=P(u).username;const l=sheet("mute","@"+un+" sessize
  $("#muGo",l).onclick=()=>{const p=$("#muP",l).checked,s=$("#muS",l).checked;muSet(u,{p:p?1:0,s:s?1:0});closeLayer("mute");toast(p||s?"@"+un+" sessize alındı":"Sessize alma kaldırıldı")}}
 function muListSheet(){const ids=Object.keys(muAll()).filter(u=>S.profiles[u]||BOT[u]);const l=sheet("mulist","Sessize alınanlar",ids.length?`<div class="box">${ids.map(u=>`<div class="row">${avatar(u,44,{click:false,ring:false})}<div class="t"><b>${esc(P(u).name)}</b><div class="s">${[muP(u)?"paylaşımlar":"",muS(u)?"hikâyeler":""].filter(Boolean).join(", ")}</div></div><button class="btn sm sec" type="button" data-mux="${esc(u)}">Kaldır</button></div>`).join("")}</div>`:`<p class="muted k62-note">Sessize aldığın kimse yok. Bir profilin üç nokta menüsünden sessize alabilirsin.</p>`);
  l.onclick=e=>{const b=e.target.closest("[data-mux]");if(!b)return;muSet(b.dataset.mux,{p:0,s:0});const row=b.closest(".row");if(row)row.remove();toast("Sessize alma kaldırıldı")}}
-{const f=profMenu;profMenu=function(uid,...a){const r=f.call(this,uid,...a);try{if(uid&&uid!==S.uid&&!S.guest){const l=$('#overlay [data-layer="menu"]');const x=l&&[...l.querySelectorAll(".opt")].find(b=>b.dataset.act==="close");if(l&&!l.querySelector("#pmMu")){const b=document.createElement("button");b.className="opt";b.id="pmMu";b.type="button";b.innerHTML=`${I("mute")}${muP(uid)||muS(uid)?"Sessize almayı düzenle":"Sessize al"}`;b.onclick=()=>{closeLayer("menu");muSheet(uid)};x?x.before(b):l.querySelector(".body,.sheet").appendChild(b)}}}catch(e){console.warn(e)}return r}}
+kAfter("profMenu",function(r,uid,...a){try{if(uid&&uid!==S.uid&&!S.guest){const l=$('#overlay [data-layer="menu"]');const x=l&&[...l.querySelectorAll(".opt")].find(b=>b.dataset.act==="close");if(l&&!l.querySelector("#pmMu")){const b=document.createElement("button");b.className="opt";b.id="pmMu";b.type="button";b.innerHTML=`${I("mute")}${muP(uid)||muS(uid)?"Sessize almayı düzenle":"Sessize al"}`;b.onclick=()=>{closeLayer("menu");muSheet(uid)};x?x.before(b):l.querySelector(".body,.sheet").appendChild(b)}}}catch(e){console.warn(e)}});
 /* paylaşım arşivi */
 {const f=allPosts;allPosts=function(...a){return f.apply(this,a).filter(p=>!p.arch&&!p.embed)}}
 async function arcSet(id,on){const p=S.posts[id];if(!p||p.uid!==S.uid)return false;S.posts={...S.posts,[id]:{...p,arch:on?1:0}};const ok=await write(()=>DB.update("posts/"+id,{arch:on?1:0}));if(!ok)S.posts={...S.posts,[id]:p};scheduleRefresh();return ok}
@@ -7957,9 +7959,9 @@ function arcSheet(){const list=Object.values(S.posts||{}).filter(p=>p&&p.uid===S
  const l=sheet("parc","Paylaşım arşivi",list.length?`<div class="dft-g">${list.map(p=>`<div class="dft-i"><button class="dft-o" type="button" data-arcv="${esc(p.id)}">${th(p)}</button><div class="dft-m"><b>${esc({photo:"Fotoğraf",note:"Not",poll:"Anket",reel:"Klaket"}[p.kind]||"Paylaşım")}</b><small>${esc(ago(p.at))}</small></div><button class="btn sm sec" type="button" data-arcb="${esc(p.id)}">Profilde göster</button></div>`).join("")}</div><p class="muted k62-note">Arşivdekileri yalnızca sen görürsün.</p>`:`<p class="muted k62-note">Arşivin boş. Bir paylaşımının üç nokta menüsünden Arşivle'ye dokun: silinmez, yalnızca senden başkası görmez.</p>`,{tall:list.length>4});
  l.onclick=async e=>{const v=e.target.closest("[data-arcv]");if(v){closeLayer("parc");const p=S.posts[v.dataset.arcv];return go(p&&p.kind==="reel"?"reels":"post",p&&p.kind==="reel"?{start:p.id,by:S.uid}:{id:v.dataset.arcv})}
   const b=e.target.closest("[data-arcb]");if(b){b.disabled=true;if(await arcSet(b.dataset.arcb,false)){const it=b.closest(".dft-i");if(it)it.remove();toast("Paylaşım profilinde yeniden görünüyor")}else b.disabled=false}}}
-{const f=postMenu;postMenu=function(id,...a){const r=f.call(this,id,...a);try{const p=postById(id);const l=$('#overlay [data-layer="menu"]');if(!p||!l)return r;
+kAfter("postMenu",function(r,id,...a){try{const p=postById(id);const l=$('#overlay [data-layer="menu"]');if(!p||!l)return r;
  if(p.uid===S.uid&&S.posts[id]&&!l.querySelector("#mArc")){const b=document.createElement("button");b.className="opt";b.id="mArc";b.type="button";b.innerHTML=`${I("box")}${p.arch?"Arşivden çıkar":"Arşivle"}`;b.onclick=async()=>{closeLayer("menu");if(await arcSet(id,!p.arch)){toast(p.arch?"Paylaşım profilinde yeniden görünüyor":"Arşivlendi. Ayarlar › Paylaşım arşivi'nden geri getirebilirsin");if(!p.arch&&(S.route.name==="post"||S.route.name==="reels"))back()}};const d=l.querySelector("#mDel");d?d.before(b):l.appendChild(b)}
- else if(p.uid!==S.uid&&!S.guest&&!l.querySelector("#mMu")){const b=document.createElement("button");b.className="opt";b.id="mMu";b.type="button";b.innerHTML=`${I("mute")}Sessize al`;b.onclick=()=>{closeLayer("menu");muSheet(p.uid)};const x=[...l.querySelectorAll(".opt")].find(o=>o.dataset.act==="close");x?x.before(b):l.appendChild(b)}}catch(e){console.warn(e)}return r}}
+ else if(p.uid!==S.uid&&!S.guest&&!l.querySelector("#mMu")){const b=document.createElement("button");b.className="opt";b.id="mMu";b.type="button";b.innerHTML=`${I("mute")}Sessize al`;b.onclick=()=>{closeLayer("menu");muSheet(p.uid)};const x=[...l.querySelectorAll(".opt")].find(o=>o.dataset.act==="close");x?x.before(b):l.appendChild(b)}}catch(e){console.warn(e)}});
 /* Kadraj'da geçirdiğin süre */
 const tmKey=()=>"kadraj_time_"+S.uid;const tmDay=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 setInterval(()=>{if(!S.authed||S.guest||!S.uid||document.hidden)return;const k=tmKey();const t=LS.get(k)||{};const d=tmDay();t[d]=(t[d]||0)+30;const ks=Object.keys(t).sort();while(ks.length>14)delete t[ks.shift()];LS.set(k,t);
@@ -8539,10 +8541,10 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)reelSongPau
   b.onclick=()=>{Music.stop();itPick(c.song,v=>{c.song=v;if(v){c.music="none";c.vmusic="none";$$("[data-mu],[data-vmu]",rb).forEach(o=>o.setAttribute("aria-pressed",o.dataset.mu==="none"||o.dataset.vmu==="none"))}paint()},"Klakete şarkı")};
   anchor.after(b);$$("[data-mu],[data-vmu]",rb).forEach(o=>o.addEventListener("click",()=>{if((o.dataset.mu||o.dataset.vmu)!=="none"&&c.song){c.song=null;paint()}}))}}}catch(e){console.warn(e)}return r}}
 /* sohbette şarkı ve grup anketi: + menüsü */
-{const f=plusMenu;plusMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const key=S.route.params.key;const k=keyInfo(key);
+kAfter("plusMenu",function(r,...a){try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const key=S.route.params.key;const k=keyInfo(key);
  if(box&&k&&k.type!=="bot"){const mk=(id,ic,b,sm,fn)=>{const e=document.createElement("button");e.className="src";e.id=id;e.type="button";e.innerHTML=`<span class="ic">${I(ic)}</span><span><b>${b}</b><small>${sm}</small></span>`;e.onclick=()=>{closeLayer("plus");fn()};box.appendChild(e)};
   mk("psong","music","Şarkı","Şarkı ara, 30 saniyesini gönder",()=>{if(!guard())return;itPick(null,m=>{if(m)sendMessage(key,{mus:m})},"Şarkı gönder")});
-  if(k.type==="group"){mk("pgpoll","poll","Anket","Gruba soru sor, herkes oy versin",()=>gpNew(key));mk("palb","image","Ortak albüm","Gruptaki herkes aynı albüme fotoğraf ekler",()=>albSheet(key))}}}catch(e){console.warn(e)}return r}}
+  if(k.type==="group"){mk("pgpoll","poll","Anket","Gruba soru sor, herkes oy versin",()=>gpNew(key));mk("palb","image","Ortak albüm","Gruptaki herkes aynı albüme fotoğraf ekler",()=>albSheet(key))}}}catch(e){console.warn(e)}});
 function musMsgPaint(box){const hid=(S.hidden&&S.hidden.msgs)||{};for(const m of S.msgs||[]){if(!m||!m.mus||!m.id||m.del||hid[m.id])continue;const el=document.getElementById("m-"+m.id);if(!el||el.querySelector(".mmus"))continue;
  const mm=musClean(m.mus);if(!mm||!pmKidOk(mm)){el.insertAdjacentHTML("beforeend",`<div class="mmus muted">Şarkı gösterilemiyor</div>`);continue}
  el.insertAdjacentHTML("beforeend",`<div class="mmus" data-noauto>${itPlayer(mm).replace('class="it-pl"',`class="it-pl" data-ik="m-${esc(m.id)}"`)}</div>`);
@@ -8561,7 +8563,7 @@ document.addEventListener("click",async e=>{const b=e.target.closest&&e.target.c
  const[mid,ix]=b.dataset.gpv.split(":");const i=+ix;const k=keyInfo(S.route.params.key);if(!k||k.type!=="group")return;const m=(S.msgs||[]).find(x=>x.id===mid);if(!m||!m.gpoll)return;
  const cur=Number.isInteger((m.pv||{})[S.uid])?m.pv[S.uid]:-1;const v=cur===i?null:i;vib(12);
  S.msgs=S.msgs.map(x=>x.id===mid?{...x,pv:{...(x.pv||{}),[S.uid]:v}}:x);renderMsgs();await write(()=>DB.update(`chats/${k.cid}/msgs/${mid}`,{pv:{[S.uid]:v}}),{quiet:true})},true);
-{const f=mnAfterRender;mnAfterRender=function(...a){const r=f.apply(this,a);const box=$("#msgs");if(box){try{musMsgPaint(box)}catch(e){console.warn(e)}try{gpPaint(box)}catch(e){console.warn(e)}}return r}}
+kAfter("mnAfterRender",function(r,...a){const box=$("#msgs");if(box){try{musMsgPaint(box)}catch(e){console.warn(e)}try{gpPaint(box)}catch(e){console.warn(e)}}});
 /* doğum günü */
 const BD_AY=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const bdOk=v=>{const m=/^(\d\d)-(\d\d)$/.exec(String(v||""));if(!m)return null;const mo=+m[1],d=+m[2];if(mo<1||mo>12||d<1||d>[31,29,31,30,31,30,31,31,30,31,30,31][mo-1])return null;return{mo,d}};
@@ -8880,12 +8882,12 @@ HOOKS.after.unshift(r=>{if(r!=="settings"||S.guest)return;const m=$("#main");if(
  m.appendChild(a);m.appendChild(q)});
 
 /* ---------- menüler: koleksiyon, favori ---------- */
-{const f=postMenu;postMenu=function(id,...a){const r=f.call(this,id,...a);try{const p=postById(id);const l=$('#overlay [data-layer="menu"]');if(p&&l&&!S.guest&&!capLocked(p)&&!l.querySelector("#mKol")){const cl=l.querySelector('[data-act="close"]');const b=document.createElement("button");b.className="opt";b.id="mKol";b.type="button";b.innerHTML=`${I("bookmark")}Koleksiyona kaydet`;b.onclick=()=>{closeLayer("menu");kolPick(id)};
+kAfter("postMenu",function(r,id,...a){try{const p=postById(id);const l=$('#overlay [data-layer="menu"]');if(p&&l&&!S.guest&&!capLocked(p)&&!l.querySelector("#mKol")){const cl=l.querySelector('[data-act="close"]');const b=document.createElement("button");b.className="opt";b.id="mKol";b.type="button";b.innerHTML=`${I("bookmark")}Koleksiyona kaydet`;b.onclick=()=>{closeLayer("menu");kolPick(id)};
  const rpb=p.uid!==S.uid&&!BOT[p.uid]&&!p.bot?document.createElement("button"):null;if(rpb){rpb.className="opt";rpb.type="button";rpb.innerHTML=`${I("repost")}${iRp(id)?"Yeniden paylaşımı geri al":"Yeniden paylaş"}`;rpb.onclick=()=>{closeLayer("menu");rpToggle(id)}}
- if(cl){cl.before(b);if(rpb)cl.before(rpb)}else{l.appendChild(b);if(rpb)l.appendChild(rpb)}}}catch(e){console.warn(e)}return r}}
-{const f=profMenu;profMenu=function(uid,...a){const r=f.call(this,uid,...a);try{const l=$('#overlay [data-layer="menu"]');if(l&&uid&&uid!==S.uid&&!S.guest&&!BOT[uid]&&S.profiles[uid]&&!l.querySelector("#pmFav")){const cl=l.querySelector('[data-act="close"]');const on=isFav(uid);
+ if(cl){cl.before(b);if(rpb)cl.before(rpb)}else{l.appendChild(b);if(rpb)l.appendChild(rpb)}}}catch(e){console.warn(e)}});
+kAfter("profMenu",function(r,uid,...a){try{const l=$('#overlay [data-layer="menu"]');if(l&&uid&&uid!==S.uid&&!S.guest&&!BOT[uid]&&S.profiles[uid]&&!l.querySelector("#pmFav")){const cl=l.querySelector('[data-act="close"]');const on=isFav(uid);
  const b=document.createElement("button");b.className="opt";b.id="pmFav";b.type="button";b.innerHTML=`${I("star")}${on?"Favorilerden çıkar":"Favorilere ekle"}`;b.onclick=async()=>{closeLayer("menu");if(!guard())return;if(!on&&favCount()>=50)return toast("En fazla 50 favori ekleyebilirsin.");if(await favSet(uid,!on))toast(on?"Favorilerden çıkarıldı":"Favorilere eklendi. Akış › Favoriler'de görürsün.")};
- const q=document.createElement("button");q.className="opt";q.type="button";q.innerHTML=`${I("qr")}Kadraj kodu`;q.onclick=()=>{closeLayer("menu");qrSheet(uid)};if(cl){cl.before(b);cl.before(q)}else{l.appendChild(b);l.appendChild(q)}}}catch(e){console.warn(e)}return r}}
+ const q=document.createElement("button");q.className="opt";q.type="button";q.innerHTML=`${I("qr")}Kadraj kodu`;q.onclick=()=>{closeLayer("menu");qrSheet(uid)};if(cl){cl.before(b);cl.before(q)}else{l.appendChild(b);l.appendChild(q)}}}catch(e){console.warn(e)}});
 
 /* ---------- günün sorusu ---------- */
 const GQ_LIST=["Bugün seni en çok ne güldürdü?","Şu an dinlediğin şarkı hangisi?","Bir süper gücün olsa ne olurdu?","Hafta sonu için planın ne?","En sevdiğin yemek hangisi?",
@@ -9374,11 +9376,11 @@ async function rzToggle(uid,id){if(!rzMine()||!RZM[id])return false;const list={
  if(!await admSet("rozet",{...k51Doc("rozet"),list,at:now()}))return false;S.adm={...(S.adm||{}),rozet:{...k51Doc("rozet"),list}};
  try{admLog(`@${P(uid).username} ${RZM[id].t} rozeti ${on?"verildi":"kaldırıldı"}`,"kullanici")}catch{}toast(on?`${RZM[id].t} rozeti verildi`:`${RZM[id].t} rozeti kaldırıldı`);render(false);return true}
 {const f=admRozetSheet;admRozetSheet=function(uid){if(S.admin||!rzMine())return f.apply(this,arguments);S.admin=true;try{return f.apply(this,arguments)}finally{S.admin=false}}}
-{const f=profMenu;profMenu=function(uid,...a){const r=f.call(this,uid,...a);try{if(uid&&uid!==S.uid&&!BOT[uid]&&S.profiles[uid]&&rzMine()){const l=$('#overlay [data-layer="menu"]');const box=l&&(l.querySelector(".opts")||l.querySelector(".sheet")||l);
+kAfter("profMenu",function(r,uid,...a){try{if(uid&&uid!==S.uid&&!BOT[uid]&&S.profiles[uid]&&rzMine()){const l=$('#overlay [data-layer="menu"]');const box=l&&(l.querySelector(".opts")||l.querySelector(".sheet")||l);
  if(box&&!box.querySelector("#pmRzH")){const has=(rzManual()[uid]||[]).includes("hayran");const cl=box.querySelector('[data-act="close"]');
   const b1=document.createElement("button");b1.className="opt";b1.id="pmRzH";b1.innerHTML=`${I("rzno1")}${has?"No.1 Hayran rozetini kaldır":"No.1 Hayran rozetini ver"}`;b1.onclick=()=>{closeLayer("menu");rzToggle(uid,"hayran")};
   const b2=document.createElement("button");b2.className="opt";b2.id="pmRzE";b2.innerHTML=`${I("rzcrown")}Rozetleri düzenle`;b2.onclick=()=>{closeLayer("menu");setTimeout(()=>admRozetSheet(uid),280)};
-  if(cl){cl.before(b1);cl.before(b2)}else{box.appendChild(b1);box.appendChild(b2)}}}}catch(e){console.warn("rz76",e)}return r}}
+  if(cl){cl.before(b1);cl.before(b2)}else{box.appendChild(b1);box.appendChild(b2)}}}}catch(e){console.warn("rz76",e)}});
 /*}@js:76*/
 
 /*@js:77{*/
@@ -9549,9 +9551,9 @@ async function stkMake(key,img0){if(!guard())return;const r=img0?{img:img0}:awai
 document.addEventListener("click",e=>{const im=e.target.closest&&e.target.closest("img.k69-stk[data-stk]");if(!im||!S.authed)return;e.preventDefault();e.stopPropagation();const g={u:im.getAttribute("src"),w:220,h:220};
  const l=sheet("k69sa","Çıkartma",`<div class="k69s-wrap"><img src="${esc(g.u)}" alt="" style="width:160px;height:160px;object-fit:contain"></div><button class="opt" id="k69Add">${I("add")}Çıkartmalarıma ekle</button>`);$("#k69Add",l).onclick=async()=>{if(await stk69Add(g))closeLayer("k69sa")}},true);
 /* + menüsü: GIF ve Çıkartma */
-{const f=plusMenu;plusMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const key=S.route.params.key;const k=keyInfo(key);
+kAfter("plusMenu",function(r,...a){try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const key=S.route.params.key;const k=keyInfo(key);
  if(box&&k&&k.type!=="bot"&&!box.querySelector("#pgif")){const mk=(id,ic,b,sm,fn)=>{const e=document.createElement("button");e.className="src";e.id=id;e.type="button";e.innerHTML=`<span class="ic">${I(ic)}</span><span><b>${b}</b><small>${sm}</small></span>`;e.onclick=()=>{closeLayer("plus");fn()};box.appendChild(e)};
-  mk("pgif","gif69","GIF","GIF ara ya da telefondan gönder",()=>gifPick(key,"gif"));mk("pstk","stk69","Çıkartma","Çıkartmaların ve yeni çıkartma",()=>gifPick(key,"mine"))}}catch(e){console.warn(e)}return r}}
+  mk("pgif","gif69","GIF","GIF ara ya da telefondan gönder",()=>gifPick(key,"gif"));mk("pstk","stk69","Çıkartma","Çıkartmaların ve yeni çıkartma",()=>gifPick(key,"mine"))}}catch(e){console.warn(e)}});
 Object.assign(IP,{gif69:'<rect x="3" y="5" width="18" height="14" rx="3.5"/><path d="M10 10.2H8.6a1.6 1.6 0 0 0-1.6 1.6v.4a1.6 1.6 0 0 0 1.6 1.6H10v-1.6H9M12.6 10v4M15.2 14v-4h2.3M15.2 12h1.8"/>',
  stk69:'<path d="M20.5 12.5V7a3.5 3.5 0 0 0-3.5-3.5H7A3.5 3.5 0 0 0 3.5 7v10A3.5 3.5 0 0 0 7 20.5h5.5"/><path d="M20.5 12.5 12.5 20.5v-4.5a3.5 3.5 0 0 1 3.5-3.5z"/><circle cx="9" cy="10" r="1" fill="currentColor" stroke="none"/><circle cx="15" cy="10" r="1" fill="currentColor" stroke="none"/><path d="M9 14.3c.8.6 1.8.9 3 .9"/>',
  acc69:'<circle cx="9" cy="8.5" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M17 8h5M19.5 5.5v5"/>'});
@@ -9672,9 +9674,9 @@ try{ADM_EXTRA.push({id:"k69live",title:"Canlı durum",desc:"Kaç kişi açık, b
 const RR=[.5,1,1.5,2];const rrLbl=v=>String(v).replace(".",",")+"x";
 const rrVid=()=>{try{return typeof activeReel!=="undefined"&&activeReel?activeReel.querySelector("video"):null}catch{return null}};
 {const f=activateReel;activateReel=function(el,...a){const r=f.call(this,el,...a);try{const v=el&&el.querySelector("video");if(v&&!el._fast)v.playbackRate=+settings.reelRate||1}catch{}return r}}
-{const f=postMenu;postMenu=function(id,...a){const r=f.call(this,id,...a);try{if(S.route.name!=="reels")return r;const l=$('#overlay [data-layer="menu"]');const o=l&&l.querySelector(".opt");if(!o||l.querySelector("#mRate"))return r;
+kAfter("postMenu",function(r,id,...a){try{if(S.route.name!=="reels")return r;const l=$('#overlay [data-layer="menu"]');const o=l&&l.querySelector(".opt");if(!o||l.querySelector("#mRate"))return r;
  const b=document.createElement("button");b.className="opt";b.id="mRate";b.type="button";const paint=()=>{b.innerHTML=`${I("play")}<span>Oynatma hızı</span><b class="k69-rr">${rrLbl(+settings.reelRate||1)}</b>`};paint();
- b.onclick=()=>{const c=+settings.reelRate||1;const n=RR[(RR.indexOf(c)+1)%RR.length];settings.reelRate=n;saveSettings();paint();const v=rrVid();if(v)v.playbackRate=n;vib(6)};o.parentNode.insertBefore(b,o)}catch(e){console.warn("rr",e)}return r}}
+ b.onclick=()=>{const c=+settings.reelRate||1;const n=RR[(RR.indexOf(c)+1)%RR.length];settings.reelRate=n;saveSettings();paint();const v=rrVid();if(v)v.playbackRate=n;vib(6)};o.parentNode.insertBefore(b,o)}catch(e){console.warn("rr",e)}});
 /* sohbetteki fotoğraftan çıkartma yap (mesaja basılı tut › Çıkartma yap) */
 {const f=msgMenu;msgMenu=function(mid,...a){const r=f.call(this,mid,...a);try{const m=(S.msgs||[]).find(x=>x.id===mid);const l=$('#overlay [data-layer="menu"]');const o=l&&l.querySelector(".opt");
  if(m&&m.img&&!m.once&&!m.del&&o&&!l.querySelector("#mmStk")){const b=document.createElement("button");b.className="opt";b.id="mmStk";b.type="button";b.innerHTML=`${I("stk69")}Çıkartma yap`;
@@ -9711,8 +9713,8 @@ function k693Cam(){if(!guard())return;const key0=S.route.params.key;const i=docu
 {const f=renderTop;renderTop=function(...a){const r=f.apply(this,a);try{if(S.route.name==="chat"){const tp=$("#top");const k=keyInfo(S.route.params.key);
  if(k.type==="dm"||k.type==="group")tp.querySelectorAll('.ib[data-act="chatinfo"]').forEach(x=>x.remove());
  tp.querySelectorAll(".stk-chip").forEach(x=>{const n=x.querySelector("b");if(!n||+n.textContent===0)x.remove()});tp.classList.add("k693-top")}else $("#top")?.classList.remove("k693-top")}catch(e){console.warn("k693t",e)}return r}}
-{const f=plusMenu;plusMenu=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const k=keyInfo(S.route.params.key);
- if(box&&k.type!=="bot"){["#pph","#pmi","#pgif","#pstk"].forEach(s=>{const e=box.querySelector(s);if(e)e.remove()});l.classList.remove("pl-grid");l.classList.add("k693-pl");const h=l.querySelector("h4>span");if(h&&/Gönder/.test(h.textContent))h.textContent="Daha fazla"}}catch(e){console.warn("k693p",e)}return r}}
+kAfter("plusMenu",function(r,...a){try{const l=$('#overlay [data-layer="plus"]');const box=l&&l.querySelector(".srcs");const k=keyInfo(S.route.params.key);
+ if(box&&k.type!=="bot"){["#pph","#pmi","#pgif","#pstk"].forEach(s=>{const e=box.querySelector(s);if(e)e.remove()});l.classList.remove("pl-grid");l.classList.add("k693-pl");const h=l.querySelector("h4>span");if(h&&/Gönder/.test(h.textContent))h.textContent="Daha fazla"}}catch(e){console.warn("k693p",e)}});
 /*}@js:693*/
 /*@js:70CHAT{*/
 /* ===== 7.0 sohbet (70CHAT) =====
@@ -9755,7 +9757,7 @@ function k70Composer(){const fm=$("#composer"),inp=$("#msgIn"),btn=$("#sendBtn")
 {const f=wireComposer;wireComposer=function(...a){const r=f.apply(this,a);try{k70Composer()}catch(e){console.warn("k70c",e)}return r}}
 /* zamanlama penceresi kutuyu boşaltınca düğme mikrofona döner */
 {const f=schOpen;schOpen=function(...a){const r=f.apply(this,a);try{const fm=$('#overlay [data-layer="sch"] #schF');if(fm)fm.addEventListener("submit",()=>setTimeout(k70Upd,0))}catch{}return r}}
-{const f=plusMenu;plusMenu=function(...a){const r=f.apply(this,a);try{const x=$('#overlay [data-layer="plus"] #psch');if(x)x.remove()}catch{}return r}}
+kAfter("plusMenu",function(r,...a){try{const x=$('#overlay [data-layer="plus"] #psch');if(x)x.remove()}catch{}});
 
 /* ---- sohbet listesi ---- */
 {const f=vChats;vChats=function(...a){let h=f.apply(this,a);try{h=h.replace(/<div class="quick">[\s\S]*?<\/div>/,"").replace("<span>Sohbetler</span>","<span>Mesajlar</span>");
@@ -10238,8 +10240,8 @@ function dlBtn(l,id,fn){const o=l&&l.querySelector(".opt");if(!o||l.querySelecto
 IP.dl708='<path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/>';
 {const f=msgMenu;msgMenu=function(mid,...a){const r=f.call(this,mid,...a);try{const m=(S.msgs||[]).find(x=>x.id===mid);if(m&&!m.del&&!m.once&&(m.video||m.img)){const l=$('#overlay [data-layer="menu"]');
  dlBtn(l,"mmDl",()=>m.video?dlMedia(m.video,"video"):dlMedia(m.img,"foto"))}}catch(e){console.warn("mmDl",e)}return r}}
-{const f=postMenu;postMenu=function(id,...a){const r=f.call(this,id,...a);try{const p=postById(id);const l=$('#overlay [data-layer="menu"]');if(p&&l&&!capLocked(p)){
- if(p.video&&!p.kvy)dlBtn(l,"mDl",()=>dlMedia(p.video,"video"));else if(p.kind==="photo"){const L=typeof phList==="function"?phList(p):[p.src||p.img];const i=typeof PHI==="object"&&PHI[id]||0;const src=L[i]||L[0];if(src)dlBtn(l,"mDl",()=>dlMedia(R(src),"foto"))}}}catch(e){console.warn("mDl",e)}return r}}
+kAfter("postMenu",function(r,id,...a){try{const p=postById(id);const l=$('#overlay [data-layer="menu"]');if(p&&l&&!capLocked(p)){
+ if(p.video&&!p.kvy)dlBtn(l,"mDl",()=>dlMedia(p.video,"video"));else if(p.kind==="photo"){const L=typeof phList==="function"?phList(p):[p.src||p.img];const i=typeof PHI==="object"&&PHI[id]||0;const src=L[i]||L[0];if(src)dlBtn(l,"mDl",()=>dlMedia(R(src),"foto"))}}}catch(e){console.warn("mDl",e)}});
 /*}@js:708*/
 /*@js:7011{*/
 /* 7.0.11 (sahibi: "indirdiğim video telefonda 3 saniye görünüyor, sonra 2 dk 10 sn oluyor; Instagram'a atınca yalnızca ilk 3 saniye"):
@@ -10679,7 +10681,7 @@ function qzGo(fn){qzLoad().then(()=>fn(window.YARISMA)).catch(()=>{qzP=null;toas
 ACT.yarisma=()=>qzGo(Y=>Y.open());
 function qzMsgPaint(){const hid=(S.hidden&&S.hidden.msgs)||{};for(const m of S.msgs||[]){if(!m||!m.qz||!m.id||m.del||hid[m.id])continue;const el=document.getElementById("m-"+m.id);if(!el||el.querySelector(".cpj"))continue;
  el.insertAdjacentHTML("beforeend",`<button class="cpj" data-qzjoin="${esc(String(m.qz).replace(/[^A-Z0-9]/g,"").slice(0,5))}">${I("bulb")}Yarışmaya katıl</button>`)}}
-{const f=mnAfterRender;mnAfterRender=function(...a){const r=f.apply(this,a);try{qzMsgPaint()}catch(e){console.warn(e)}return r}}
+kAfter("mnAfterRender",function(r,...a){try{qzMsgPaint()}catch(e){console.warn(e)}});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-qzjoin]");if(!b)return;e.preventDefault();e.stopPropagation();const c=b.dataset.qzjoin;qzGo(Y=>Y.join(c))},true);
 /*}@js:7112*/
 /*@js:7117{*/
@@ -10734,7 +10736,7 @@ async function albAdd(key,name,repaint){if(!guard())return;name=albName(name);if
 {const f=albAll;albAll=function(cid){const L=f(cid);const seen=new Set(L.filter(m=>!String(m.id).startsWith("tmp-")).map(m=>m.from+"|"+m.img.length+"|"+m.img.slice(-40)));return L.filter(m=>!String(m.id).startsWith("tmp-")||!seen.has(m.from+"|"+m.img.length+"|"+m.img.slice(-40)))}}
 function albMsgPaint(){const hid=(S.hidden&&S.hidden.msgs)||{};for(const m of S.msgs||[]){if(!m||!m.alb||!m.img||!m.id||m.del||hid[m.id])continue;const el=document.getElementById("m-"+m.id);if(!el||el.querySelector(".alb-chip"))continue;const n=albName(m.alb);if(!n)continue;
  el.insertAdjacentHTML("beforeend",`<button type="button" class="alb-chip" data-albo="${esc(n)}">${I("image")}<span>Albüm: ${esc(n)}</span></button>`)}}
-{const f=mnAfterRender;mnAfterRender=function(...a){const r=f.apply(this,a);try{albMsgPaint()}catch(e){console.warn(e)}return r}}
+kAfter("mnAfterRender",function(r,...a){try{albMsgPaint()}catch(e){console.warn(e)}});
 document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-albo]");if(!b)return;e.preventDefault();e.stopPropagation();const key=S.route.params&&S.route.params.key;if(key)albSheet(key,b.dataset.albo)},true);
 /* albüm penceresi açıkken yeni mesaj gelirse ızgara güncellenir */
 {const f=renderMsgs;renderMsgs=function(...a){const r=f.apply(this,a);try{const l=$('#overlay [data-layer="album"]');if(l&&l._albPaint)l._albPaint()}catch(e){}return r}}
