@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70112,APP_VER_RAW="7.1.12";
+const APP_V=70113,APP_VER_RAW="7.1.13";
 /* 7.1.7: sahibinin isteğiyle görünen sürüm numaraları 3 eksik (3.0 → 0.0, 7.1.7 → 4.1.7, iç 8.0 → görünen 5.0). APP_V, VER_NAMES anahtarları, kayıt mesajları ("7.1.7: …") ve meta/_surum iç numarayla devam eder (sürüm denetimi geri gitmesin); yalnızca ekranda verShow/verStr ile 3 çıkarılır. */
 const VER_OFF=3,verShow=s=>String(s).replace(/^(\d+)/,(m,a)=>String(Math.max(0,+a-VER_OFF)));const APP_VER=verShow(APP_VER_RAW);
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
@@ -10712,7 +10712,7 @@ try{ADM_EXTRA.push({id:"marsi",title:"İstiklal Marşı",desc:"Pazartesi töreni
   if(q("#imNowB"))q("#imNowB").onclick=()=>set(imNow()+65000);
   if(q("#imOffB"))q("#imOffB").onclick=()=>{try{window.MARSI&&window.MARSI.stop()}catch(e){}clearTimeout(IM.t1);set(0)};
   if(q("#imSetB"))q("#imSetB").onclick=()=>{const v=(q("#imTm").value||"").split(":");if(v.length<2)return toast("Önce saati seç");const n=imNow(),d=imTR(n);const t=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate(),+v[0],+v[1],0)-10800000;if(t<n+65000)return toast("En az bir dakika sonrası için seç");set(t)};
-  if(q("#imPrevB"))q("#imPrevB").onclick=()=>{toast("Önizleme: 10 saniye sonra başlar");imLoad().then(()=>window.MARSI.run(Date.now()+10000,()=>Date.now())).catch(()=>toast("Yüklenemedi"))}}})}catch(e){console.warn("im adm",e)}
+  if(q("#imPrevB"))q("#imPrevB").onclick=()=>{imUnlock();toast("Önizleme: 10 saniye sonra başlar");imLoad().then(()=>window.MARSI.run(Date.now()+10000,()=>Date.now())).catch(()=>toast("Yüklenemedi"))}}})}catch(e){console.warn("im adm",e)}
 /*}@js:7029*/
 /*@js:711{*/
 /* 7.1.1 Gelişmiş satranç (yol haritası). 1) 60 yeni bulmaca (PZ711): motorla kendi kendine oynanan oyunlardan çıkarıldı ve doğrulandı
@@ -10775,7 +10775,10 @@ HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.qu
 /*}@js:715*/
 /*@js:719{*/
 /* 7.1.9 Ayarlar › İstiklal Marşı (#k719M): herkes istediği an dinler (tören ekranı, sözler, telefonun Türkçe sesi + cihazda üretilen müzik; Android uygulamasında KadrajGaleri.oku) ya da bütün sözleri okur. Pazartesi töreni (7029) aynen sürer. */
-ACT.k719im=()=>imLoad().then(()=>{closeAll();MARSI.run(Date.now())}).catch(()=>toast("Marş açılamadı, internetini kontrol et."));
+/* 7.1.13: telefon sesi yalnızca dokunuş anında açılabilir; marş dosyası yüklenmeden önce ses bağlamını ve okuma sesini burada açarız (marsi.js window.kImAC'ı kullanır) */
+function imUnlock(){try{const AC=window.AudioContext||window.webkitAudioContext;if(AC&&(!window.kImAC||window.kImAC.state==="closed"))window.kImAC=new AC();if(window.kImAC)window.kImAC.resume().catch(()=>{})}catch(e){}
+ try{const ss=window.speechSynthesis;if(ss){const u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="tr-TR";ss.speak(u)}}catch(e){}}
+ACT.k719im=()=>{imUnlock();return imLoad().then(()=>{closeAll();MARSI.run(Date.now())}).catch(()=>toast("Marş açılamadı, internetini kontrol et."))};
 ACT.k719soz=()=>imLoad().then(()=>MARSI.lyrics()).catch(()=>toast("Sözler açılamadı."));
 HOOKS.after.push(r=>{if(r!=="settings")return;try{const m=$("#main");if(!m||m.querySelector("#k719M"))return;const d=document.createElement("div");d.className="box";d.id="k719M";d.style.margin="12px 0";
  d.innerHTML=`<button class="srow" type="button" data-act="k719im"><span class="sic" style="--c:#E30A17">${I("flag")}</span><span class="t">İstiklal Marşı'nı dinle<small>Sözleriyle, sesli okunur, arkada müzik çalar</small></span>${I("next","chev")}</button><button class="srow" type="button" data-act="k719soz"><span class="sic" style="--c:#E30A17">${I("type")}</span><span class="t">İstiklal Marşı sözleri<small>10 kıtanın hepsi</small></span>${I("next","chev")}</button>`;
