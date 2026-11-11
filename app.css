@@ -4726,3 +4726,39 @@ html.reduce-motion #intro .in-vf .in-ring{display:none}
 @keyframes achIn{from{opacity:0;transform:translateX(-50%) translateY(-30px) scale(.8)}}@keyframes achSpin{from{transform:rotateY(180deg) scale(.4)}}
 @media (prefers-reduced-motion:reduce){.ach-pop,.ach-pop .ach-i{animation:none}}
 /*}@css:7120*/
+/*@css:7121{*/
+#main .prof>.pth{position:relative;height:clamp(84px,25vw,132px);border-radius:20px;overflow:hidden;background:var(--surface-2);animation:pthIn .6s cubic-bezier(.2,.8,.2,1) both}
+#main .prof>.pth svg{display:block;width:100%;height:100%}
+#main .prof>.pth::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(transparent,color-mix(in srgb,#000 22%,transparent));pointer-events:none}
+#main .prof.pth-on>.prof-top{margin-top:-36px;align-items:flex-end!important;padding-left:10px!important}
+#main .prof.pth-on>.prof-top>.av{border-radius:50%;box-shadow:0 0 0 4px var(--bg)}
+#main .prof.pth-on>.prof-top .stats{padding-bottom:4px}
+.pth .pl-su{animation:pthSun 1.4s .2s cubic-bezier(.2,.8,.2,1) both}
+.pth .pl-tw{animation:pthTw 1.2s .4s ease-in-out 3}
+.pth .pl-wv{animation:pthWv 1.6s ease-in-out 3}
+.pth .pl-bt{animation:pthBt 1.6s ease-in-out 3;transform-box:fill-box;transform-origin:50% 100%}
+.pth .pl-sn{animation:pthSn 2.4s linear 2}
+.pth .pl-cm{animation:pthCm 1.8s .5s cubic-bezier(.3,.6,.3,1) both}
+.pth .pl-fl{animation:pthFl 1.4s .3s ease-in-out 2;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes pthIn{from{opacity:0;transform:translateY(-8px) scale(.98)}}
+@keyframes pthSun{from{transform:translateY(6px);opacity:.3}}
+@keyframes pthTw{50%{opacity:.25}}
+@keyframes pthWv{50%{transform:translateX(2px)}}
+@keyframes pthBt{25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+@keyframes pthSn{from{transform:translateY(-6px)}to{transform:translateY(6px)}}
+@keyframes pthCm{from{transform:translate(18px,-6px);opacity:0}}
+@keyframes pthFl{50%{transform:skewX(-6deg)}}
+.pth-p{margin:0 16px 10px}
+.pth-grid{margin:0 16px 16px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pth-t{display:grid;gap:6px;padding:6px;border:2px solid transparent;border-radius:16px;background:var(--surface-2);color:var(--fg);font:600 .9rem/1.2 var(--f-body);text-align:left;cursor:pointer}
+.pth-t.on{border-color:var(--accent)}
+.pth-pv{display:block;aspect-ratio:3/1;border-radius:11px;overflow:hidden;background:var(--surface)}
+.pth-pv svg,.pth-mini svg{display:block;width:100%;height:100%}
+.pth-none .pth-pv{background:repeating-linear-gradient(45deg,var(--surface),var(--surface) 6px,var(--surface-2) 6px,var(--surface-2) 12px)}
+.pth-row{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);text-align:left;cursor:pointer}
+.pth-row>span:nth-child(2){flex:1;display:grid;gap:2px;min-width:0}
+.pth-row b{font:600 .95rem/1.2 var(--f-body)}
+.pth-mini{flex:none;width:72px;height:24px;border-radius:7px;overflow:hidden;background:var(--surface-2)}
+@media (prefers-reduced-motion:reduce){#main .prof>.pth,.pth [class^="pl-"]{animation:none!important}}
+:root.reduce-motion #main .prof>.pth,:root.reduce-motion .pth [class^="pl-"]{animation:none!important}
+/*}@css:7121*/
