@@ -18,7 +18,7 @@ const CSS=`.ms{position:absolute;inset:0;margin:0 auto;max-width:560px;backgroun
 .ms-btn{padding:11px 18px;border-radius:14px;background:#2BC48E;color:#06231A;font-weight:800;font-size:.95rem}.ms-btn.sec{background:rgba(255,255,255,.12);color:#fff}.ms-btn:disabled{opacity:.4}
 .ms-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .ms-opp{display:flex;justify-content:space-around;gap:6px}.ms-o{flex:1;min-width:0;text-align:center;padding:6px 4px;border-radius:12px;background:rgba(255,255,255,.06);font-size:.78rem;color:#A9BDB5;transition:background .2s}.ms-o b{display:block;color:#fff;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ms-o.on{background:rgba(43,196,142,.28)}
-.ms-end{position:absolute;inset:0;background:rgba(6,16,13,.86);display:grid;place-items:center;z-index:5;animation:fade .25s ease}.ms-end>div{text-align:center;padding:24px;display:grid;gap:12px;justify-items:center}.ms-end h2{margin:0;font:900 1.6rem var(--f-display)}.ms-end p{margin:0;color:#A9BDB5}
+.on-in{min-width:0;font:800 1.1rem var(--f-mono);letter-spacing:.2em;text-transform:uppercase;background:rgba(255,255,255,.1);color:#fff;border:0;border-radius:10px;padding:8px 10px}.on-code{display:grid;justify-items:center;gap:6px;padding:16px;border-radius:18px;background:rgba(255,255,255,.07)}.on-code small{color:#A9BDB5}.on-code b{font:900 2.2rem var(--f-mono);letter-spacing:.18em}.on-seats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ms.ms-re{animation:none}.ms-end{position:absolute;inset:0;background:rgba(6,16,13,.86);display:grid;place-items:center;z-index:5;animation:fade .25s ease}.ms-end>div{text-align:center;padding:24px;display:grid;gap:12px;justify-items:center}.ms-end h2{margin:0;font:900 1.6rem var(--f-display)}.ms-end p{margin:0;color:#A9BDB5}
 /* okey */
 .ok-mid{display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0}.ok-pile{display:grid;justify-items:center;gap:4px;font-size:.72rem;color:#A9BDB5}
 .ok-t{width:var(--tw,40px);height:calc(var(--tw,40px)*1.38);border-radius:7px;background:#FBF6E9;color:var(--k);display:grid;place-items:center;font:900 calc(var(--tw,40px)*.5) var(--f-display);box-shadow:0 2px 0 #C9BFA5,0 3px 6px rgba(0,0,0,.35);position:relative;flex:none;transition:transform .15s}
@@ -37,14 +37,15 @@ const CSS=`.ms{position:absolute;inset:0;margin:0 auto;max-width:560px;backgroun
 @media (prefers-reduced-motion:reduce){.ms,.ms-end,.ok-t,.cd{animation:none;transition:none}}`;
 function css(){if(document.getElementById("msCss"))return;const s=document.createElement("style");s.id="msCss";s.textContent=CSS;document.head.appendChild(s)}
 function shell(title,body,menu){const h=`<div class="ms" role="dialog" aria-label="${esc(title)}"><div class="ms-h"><button type="button" data-ms="${menu?"x":"menu"}" aria-label="Geri">${I("back")}</button><h1>${esc(title)}</h1>${menu?"":`<button type="button" data-ms="new" aria-label="Yeni oyun">${I("rotate")}</button>`}</div><div class="ms-b" id="msB">${body}</div></div>`;
- if(!L||!L.isConnected){L=openLayer("masa",h,{noScrim:true,onClose:()=>{run++;G=null;L=null}});L._guard=()=>{if(G&&!G.over&&G.moved){dialog("Oyundan çıkılsın mı?","Bu el yarıda kalır.",[{label:"Vazgeç",cls:"sec"},{label:"Çık",cls:"danger",fn:()=>{G=null;menu_()}}]);return true}if(G){G=null;menu_();return true}return false};
-  L.addEventListener("click",e=>{const b=e.target.closest("[data-ms]");if(!b)return;const a=b.dataset.ms;if(a==="x")return closeLayer("masa");if(a==="menu"){if(L._guard())return;return menu_()}if(a==="new")return G&&start(G.k);if(a.startsWith("g:"))return start(a.slice(2))})}
- else L.querySelector(".ms").outerHTML=h;return L.querySelector("#msB")}
-function menu_(){run++;G=null;const o=st(),w=k=>o[k]?` · ${o[k]} galibiyet`:"";
+ if(!L||!L.isConnected){L=openLayer("masa",h,{noScrim:true,onClose:()=>{onLeave();run++;G=null;L=null}});L._guard=()=>{if(G&&!G.over&&G.moved){dialog("Oyundan çıkılsın mı?","Bu el yarıda kalır.",[{label:"Vazgeç",cls:"sec"},{label:"Çık",cls:"danger",fn:()=>{G=null;menu_()}}]);return true}if(G){G=null;menu_();return true}return false};
+  L.addEventListener("click",e=>{const b=e.target.closest("[data-ms]");if(!b)return;const a=b.dataset.ms;if(a==="x")return closeLayer("masa");if(a==="menu"){if(L._guard())return;return menu_()}if(a==="new"){if(G&&G.on)return onNew();return G&&start(G.k)}if(a==="on:renk")return onMenu("renk");if(a==="on:make")return onMake();if(a==="on:join")return onJoin();if(a==="on:go")return onStart();if(a==="on:copy")return onCopy();if(a.startsWith("g:"))return start(a.slice(2))})}
+ else L.querySelector(".ms").outerHTML=h.replace('<div class="ms"','<div class="ms ms-re"');return L.querySelector("#msB")}
+function menu_(){onLeave();run++;G=null;const o=st(),w=k=>o[k]?` · ${o[k]} galibiyet`:"";
  shell("Masa Oyunları",`<div class="ms-menu"><button class="ms-m" type="button" data-ms="g:okey" style="--c:#B45309"><i>13</i><b>Okey</b><small>4 kişilik, üç bota karşı${w("okey")}</small></button>
  <button class="ms-m" type="button" data-ms="g:renk" style="--c:#2563EB"><i>4R</i><b>Dörtrenk</b><small>Rengi ya da sayıyı tuttur, elini ilk bitiren kazanır${w("renk")}</small></button>
+ <button class="ms-m" type="button" data-ms="on:renk" style="--c:#7C3AED"><i>4R</i><b>Dörtrenk · Arkadaşlarla</b><small>2-4 kişi çevrim içi, boş yerlerde bot oynar</small></button>
  <button class="ms-m" type="button" data-ms="g:pisti" style="--c:#BE123C"><i>J</i><b>Pişti</b><small>Yerdeki kartı tuttur, pişti yap${w("pisti")}</small></button>
- <button class="ms-m" type="button" data-ms="g:amiral" style="--c:#0E7490"><i>A</i><b>Amiral Battı</b><small>Gemileri bul ve batır${w("amiral")}</small></button></div><p class="ms-st">Oyunlar botlara karşı ve yalnızca bu cihazda oynanır.</p>`,true)}
+ <button class="ms-m" type="button" data-ms="g:amiral" style="--c:#0E7490"><i>A</i><b>Amiral Battı</b><small>Gemileri bul ve batır${w("amiral")}</small></button></div><p class="ms-st">Dörtrenk arkadaşlarla da oynanır; diğerleri botlara karşı ve yalnızca bu cihazda.</p>`,true)}
 function start(k){run++;({okey:okStart,renk:drStart,pisti:ptStart,amiral:abStart})[k]()}
 function end(title,sub,k,won){if(!G)return;G.over=1;if(won)win(k);try{vib(won?[20,40,20]:15)}catch(e){}const d=document.createElement("div");d.className="ms-end";d.innerHTML=`<div><h2>${esc(title)}</h2><p>${esc(sub)}</p><div class="ms-row"><button class="ms-btn" type="button" data-ms="new">Yeni oyun</button><button class="ms-btn sec" type="button" data-ms="menu">Oyunlar</button></div></div>`;L.querySelector(".ms").appendChild(d)}
 
@@ -113,28 +114,30 @@ const DRC=["#DC2626","#2563EB","#16A34A","#D97706","#111827"],DRN=["Kırmızı",
 function drDeck(){const d=[];for(let c=0;c<4;c++){d.push({c,v:"0"});for(let k=0;k<2;k++){for(let n=1;n<=9;n++)d.push({c,v:String(n)});for(const v of["A","Y","+2"])d.push({c,v})}}for(let k=0;k<4;k++){d.push({c:4,v:"R"});d.push({c:4,v:"+4"})}return shuf(d)}
 const drCan=(k,top,col)=>k.c===4||k.c===col||k.v===top.v;
 function drCard(k,cls="",i){return`<${i!=null?`button type="button" data-dr="${i}"`:"span"} class="cd ${cls}" style="--c:${DRC[k.c]};--cw:50px">${k.v==="A"?"⊘":k.v==="Y"?"⇄":k.v==="R"?"★":k.v}</${i!=null?"button":"span"}>`}
-function drStart(){const d=drDeck();G={k:"renk",deck:d,hands:[0,1,2,3].map(()=>d.splice(0,7)),pile:[],turn:0,dir:1,moved:0,msg:"Sıra sende."};let f;do{f=d.pop();if(f.c===4||isNaN(+f.v)){d.unshift(f);f=null}}while(!f);G.pile.push(f);G.col=f.c;drDraw()}
+function drStart(o){o=o||{};const d=drDeck();G={k:"renk",deck:d,hands:[0,1,2,3].map(()=>d.splice(0,7)),pile:[],turn:0,dir:1,moved:0,msg:"",me:o.me||0,names:o.names||["Sen",...BOTN],human:o.human||[1,0,0,0],on:o.on||null,host:!!o.host,seq:0};G.msg=G.turn===G.me?"Sıra sende.":"";let f;do{f=d.pop();if(f.c===4||isNaN(+f.v)){d.unshift(f);f=null}}while(!f);G.pile.push(f);G.col=f.c;drDraw()}
 function drTake(i,n){for(let k=0;k<n;k++){if(!G.deck.length){const top=G.pile.pop();G.deck=shuf(G.pile);G.pile=[top];if(!G.deck.length)return}G.hands[i].push(G.deck.pop())}}
-function drDraw(){if(!G||G.k!=="renk")return;const top=G.pile[G.pile.length-1],me=G.hands[0];
- const b=shell("Dörtrenk",`<div class="ms-opp">${[1,2,3].map(i=>`<div class="ms-o ${G.turn===i?"on":""}"><b>${BOTN[i-1]}</b>${G.hands[i].length} kart</div>`).join("")}</div>
+function drDraw(){if(!G||G.k!=="renk")return;const top=G.pile[G.pile.length-1],ME=G.me||0,me=G.hands[ME];
+ const b=shell(G.on?"Dörtrenk · "+G.on:"Dörtrenk",`<div class="ms-opp">${[1,2,3].map(d=>(ME+d)%4).map(i=>`<div class="ms-o ${G.turn===i?"on":""}"><b>${esc(G.names[i])}</b>${G.hands[i].length} kart${G.on&&!G.human[i]?" · bot":""}</div>`).join("")}</div>
  <div class="cd-mid"><button type="button" data-drd="1" aria-label="Kart çek"><span class="cd bk" style="--cw:58px">${G.deck.length}</span></button><span class="cd" style="--c:${DRC[top.c===4?G.col:top.c]};--cw:66px">${top.v==="A"?"⊘":top.v==="Y"?"⇄":top.v==="R"?"★":top.v}</span></div>
- <p class="ms-st">${G.pick!=null?"Bir renk seç":`Renk: <b style="color:${DRC[G.col]}">${DRN[G.col]}</b> · ${G.msg||""}`}</p>
+ <p class="ms-st">${G.pick!=null?"Bir renk seç":G.on&&G.turn!==ME&&!G.over?`Sıra: <b>${esc(G.names[G.turn])}</b> · Renk: <b style="color:${DRC[G.col]}">${DRN[G.col]}</b>`:`Renk: <b style="color:${DRC[G.col]}">${DRN[G.col]}</b> · ${G.msg||""}`}</p>
  ${G.pick!=null?`<div class="dr-col">${[0,1,2,3].map(c=>`<button type="button" data-drc="${c}" style="background:${DRC[c]}" aria-label="${DRN[c]}"></button>`).join("")}</div>`:""}
- <div class="cd-hand">${me.map((k,i)=>drCard(k,G.turn===0&&G.pick==null&&drCan(k,top,G.col)?"ok":"no",i)).join("")}</div>`);
+ <div class="cd-hand">${me.map((k,i)=>drCard(k,G.turn===ME&&G.pick==null&&drCan(k,top,G.col)?"ok":"no",i)).join("")}</div>`);
  b.onclick=drClick}
 function drPlay(i,idx,col){const h=G.hands[i],k=h.splice(idx,1)[0];G.pile.push(k);G.col=k.c===4?col:k.c;let skip=0;const nx=()=>(G.turn+G.dir+4)%4;
- if(!h.length){drDraw();return end(i===0?"Kazandın":BOTN[i-1]+" kazandı",i===0?"Elini ilk sen bitirdin.":"Elini ilk o bitirdi.","renk",i===0),true}
+ if(!h.length){G.win=i;drDraw();return end(i===G.me?"Kazandın":G.names[i]+" kazandı",i===G.me?"Elini ilk sen bitirdin.":"Elini ilk o bitirdi.","renk",i===G.me),true}
  if(k.v==="Y")G.dir*=-1;if(k.v==="A")skip=1;if(k.v==="+2"){drTake(nx(),2);skip=1}if(k.v==="+4"){drTake(nx(),4);skip=1}
- G.turn=nx();if(skip)G.turn=nx();G.msg=G.turn===0?"Sıra sende.":"";return false}
+ G.turn=nx();if(skip)G.turn=nx();G.msg=G.turn===G.me?"Sıra sende.":"";return false}
 function drClick(e){if(!G||G.over)return;const c=e.target.closest("[data-drc]"),k=e.target.closest("[data-dr]"),d=e.target.closest("[data-drd]");
- if(c&&G.pick!=null){const idx=G.pick;G.pick=null;if(drPlay(0,idx,+c.dataset.drc))return;drDraw();return drBots()}
- if(G.turn!==0||G.pick!=null)return;const top=G.pile[G.pile.length-1];
- if(k){const i=+k.dataset.dr,cd=G.hands[0][i];if(!drCan(cd,top,G.col)){G.msg="Bu kart oynanmaz.";return drDraw()}G.moved=1;if(cd.c===4){G.pick=i;return drDraw()}if(drPlay(0,i))return;drDraw();return drBots()}
- if(d){G.moved=1;drTake(0,1);const n=G.hands[0][G.hands[0].length-1];if(n&&drCan(n,top,G.col)){G.msg="Çektiğin kart oynanabilir.";return drDraw()}G.turn=(G.turn+G.dir+4)%4;G.msg="";drDraw();return drBots()}}
-async function drBots(){const my=run;while(G&&G.k==="renk"&&!G.over&&G.turn!==0){await wait(700);if(my!==run||!G)return;const i=G.turn,h=G.hands[i],top=G.pile[G.pile.length-1];
+ const ME=G.me||0;
+ if(c&&G.pick!=null){const idx=G.pick;G.pick=null;if(drPlay(ME,idx,+c.dataset.drc))return onPush();drDraw();return drAfter()}
+ if(G.turn!==ME||G.pick!=null)return;const top=G.pile[G.pile.length-1];
+ if(k){const i=+k.dataset.dr,cd=G.hands[ME][i];if(!drCan(cd,top,G.col)){G.msg="Bu kart oynanmaz.";return drDraw()}G.moved=1;if(cd.c===4){G.pick=i;return drDraw()}if(drPlay(ME,i))return onPush();drDraw();return drAfter()}
+ if(d){G.moved=1;drTake(ME,1);const n=G.hands[ME][G.hands[ME].length-1];if(n&&drCan(n,top,G.col)){G.msg="Çektiğin kart oynanabilir.";if(G.on)onPush();return drDraw()}G.turn=(G.turn+G.dir+4)%4;G.msg="";drDraw();return drAfter()}}
+function drAfter(){if(G&&G.on){onPush();if(G.host)drBots();return}drBots()}
+async function drBots(){if(G&&G.on&&!G.host)return;if(G&&G._bt)return;const my=run;if(G)G._bt=1;try{while(G&&G.k==="renk"&&!G.over&&!G.human[G.turn]){await wait(700);if(my!==run||!G||G.over||G.human[G.turn])return;const i=G.turn,h=G.hands[i],top=G.pile[G.pile.length-1];
   let idx=h.findIndex(k=>k.c!==4&&drCan(k,top,G.col)&&isNaN(+k.v));if(idx<0)idx=h.findIndex(k=>k.c!==4&&drCan(k,top,G.col));if(idx<0)idx=h.findIndex(k=>k.c===4);
   if(idx<0){drTake(i,1);const n=h[h.length-1];if(n&&drCan(n,top,G.col))idx=h.length-1}
-  if(idx<0){G.turn=(G.turn+G.dir+4)%4;if(G.turn===0)G.msg="Sıra sende."}else{const cnt=[0,0,0,0];for(const k of h)if(k.c<4)cnt[k.c]++;if(drPlay(i,idx,cnt.indexOf(Math.max(...cnt))))return}drDraw()}}
+  if(idx<0){G.turn=(G.turn+G.dir+4)%4;if(G.turn===G.me)G.msg="Sıra sende."}else{const cnt=[0,0,0,0];for(const k of h)if(k.c<4)cnt[k.c]++;if(drPlay(i,idx,cnt.indexOf(Math.max(...cnt)))){if(G.on)onPush();return}}if(G.on)onPush();drDraw()}}finally{if(G)G._bt=0}}
 
 /* ================= PİŞTİ ================= */
 const PTS=["♠︎","♥︎","♦︎","♣︎"],PTR=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
@@ -174,5 +177,46 @@ async function abBot(){const my=run;while(G&&G.k==="amiral"&&!G.over&&G.turn===1
   const r=abShoot(b,i);if(r===1){const x=i%ABN,y=(i/ABN)|0;for(const[dx,dy]of[[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy;if(nx>=0&&ny>=0&&nx<ABN&&ny<ABN&&!b.shot[ny*ABN+nx])G.q.push(ny*ABN+nx)}}if(r===2)G.q=[];
   if(!abLeft(b)){abDraw();return end("Rota kazandı","Bütün gemilerin battı.","amiral",false)}if(!r){G.turn=0;G.msg="Sıra sende."}else G.msg=r===2?"Rota bir gemini batırdı.":"Rota vurdu.";abDraw()}}
 
-window.MASA={open(k){css();if(k)start(k);else menu_()},_t:{okDeal,okBest,okSolve,okPick,okScore,okJ,drDeck,drCan,ptDeck,ptScore,ptVal,abPlace,abShoot,G:()=>G}};
+
+/* ================= ÇEVRİM İÇİ (7.1.8, şimdilik Dörtrenk) =================
+   Oda games/ms-<KOD> = {ms:1,k,host,seats:[uid…≤4],names:{uid:ad},st:lobby|play|over,s:JSON durum,seq,gone:{uid:1},at}. Kural değişikliği yok (games).
+   Sırası gelen insan kendi hamlesinden sonra durumu yazar (onPush, seq+1); boş koltuklar ve oyundan çıkanlar bot, botları kurucu oynatır ve yazar.
+   Tek canlı dinleyici yalnızca odadayken (watchDoc), çıkınca kapanır. Eller aynı belgede durur (arkadaş oyunu; gizlilik istemci tarafında). */
+const ON={c:null,un:null,doc:null};const rp=c=>"games/ms-"+c;
+const myNm=()=>{const p=(S.profiles||{})[S.uid]||{};return String(p.name||p.username||"Oyuncu").slice(0,20)};
+function onCode(){const A="ABCDEFGHJKLMNPRSTUVYZ23456789";let c="";for(let i=0;i<5;i++)c+=A[rnd(A.length)];return c}
+function onMenu(k){onLeave();run++;G=null;if(!S.uid||S.guest)return toast("Arkadaşlarla oynamak için giriş yap.");
+ shell("Dörtrenk · Arkadaşlarla",`<div class="ms-menu"><button class="ms-m" type="button" data-ms="on:make" style="--c:#7C3AED"><i>+</i><b>Oda kur</b><small>Kodu arkadaşlarına gönder, 2-4 kişi</small></button>
+ <div class="ms-m" style="--c:#2563EB;grid-template-columns:54px 1fr auto"><i>#</i><b>Kodla katıl</b><button class="ms-btn" type="button" data-ms="on:join" style="grid-row:span 2">Katıl</button><textarea class="in k1l on-in" id="onCode" rows="1" maxlength="5" placeholder="KOD" autocomplete="off" spellcheck="false"></textarea></div></div>
+ <p class="ms-st">Boş kalan yerlerde bot oynar. Botları odayı kuran kişinin telefonu oynatır.</p>`)}
+async function onMake(){const c=onCode(),d={ms:1,k:"renk",host:S.uid,seats:[S.uid],names:{[S.uid]:myNm()},st:"lobby",seq:0,s:"",gone:{},at:Date.now()};
+ if(!await write(()=>DB.set(rp(c),d)))return;onWatch(c)}
+async function onJoin(){const el=L&&L.querySelector("#onCode"),c=String(el&&el.value||"").toUpperCase().replace(/[^A-Z0-9]/g,"");if(c.length!==5)return toast("Kod 5 harf olmalı.");
+ for(let t=0;t<3;t++){let d=null;try{d=await DB.get(rp(c))}catch(e){}if(!d||!d.ms)return toast("Bu kodla oda yok.");
+  if((d.seats||[]).includes(S.uid))return onWatch(c);if(d.st!=="lobby")return toast("Bu odada oyun başlamış.");if((d.seats||[]).length>=4)return toast("Oda dolu.");
+  if(!await write(()=>DB.update(rp(c),{seats:[...d.seats,S.uid],names:{[S.uid]:myNm()}})))return;
+  try{const e=await DB.get(rp(c));if(e&&(e.seats||[]).includes(S.uid))return onWatch(c)}catch(e){}}
+ toast("Odaya girilemedi, yeniden dene.")}
+function onWatch(c){if(ON.un)try{ON.un()}catch(e){}ON.c=c;ON.doc=null;ON.un=DB.watchDoc(rp(c),d=>onDoc(c,d))}
+function onLobby(d){const me=S.uid,host=d.host===me,seats=d.seats||[];
+ shell("Dörtrenk · Oda",`<div class="on-code"><small>Oda kodu</small><b>${esc(ON.c)}</b><button class="ms-btn sec" type="button" data-ms="on:copy">Kodu paylaş</button></div>
+ <div class="on-seats">${[0,1,2,3].map(i=>{const u=seats[i];return`<div class="ms-o ${u?"on":""}"><b>${u?esc((d.names||{})[u]||"Oyuncu"):"Boş"}</b>${u?(u===d.host?"kurucu":u===me?"sen":"oyuncu"):"bot oynar"}</div>`}).join("")}</div>
+ ${host?`<div class="ms-row"><button class="ms-btn" type="button" data-ms="on:go" ${seats.length<2?"disabled":""}>Başlat</button></div><p class="ms-st">${seats.length<2?"En az bir arkadaşın katılınca başlatabilirsin.":"Herkes hazırsa başlat."}</p>`:`<p class="ms-st">Kurucunun başlatması bekleniyor…</p>`}`)}
+function onDoc(c,d){if(c!==ON.c)return;ON.doc=d;if(!d||d.st==="over"&&!d.s){toast("Oda kapandı.");return menu_()}
+ const me=S.uid,seats=d.seats||[],mi=seats.indexOf(me);if(mi<0){toast("Bu odada yerin yok.");return menu_()}
+ if(d.st==="lobby"){G=null;return onLobby(d)}
+ let st=null;try{st=JSON.parse(d.s||"null")}catch(e){}if(!st)return;
+ if(!G||G.on!==c||(st.seq||0)>(G.seq||0)){const keep=G&&G.on===c?{pick:G.pick}:{};G=Object.assign({k:"renk",moved:1},st,{me:mi,on:c,host:d.host===me,over:0},st.seq>((G&&G.seq)||0)?{}:keep);G.msg=G.turn===mi?"Sıra sende.":"";
+  if(st.over!=null){G.win=st.over;drDraw();const w=st.over;return end(w===mi?"Kazandın":G.names[w]+" kazandı",w===mi?"Elini ilk sen bitirdin.":"Elini ilk o bitirdi.","renk",w===mi)}drDraw()}
+ if(G.host){const gone=d.gone||{};let ch=0;seats.forEach((u,i)=>{if(gone[u]&&G.human[i]){G.human[i]=0;G.names[i]+=" (çıktı)";ch=1}});if(ch){onPush();drDraw()}if(!G.over&&!G.human[G.turn])drBots()}}
+function onPush(){if(!G||!G.on)return;G.seq=(G.seq||0)+1;const st={deck:G.deck,hands:G.hands,pile:G.pile,turn:G.turn,dir:G.dir,col:G.col,names:G.names,human:G.human,seq:G.seq,over:G.over?G.win:null};
+ write(()=>DB.update(rp(G.on),{s:JSON.stringify(st),seq:G.seq,st:G.over?"over":"play",at:Date.now()}),{quiet:true})}
+function onStart(){const d=ON.doc;if(!d||d.host!==S.uid)return;const seats=d.seats||[];if(seats.length<2)return toast("En az iki kişi gerekli.");
+ run++;const names=[0,1,2,3].map(i=>seats[i]?((d.names||{})[seats[i]]||"Oyuncu"):BOTN[i-seats.length]||"Bot"),human=[0,1,2,3].map(i=>seats[i]?1:0);
+ drStart({me:0,names,human,on:ON.c,host:true});G.seq=+d.seq||0;G.turn=0;G.msg="Sıra sende.";onPush();drDraw()}
+function onNew(){if(!G||!G.on)return;if(!G.host)return toast("Yeni eli odayı kuran başlatır.");onStart()}
+function onCopy(){const t="Kadraj'da Dörtrenk oynayalım! Masa Oyunları › Dörtrenk · Arkadaşlarla › Kodla katıl: "+ON.c;try{if(navigator.share)return navigator.share({text:t}).catch(()=>{})}catch(e){}copyText(t,"Kod kopyalandı")}
+function onLeave(){if(!ON.c)return;const c=ON.c,d=ON.doc;ON.c=null;ON.doc=null;if(ON.un)try{ON.un()}catch(e){}ON.un=null;
+ try{if(d&&d.host===S.uid)write(()=>DB.update(rp(c),{st:"over",s:"",at:Date.now()}),{quiet:true});else if(d)write(()=>DB.update(rp(c),{gone:{[S.uid]:1},...(d.st==="lobby"?{seats:(d.seats||[]).filter(u=>u!==S.uid)}:{})}),{quiet:true})}catch(e){}}
+window.MASA={open(k){css();if(k)start(k);else menu_()},join(c){css();onMenu("renk");const x=L&&L.querySelector("#onCode");if(x){x.value=c;onJoin()}},_on:ON,_t:{okDeal,okBest,okSolve,okPick,okScore,okJ,drDeck,drCan,ptDeck,ptScore,ptVal,abPlace,abShoot,G:()=>G}};
 })();
