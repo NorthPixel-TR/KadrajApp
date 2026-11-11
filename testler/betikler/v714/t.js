@@ -1,4 +1,5 @@
 // 7.1.4: Ayarlar'da simge satırı + İstiklal Marşı sesli okuma/müzik (ses dosyası yokken)
+process.env.KBLOCK="/ses/istiklal.mp3"; /* dosyasız (yapay ses) yolu dener */
 const {open}=require('/home/user/kadraj-test/m70/lib.js');let pass=0,fail=0;const ok=(c,m)=>{console.log((c?"OK  ":"FAIL")+" "+m);c?pass++:fail++};
 (async()=>{const {b,p,errors}=await open(390);
  await p.evaluate(()=>{window.__said=[];const ss=window.speechSynthesis;if(ss){ss.speak=u=>__said.push(u.text);ss.cancel=()=>{}}go("settings")});await p.waitForTimeout(900);
