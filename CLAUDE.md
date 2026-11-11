@@ -31,6 +31,7 @@ Sahibi: "sık sık yükle", "hiçbir şeyi atlama", "kendi kafandan büyük şey
 - [x] (7.1.12) Canlı Bilgi Yarışması: oda kodu (`games/qz-<KOD>`, masa.js çevrim içi kalıbı), kurucu soru sorar, herkes 10 sn'de cevaplar, puan tablosu; sorular `GQ_LIST` + yeni Türkçe genel kültür soruları
 - [x] (7.1.17) Ortak albüm: grupta "Albüm" sekmesi, üyeler aynı albüme fotoğraf ekler (grup mesajı `alb` alanıyla; yeni koleksiyon yok)
 - [x] (7.2.0) Başarımlar ve rozet vitrini (28 piksel rozet, `profiles.ach`)
+- [x] (11-12 Kasım gecesi, 7.2.1-7.2.7) Profil temaları, Çiz Bil, Haftalık meydan okuma, Clawd Koşu, Kadraj yolculuğun, Sohbet efektleri. Sıradaki fikirler: Clawd'a Klaket rafı (patlamış mısır), sohbette ortak çalma listesi, profil ziyaretçi defteri, Çiz Bil'e Rota'ya karşı kip
 - [ ] Tanıtım sayfası (`tanitim.html` + `tanitim/`) yeni görünüm ve yeni logoyla yeniden
 - [ ] (sahibi 11 Kasım: "sonra") Haftalık Kadraj Ödülleri: pazar akşamı Akış'ta kart (haftanın en çok beğenilen paylaşımı, en uzun seri, en çok oynanan oyun), yalnızca zaten yüklü veriden
 - [ ] (sahibi: "Firebase sonra") Uygulama kapalıyken bildirim: `google-services.json` + Cloudflare `FCM_SA`, sonra SURUM/APK_NATIVE artar
