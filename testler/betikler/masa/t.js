@@ -49,7 +49,7 @@ const OUT='/tmp/claude-0/-home-user/de2b9ee9-f1cc-5362-a195-b9aefa1af271/scratch
   ok(won.over&&/Kazandın/.test(won.end||""),"okey: el bitince kazanma ekranı ("+won.end+")");await p.screenshot({path:OUT+"okey-win-"+W+".png"})}
  /* Dörtrenk: tam oyun, hep ilk oynanabilir kart */
  await p.click('.ms-end [data-ms="menu"]').catch(()=>{});await p.waitForTimeout(200);
- const menu=await p.evaluate(()=>document.querySelectorAll(".ms-menu .ms-m").length);ok(menu===5,"menü: 4 oyun + Dörtrenk arkadaşlarla");await p.screenshot({path:OUT+"menu-"+W+".png"});
+ const menu=await p.evaluate(()=>document.querySelectorAll(".ms-menu .ms-m").length);ok(menu===6,"menü: 4 oyun + Okey ve Dörtrenk arkadaşlarla");await p.screenshot({path:OUT+"menu-"+W+".png"});
  await p.click('[data-ms="g:renk"]');await p.waitForTimeout(300);await p.screenshot({path:OUT+"renk-"+W+".png"});
  let n=0;for(;n<400;n++){const st=await p.evaluate(()=>{const G=MASA._t.G();if(!G||G.over)return"over";if(G.pick!=null){document.querySelector("[data-drc]").click();return"pick"}if(G.turn!==0)return"wait";const c=document.querySelector(".cd-hand .cd.ok");if(c){c.click();return"play"}document.querySelector("[data-drd]").click();return"draw"});if(st==="over")break;await p.waitForTimeout(st==="wait"?250:40)}
  s=await p.evaluate(()=>{const G=MASA._t.G();const tot=G.hands.reduce((a,h)=>a+h.length,0)+G.pile.length+G.deck.length;return{over:!!G.over,tot,end:(document.querySelector(".ms-end h2")||{}).textContent,ov:document.querySelector("#msB").scrollWidth-document.querySelector("#msB").clientWidth}});

@@ -38,14 +38,15 @@ const CSS=`.ms{position:absolute;inset:0;margin:0 auto;max-width:560px;backgroun
 function css(){if(document.getElementById("msCss"))return;const s=document.createElement("style");s.id="msCss";s.textContent=CSS;document.head.appendChild(s)}
 function shell(title,body,menu){const h=`<div class="ms" role="dialog" aria-label="${esc(title)}"><div class="ms-h"><button type="button" data-ms="${menu?"x":"menu"}" aria-label="Geri">${I("back")}</button><h1>${esc(title)}</h1>${menu?"":`<button type="button" data-ms="new" aria-label="Yeni oyun">${I("rotate")}</button>`}</div><div class="ms-b" id="msB">${body}</div></div>`;
  if(!L||!L.isConnected){L=openLayer("masa",h,{noScrim:true,onClose:()=>{onLeave();run++;G=null;L=null}});L._guard=()=>{if(G&&!G.over&&G.moved){dialog("Oyundan çıkılsın mı?","Bu el yarıda kalır.",[{label:"Vazgeç",cls:"sec"},{label:"Çık",cls:"danger",fn:()=>{G=null;menu_()}}]);return true}if(G){G=null;menu_();return true}return false};
-  L.addEventListener("click",e=>{const b=e.target.closest("[data-ms]");if(!b)return;const a=b.dataset.ms;if(a==="x")return closeLayer("masa");if(a==="menu"){if(L._guard())return;return menu_()}if(a==="new"){if(G&&G.on)return onNew();return G&&start(G.k)}if(a==="on:renk")return onMenu("renk");if(a==="on:make")return onMake();if(a==="on:join")return onJoin();if(a==="on:go")return onStart();if(a==="on:copy")return onCopy();if(a.startsWith("g:"))return start(a.slice(2))})}
+  L.addEventListener("click",e=>{const b=e.target.closest("[data-ms]");if(!b)return;const a=b.dataset.ms;if(a==="x")return closeLayer("masa");if(a==="menu"){if(L._guard())return;return menu_()}if(a==="new"){if(G&&G.on)return onNew();return G&&start(G.k)}if(a==="on:renk")return onMenu("renk");if(a==="on:okey")return onMenu("okey");if(a==="on:make")return onMake();if(a==="on:join")return onJoin();if(a==="on:go")return onStart();if(a==="on:copy")return onCopy();if(a.startsWith("g:"))return start(a.slice(2))})}
  else L.querySelector(".ms").outerHTML=h.replace('<div class="ms"','<div class="ms ms-re"');return L.querySelector("#msB")}
 function menu_(){onLeave();run++;G=null;const o=st(),w=k=>o[k]?` · ${o[k]} galibiyet`:"";
  shell("Masa Oyunları",`<div class="ms-menu"><button class="ms-m" type="button" data-ms="g:okey" style="--c:#B45309"><i>13</i><b>Okey</b><small>4 kişilik, üç bota karşı${w("okey")}</small></button>
  <button class="ms-m" type="button" data-ms="g:renk" style="--c:#2563EB"><i>4R</i><b>Dörtrenk</b><small>Rengi ya da sayıyı tuttur, elini ilk bitiren kazanır${w("renk")}</small></button>
+ <button class="ms-m" type="button" data-ms="on:okey" style="--c:#9A3412"><i>13</i><b>Okey · Arkadaşlarla</b><small>2-4 kişi çevrim içi, boş yerlerde bot oynar</small></button>
  <button class="ms-m" type="button" data-ms="on:renk" style="--c:#7C3AED"><i>4R</i><b>Dörtrenk · Arkadaşlarla</b><small>2-4 kişi çevrim içi, boş yerlerde bot oynar</small></button>
  <button class="ms-m" type="button" data-ms="g:pisti" style="--c:#BE123C"><i>J</i><b>Pişti</b><small>Yerdeki kartı tuttur, pişti yap${w("pisti")}</small></button>
- <button class="ms-m" type="button" data-ms="g:amiral" style="--c:#0E7490"><i>A</i><b>Amiral Battı</b><small>Gemileri bul ve batır${w("amiral")}</small></button></div><p class="ms-st">Dörtrenk arkadaşlarla da oynanır; diğerleri botlara karşı ve yalnızca bu cihazda.</p>`,true)}
+ <button class="ms-m" type="button" data-ms="g:amiral" style="--c:#0E7490"><i>A</i><b>Amiral Battı</b><small>Gemileri bul ve batır${w("amiral")}</small></button></div><p class="ms-st">Okey ve Dörtrenk arkadaşlarla da oynanır; diğerleri botlara karşı ve yalnızca bu cihazda.</p>`,true)}
 function start(k){run++;({okey:okStart,renk:drStart,pisti:ptStart,amiral:abStart})[k]()}
 function end(title,sub,k,won){if(!G)return;G.over=1;if(won)win(k);try{vib(won?[20,40,20]:15)}catch(e){}const d=document.createElement("div");d.className="ms-end";d.innerHTML=`<div><h2>${esc(title)}</h2><p>${esc(sub)}</p><div class="ms-row"><button class="ms-btn" type="button" data-ms="new">Yeni oyun</button><button class="ms-btn sec" type="button" data-ms="menu">Oyunlar</button></div></div>`;L.querySelector(".ms").appendChild(d)}
 
@@ -79,34 +80,37 @@ const okScore=(tiles,ok)=>okBest(tiles,ok)*10+okNear(tiles,ok);
 /* 15 taştan hangisini atmalı: atınca en iyi kalan (bitiyorsa onu) */
 function okPick(hand,ok){let bi=0,bs=-1;for(let i=0;i<hand.length;i++){if(okJ(hand[i],ok))continue;const rest=hand.filter((_,k)=>k!==i);if(okSolve(rest,ok))return{i,win:true};const s=okScore(rest,ok);if(s>bs){bs=s;bi=i}}return{i:bi,win:false}}
 function okTile(t,ok,cls=""){if(!t)return`<span class="ok-t e ${cls}"></span>`;const v=okV(t,ok),jk=okJ(t,ok);return`<span class="ok-t ${jk?"jk":""} ${cls}" style="--k:${OKC[v.c]}">${t.f?"★":v.n}${t.f?"<small>sahte</small>":jk?"<small>okey</small>":""}</span>`}
-function okStart(){G=Object.assign(okDeal(),{k:"okey",sel:-1,moved:0});G.rack=G.hands[0].concat(new Array(24-G.hands[0].length).fill(null));G.msg="Sen başlıyorsun: bir taş seç ve at.";okDraw()}
-function okDraw(){if(!G||G.k!=="okey")return;const tw=Math.max(22,Math.min(44,Math.floor((Math.min(innerWidth,560)-24-8-11*3)/12)));
- const b=shell("Okey",`<div class="ms-opp">${[1,2,3].map(i=>`<div class="ms-o ${G.turn===i?"on":""}"><b>${BOTN[i-1]}</b>${G.hands[i].length} taş</div>`).join("")}</div>
- <div class="ok-dis" style="--tw:${tw-6}px">${[1,2,3].map(i=>`<div>${okTile(G.dis[i][G.dis[i].length-1],G.ok)}<span>${BOTN[i-1]} attı</span></div>`).join("")}</div>
- <div class="ok-mid" style="--tw:${tw}px"><div class="ok-pile"><button type="button" data-ok="take" aria-label="Soldakinin attığını al">${okTile(G.dis[3][G.dis[3].length-1],G.ok)}</button><span>Sana atılan</span></div>
+function okStart(o){o=o||{};G=Object.assign(okDeal(),{k:"okey",sel:-1,moved:0,me:o.me||0,names:o.names||["Sen",...BOTN],human:o.human||[1,0,0,0],on:o.on||null,host:!!o.host,seq:0});G.rack=okRackSync(null,G.hands[G.me]);G.msg=G.turn===G.me?"Sen başlıyorsun: bir taş seç ve at.":"";okDraw()}
+/* ıstaka kişiye özel dizilim: eldeki taşlar korunur, gelen boş yere, giden çıkar */
+function okRackSync(rack,hand){const key=t=>t.f?"f":t.c+"-"+t.n,need={};for(const t of hand){const k=key(t);need[k]=(need[k]||0)+1}const r=new Array(24).fill(null);if(rack)rack.forEach((t,i)=>{if(t&&need[key(t)]>0){need[key(t)]--;r[i]=t}});const left=[];for(const t of hand){const k=key(t);if(need[k]>0){need[k]--;left.push(t)}}for(const t of left){const e=r.indexOf(null);if(e<0)break;r[e]=t}return r}
+function okDraw(){if(!G||G.k!=="okey")return;const ME=G.me||0,OP=[1,2,3].map(d=>(ME+d)%4),PV=(ME+3)%4;const tw=Math.max(22,Math.min(44,Math.floor((Math.min(innerWidth,560)-24-8-11*3)/12)));
+ const b=shell(G.on?"Okey · "+G.on:"Okey",`<div class="ms-opp">${OP.map(i=>`<div class="ms-o ${G.turn===i?"on":""}"><b>${esc(G.names[i])}</b>${G.hands[i].length} taş${G.on&&!G.human[i]?" · bot":""}</div>`).join("")}</div>
+ <div class="ok-dis" style="--tw:${tw-6}px">${OP.map(i=>`<div>${okTile(G.dis[i][G.dis[i].length-1],G.ok)}<span>${esc(G.names[i])} attı</span></div>`).join("")}</div>
+ <div class="ok-mid" style="--tw:${tw}px"><div class="ok-pile"><button type="button" data-ok="take" aria-label="Soldakinin attığını al">${okTile(G.dis[PV][G.dis[PV].length-1],G.ok)}</button><span>Sana atılan</span></div>
  <div class="ok-pile"><button type="button" data-ok="draw" aria-label="Ortadan çek"><span class="ok-t bk">${G.stock.length}</span></button><span>Ortadan çek</span></div>
- <div class="ok-pile">${okTile(G.ind,G.ok)}<span>Gösterge</span></div><div class="ok-pile"><button type="button" data-ok="dis" aria-label="Seçili taşı at">${okTile(G.dis[0][G.dis[0].length-1],G.ok)}</button><span>Atılan</span></div></div>
- <p class="ms-st">${G.msg||""}</p>
+ <div class="ok-pile">${okTile(G.ind,G.ok)}<span>Gösterge</span></div><div class="ok-pile"><button type="button" data-ok="dis" aria-label="Seçili taşı at">${okTile(G.dis[ME][G.dis[ME].length-1],G.ok)}</button><span>Atılan</span></div></div>
+ <p class="ms-st">${G.on&&G.turn!==ME&&!G.over?`Sıra: <b>${esc(G.names[G.turn])}</b>`:G.msg||""}</p>
  <div class="ok-rack" style="--tw:${tw}px;--n:12">${G.rack.map((t,i)=>`<button type="button" data-oki="${i}">${okTile(t,G.ok,G.sel===i?"sel":"")}</button>`).join("")}</div>
- <div class="ms-row"><button class="ms-btn sec" type="button" data-ok="sort">Diz</button><button class="ms-btn sec" type="button" data-ok="pairs">Çift diz</button><button class="ms-btn" type="button" data-ok="fin" ${G.turn===0&&G.drew?"":"disabled"}>Seçiliyi at</button></div>`);
+ <div class="ms-row"><button class="ms-btn sec" type="button" data-ok="sort">Diz</button><button class="ms-btn sec" type="button" data-ok="pairs">Çift diz</button><button class="ms-btn" type="button" data-ok="fin" ${G.turn===ME&&G.drew?"":"disabled"}>Seçiliyi at</button></div>`);
  b.onclick=okClick}
 const okMine=()=>G.rack.filter(Boolean);
 function okSort(pairs){const ok=G.ok,t=okMine(),key=x=>{const v=okV(x,ok);return okJ(x,ok)?999:pairs?v.n*10+v.c:v.c*20+v.n};t.sort((a,b)=>key(a)-key(b));G.rack=t.concat(new Array(24-t.length).fill(null));G.sel=-1}
 function okClick(e){if(!G||G.over)return;const a=e.target.closest("[data-ok]"),ti=e.target.closest("[data-oki]");
  if(ti){const i=+ti.dataset.oki;if(G.sel<0){if(G.rack[i])G.sel=i}else{[G.rack[G.sel],G.rack[i]]=[G.rack[i],G.rack[G.sel]];G.sel=-1}return okDraw()}
  if(!a)return;const k=a.dataset.ok;if(k==="sort"||k==="pairs"){okSort(k==="pairs");return okDraw()}
- if(G.turn!==0){G.msg="Sıra sende değil.";return okDraw()}
- if(k==="draw"||k==="take"){if(G.drew){G.msg="Zaten çektin; bir taş seçip at.";return okDraw()}let t;if(k==="take"){t=G.dis[3].pop();if(!t){G.msg="Sana atılan taş yok.";return okDraw()}}else{t=G.stock.pop();if(!t)return okTie()}
+ const ME=G.me||0;if(G.turn!==ME){G.msg="Sıra sende değil.";return okDraw()}
+ if(k==="draw"||k==="take"){if(G.drew){G.msg="Zaten çektin; bir taş seçip at.";return okDraw()}let t;if(k==="take"){t=G.dis[(ME+3)%4].pop();if(!t){G.msg="Sana atılan taş yok.";return okDraw()}}else{t=G.stock.pop();if(!t)return okTie()}
   const e2=G.rack.indexOf(null);G.rack[e2]=t;G.sel=e2;G.drew=true;G.moved=1;G.msg="Bir taş seç ve at. Elin bitiyorsa atınca kazanırsın.";return okDraw()}
  if(k==="dis"||k==="fin"){if(!G.drew){G.msg="Önce taş çek.";return okDraw()}if(G.sel<0||!G.rack[G.sel]){G.msg="Atacağın taşı seç.";return okDraw()}
-  const t=G.rack[G.sel];G.rack[G.sel]=null;G.sel=-1;G.moved=1;const rest=okMine();if(okSolve(rest,G.ok)){G.dis[0].push(t);okDraw();return end("Okey! Kazandın","Elini bitirdin.","okey",true)}
-  G.dis[0].push(t);G.drew=false;G.turn=1;G.msg="";okDraw();okBots()}}
-function okTie(){G.msg="Ortada taş kalmadı.";okDraw();end("Berabere","Ortadaki taşlar bitti.","okey",false)}
-async function okBots(){const my=run;while(G&&G.k==="okey"&&!G.over&&G.turn!==0){await wait(650);if(my!==run||!G)return;const i=G.turn,h=G.hands[i],ok=G.ok,prev=G.dis[(i+3)%4],top=prev[prev.length-1];
+  const t=G.rack[G.sel];G.rack[G.sel]=null;G.sel=-1;G.moved=1;const rest=okMine();G.hands[ME]=rest;if(okSolve(rest,G.ok)){G.dis[ME].push(t);G.win=ME;okDraw();end("Okey! Kazandın","Elini bitirdin.","okey",true);return onPush()}
+  G.dis[ME].push(t);G.drew=false;G.turn=(ME+1)%4;G.msg="";okDraw();okAfter()}}
+function okAfter(){if(G&&G.on){onPush();if(G.host)okBots();return}okBots()}
+function okTie(){G.msg="Ortada taş kalmadı.";G.win=-1;okDraw();end("Berabere","Ortadaki taşlar bitti.","okey",false);if(G.on)onPush()}
+async function okBots(){if(G&&G.on&&!G.host)return;if(G&&G._bt)return;const my=run;if(G)G._bt=1;try{while(G&&G.k==="okey"&&!G.over&&!G.human[G.turn]){await wait(650);if(my!==run||!G||G.over||G.human[G.turn])return;const i=G.turn,h=G.hands[i],ok=G.ok,prev=G.dis[(i+3)%4],top=prev[prev.length-1];
   let took=false;if(top){const cur=okScore(h,ok);const pk=okPick(h.concat([top]),ok);const after=okScore(h.concat([top]).filter((_,k)=>k!==pk.i),ok);if(pk.win||after>cur+6){h.push(prev.pop());took=true}}
   if(!took){const t=G.stock.pop();if(!t)return okTie();h.push(t)}
-  const pk=okPick(h,ok),t=h.splice(pk.i,1)[0];G.dis[i].push(t);if(pk.win){okDraw();return end(BOTN[i-1]+" bitirdi","Bu eli "+BOTN[i-1]+" kazandı.","okey",false)}
-  G.turn=(i+1)%4;if(G.turn===0){G.drew=false;G.msg="Sıra sende: ortadan çek ya da sana atılanı al."}okDraw()}}
+  const pk=okPick(h,ok),t=h.splice(pk.i,1)[0];G.dis[i].push(t);if(pk.win){G.win=i;okDraw();end(G.names[i]+" bitirdi","Bu eli "+G.names[i]+" kazandı.","okey",false);if(G.on)onPush();return}
+  G.turn=(i+1)%4;if(G.turn===G.me){G.drew=false;G.msg="Sıra sende: ortadan çek ya da sana atılanı al."}if(G.on)onPush();okDraw()}}finally{if(G)G._bt=0}}
 
 /* ================= DÖRTRENK ================= */
 /* kart: {c:0-3|4 (joker), v:"0".."9"|"A" atla|"Y" yön|"+2"|"R" renk seç|"+4"} */
@@ -182,41 +186,45 @@ async function abBot(){const my=run;while(G&&G.k==="amiral"&&!G.over&&G.turn===1
    Oda games/ms-<KOD> = {ms:1,k,host,seats:[uid…≤4],names:{uid:ad},st:lobby|play|over,s:JSON durum,seq,gone:{uid:1},at}. Kural değişikliği yok (games).
    Sırası gelen insan kendi hamlesinden sonra durumu yazar (onPush, seq+1); boş koltuklar ve oyundan çıkanlar bot, botları kurucu oynatır ve yazar.
    Tek canlı dinleyici yalnızca odadayken (watchDoc), çıkınca kapanır. Eller aynı belgede durur (arkadaş oyunu; gizlilik istemci tarafında). */
-const ON={c:null,un:null,doc:null};const rp=c=>"games/ms-"+c;
+const ON={c:null,un:null,doc:null,k:"renk"};const GN={renk:"Dörtrenk",okey:"Okey"};const rp=c=>"games/ms-"+c;
 const myNm=()=>{const p=(S.profiles||{})[S.uid]||{};return String(p.name||p.username||"Oyuncu").slice(0,20)};
 function onCode(){const A="ABCDEFGHJKLMNPRSTUVYZ23456789";let c="";for(let i=0;i<5;i++)c+=A[rnd(A.length)];return c}
-function onMenu(k){onLeave();run++;G=null;if(!S.uid||S.guest)return toast("Arkadaşlarla oynamak için giriş yap.");
- shell("Dörtrenk · Arkadaşlarla",`<div class="ms-menu"><button class="ms-m" type="button" data-ms="on:make" style="--c:#7C3AED"><i>+</i><b>Oda kur</b><small>Kodu arkadaşlarına gönder, 2-4 kişi</small></button>
+function onMenu(k){onLeave();run++;G=null;ON.k=k||"renk";if(!S.uid||S.guest)return toast("Arkadaşlarla oynamak için giriş yap.");
+ shell(GN[ON.k]+" · Arkadaşlarla",`<div class="ms-menu"><button class="ms-m" type="button" data-ms="on:make" style="--c:#7C3AED"><i>+</i><b>Oda kur</b><small>Kodu arkadaşlarına gönder, 2-4 kişi</small></button>
  <div class="ms-m" style="--c:#2563EB;grid-template-columns:54px 1fr auto"><i>#</i><b>Kodla katıl</b><button class="ms-btn" type="button" data-ms="on:join" style="grid-row:span 2">Katıl</button><textarea class="in k1l on-in" id="onCode" rows="1" maxlength="5" placeholder="KOD" autocomplete="off" spellcheck="false"></textarea></div></div>
  <p class="ms-st">Boş kalan yerlerde bot oynar. Botları odayı kuran kişinin telefonu oynatır.</p>`)}
-async function onMake(){const c=onCode(),d={ms:1,k:"renk",host:S.uid,seats:[S.uid],names:{[S.uid]:myNm()},st:"lobby",seq:0,s:"",gone:{},at:Date.now()};
+async function onMake(){const c=onCode(),d={ms:1,k:ON.k,host:S.uid,seats:[S.uid],names:{[S.uid]:myNm()},st:"lobby",seq:0,s:"",gone:{},at:Date.now()};
  if(!await write(()=>DB.set(rp(c),d)))return;onWatch(c)}
 async function onJoin(){const el=L&&L.querySelector("#onCode"),c=String(el&&el.value||"").toUpperCase().replace(/[^A-Z0-9]/g,"");if(c.length!==5)return toast("Kod 5 harf olmalı.");
  for(let t=0;t<3;t++){let d=null;try{d=await DB.get(rp(c))}catch(e){}if(!d||!d.ms)return toast("Bu kodla oda yok.");
-  if((d.seats||[]).includes(S.uid))return onWatch(c);if(d.st!=="lobby")return toast("Bu odada oyun başlamış.");if((d.seats||[]).length>=4)return toast("Oda dolu.");
+  if((d.seats||[]).includes(S.uid))return onWatch(c);if(d.st!=="lobby")return toast("Bu odada oyun başlamış.");if(d.k&&d.k!==ON.k)return toast("Bu kod bir "+(GN[d.k]||"başka oyun")+" odası, oradan katıl.");if((d.seats||[]).length>=4)return toast("Oda dolu.");
   if(!await write(()=>DB.update(rp(c),{seats:[...d.seats,S.uid],names:{[S.uid]:myNm()}})))return;
   try{const e=await DB.get(rp(c));if(e&&(e.seats||[]).includes(S.uid))return onWatch(c)}catch(e){}}
  toast("Odaya girilemedi, yeniden dene.")}
 function onWatch(c){if(ON.un)try{ON.un()}catch(e){}ON.c=c;ON.doc=null;ON.un=DB.watchDoc(rp(c),d=>onDoc(c,d))}
 function onLobby(d){const me=S.uid,host=d.host===me,seats=d.seats||[];
- shell("Dörtrenk · Oda",`<div class="on-code"><small>Oda kodu</small><b>${esc(ON.c)}</b><button class="ms-btn sec" type="button" data-ms="on:copy">Kodu paylaş</button></div>
+ shell((GN[d.k]||"Dörtrenk")+" · Oda",`<div class="on-code"><small>Oda kodu</small><b>${esc(ON.c)}</b><button class="ms-btn sec" type="button" data-ms="on:copy">Kodu paylaş</button></div>
  <div class="on-seats">${[0,1,2,3].map(i=>{const u=seats[i];return`<div class="ms-o ${u?"on":""}"><b>${u?esc((d.names||{})[u]||"Oyuncu"):"Boş"}</b>${u?(u===d.host?"kurucu":u===me?"sen":"oyuncu"):"bot oynar"}</div>`}).join("")}</div>
  ${host?`<div class="ms-row"><button class="ms-btn" type="button" data-ms="on:go" ${seats.length<2?"disabled":""}>Başlat</button></div><p class="ms-st">${seats.length<2?"En az bir arkadaşın katılınca başlatabilirsin.":"Herkes hazırsa başlat."}</p>`:`<p class="ms-st">Kurucunun başlatması bekleniyor…</p>`}`)}
 function onDoc(c,d){if(c!==ON.c)return;ON.doc=d;if(!d||d.st==="over"&&!d.s){toast("Oda kapandı.");return menu_()}
- const me=S.uid,seats=d.seats||[],mi=seats.indexOf(me);if(mi<0){toast("Bu odada yerin yok.");return menu_()}
+ const me=S.uid,seats=d.seats||[],mi=seats.indexOf(me),K=d.k||"renk";ON.k=K;if(mi<0){toast("Bu odada yerin yok.");return menu_()}
  if(d.st==="lobby"){G=null;return onLobby(d)}
- let st=null;try{st=JSON.parse(d.s||"null")}catch(e){}if(!st)return;
- if(!G||G.on!==c||(st.seq||0)>(G.seq||0)){const keep=G&&G.on===c?{pick:G.pick}:{};G=Object.assign({k:"renk",moved:1},st,{me:mi,on:c,host:d.host===me,over:0},st.seq>((G&&G.seq)||0)?{}:keep);G.msg=G.turn===mi?"Sıra sende.":"";
-  if(st.over!=null){G.win=st.over;drDraw();const w=st.over;return end(w===mi?"Kazandın":G.names[w]+" kazandı",w===mi?"Elini ilk sen bitirdin.":"Elini ilk o bitirdi.","renk",w===mi)}drDraw()}
- if(G.host){const gone=d.gone||{};let ch=0;seats.forEach((u,i)=>{if(gone[u]&&G.human[i]){G.human[i]=0;G.names[i]+=" (çıktı)";ch=1}});if(ch){onPush();drDraw()}if(!G.over&&!G.human[G.turn])drBots()}}
-function onPush(){if(!G||!G.on)return;G.seq=(G.seq||0)+1;const st={deck:G.deck,hands:G.hands,pile:G.pile,turn:G.turn,dir:G.dir,col:G.col,names:G.names,human:G.human,seq:G.seq,over:G.over?G.win:null};
+ let st=null;try{st=JSON.parse(d.s||"null")}catch(e){}if(!st)return;const draw=K==="okey"?okDraw:drDraw,bots=K==="okey"?okBots:drBots;
+ if(!G||G.on!==c||G.k!==K||(st.seq||0)>(G.seq||0)){const old=G&&G.on===c&&G.k===K?G:null,keep=old&&!((st.seq||0)>(old.seq||0))?{pick:old.pick}:{};
+  G=Object.assign({k:K,moved:1},st,{me:mi,on:c,host:d.host===me,over:0},keep);
+  if(K==="okey"){G.rack=okRackSync(old&&old.rack,G.hands[mi]||[]);G.sel=-1;G.drew=!!st.drew&&G.turn===mi;G.msg=G.turn===mi?(G.drew?"Bir taş seç ve at.":"Sıra sende: ortadan çek ya da sana atılanı al."):""}
+  else G.msg=G.turn===mi?"Sıra sende.":"";
+  if(st.over!=null){const w=st.over;G.win=w;draw();if(w<0)return end("Berabere","Ortadaki taşlar bitti.",K,false);return end(w===mi?(K==="okey"?"Okey! Kazandın":"Kazandın"):G.names[w]+(K==="okey"?" bitirdi":" kazandı"),w===mi?"Elini ilk sen bitirdin.":"Bu eli "+G.names[w]+" kazandı.",K,w===mi)}draw()}
+ if(G.host){const gone=d.gone||{};let ch=0;seats.forEach((u,i)=>{if(gone[u]&&G.human[i]){G.human[i]=0;G.names[i]+=" (çıktı)";ch=1}});if(ch){onPush();draw()}if(!G.over&&!G.human[G.turn])bots()}}
+function onPush(){if(!G||!G.on)return;G.seq=(G.seq||0)+1;const over=G.over?(G.win==null?-1:G.win):null;let st;if(G.k==="okey"){if(G.rack)G.hands[G.me]=okMine();st={hands:G.hands,stock:G.stock,dis:G.dis,ind:G.ind,ok:G.ok,turn:G.turn,drew:G.turn===G.me?!!G.drew:G.turn===0&&G.seq<=1,names:G.names,human:G.human,seq:G.seq,over}}else st={deck:G.deck,hands:G.hands,pile:G.pile,turn:G.turn,dir:G.dir,col:G.col,names:G.names,human:G.human,seq:G.seq,over};
  write(()=>DB.update(rp(G.on),{s:JSON.stringify(st),seq:G.seq,st:G.over?"over":"play",at:Date.now()}),{quiet:true})}
 function onStart(){const d=ON.doc;if(!d||d.host!==S.uid)return;const seats=d.seats||[];if(seats.length<2)return toast("En az iki kişi gerekli.");
  run++;const names=[0,1,2,3].map(i=>seats[i]?((d.names||{})[seats[i]]||"Oyuncu"):BOTN[i-seats.length]||"Bot"),human=[0,1,2,3].map(i=>seats[i]?1:0);
+ if((d.k||"renk")==="okey"){okStart({me:0,names,human,on:ON.c,host:true});G.seq=+d.seq||0;G.drew=true;G.msg="Sen başlıyorsun: bir taş seç ve at.";onPush();return okDraw()}
  drStart({me:0,names,human,on:ON.c,host:true});G.seq=+d.seq||0;G.turn=0;G.msg="Sıra sende.";onPush();drDraw()}
 function onNew(){if(!G||!G.on)return;if(!G.host)return toast("Yeni eli odayı kuran başlatır.");onStart()}
-function onCopy(){const t="Kadraj'da Dörtrenk oynayalım! Masa Oyunları › Dörtrenk · Arkadaşlarla › Kodla katıl: "+ON.c;try{if(navigator.share)return navigator.share({text:t}).catch(()=>{})}catch(e){}copyText(t,"Kod kopyalandı")}
+function onCopy(){const g=GN[ON.k]||"Dörtrenk",t="Kadraj'da "+g+" oynayalım! Masa Oyunları › "+g+" · Arkadaşlarla › Kodla katıl: "+ON.c;try{if(navigator.share)return navigator.share({text:t}).catch(()=>{})}catch(e){}copyText(t,"Kod kopyalandı")}
 function onLeave(){if(!ON.c)return;const c=ON.c,d=ON.doc;ON.c=null;ON.doc=null;if(ON.un)try{ON.un()}catch(e){}ON.un=null;
  try{if(d&&d.host===S.uid)write(()=>DB.update(rp(c),{st:"over",s:"",at:Date.now()}),{quiet:true});else if(d)write(()=>DB.update(rp(c),{gone:{[S.uid]:1},...(d.st==="lobby"?{seats:(d.seats||[]).filter(u=>u!==S.uid)}:{})}),{quiet:true})}catch(e){}}
-window.MASA={open(k){css();if(k)start(k);else menu_()},join(c){css();onMenu("renk");const x=L&&L.querySelector("#onCode");if(x){x.value=c;onJoin()}},_on:ON,_t:{okDeal,okBest,okSolve,okPick,okScore,okJ,drDeck,drCan,ptDeck,ptScore,ptVal,abPlace,abShoot,G:()=>G}};
+window.MASA={open(k){css();if(k)start(k);else menu_()},join(c,k){css();onMenu(k||"renk");const x=L&&L.querySelector("#onCode");if(x){x.value=c;onJoin()}},_on:ON,_t:{okDeal,okBest,okSolve,okPick,okScore,okJ,drDeck,drCan,ptDeck,ptScore,ptVal,abPlace,abShoot,G:()=>G}};
 })();
