@@ -22,7 +22,7 @@ const vib=ms=>{try{if(settings.haptics===false)return;navigator.vibrate&&navigat
 /* Sürüm: ana.ara.yama (4.1.0). Hata düzeltme ve küçük şeyler → yama artar (4.1.1); büyük güncelleme → ara artar (4.2.0).
    APP_V = ana*10000 + ara*100 + yama (4.1.0 → 40100). Başlıktaki <meta name="kadraj-version"> ile aynı tutulmalı.
    Eski biçim (4.0 → 40) verNorm ile çevrilir. "İki sürüm geride" ara sürüm sayısıyla ölçülür (yamalar engellemez). */
-const APP_V=70114,APP_VER_RAW="7.1.14";
+const APP_V=70115,APP_VER_RAW="7.1.15";
 /* 7.1.7: sahibinin isteğiyle görünen sürüm numaraları 3 eksik (3.0 → 0.0, 7.1.7 → 4.1.7, iç 8.0 → görünen 5.0). APP_V, VER_NAMES anahtarları, kayıt mesajları ("7.1.7: …") ve meta/_surum iç numarayla devam eder (sürüm denetimi geri gitmesin); yalnızca ekranda verShow/verStr ile 3 çıkarılır. */
 const VER_OFF=3,verShow=s=>String(s).replace(/^(\d+)/,(m,a)=>String(Math.max(0,+a-VER_OFF)));const APP_VER=verShow(APP_VER_RAW);
 /* Güncelleme adları (sahibinin isteği, 6.0.5): her ara sürümün bir adı var, Türkiye'nin rüzgârları. Yeni ara sürümde buraya sıradakini ekle. */
