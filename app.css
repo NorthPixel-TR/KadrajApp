@@ -4879,3 +4879,40 @@ html.reduce-motion #intro .in-vf .in-ring{display:none}
 .pdk .pdk-i{flex:none;width:40px;height:40px;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px var(--line)}.pdk .pdk-i svg{width:100%;height:100%;display:block}
 .pdk .t{flex:1;display:grid;gap:2px;min-width:0}.pdk .t b{font:800 .98rem/1.2 var(--f-body)}.pdk .t small{color:var(--muted);font-size:.82rem;line-height:1.3}
 /*}@css:7130*/
+/*@css:7131{*/
+.gk{position:absolute;inset:0;margin:0 auto;max-width:520px;background:var(--bg);color:var(--fg);pointer-events:auto;display:flex;flex-direction:column;animation:gkIn .3s ease both}
+.gk-h{display:flex;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top)) 12px 6px}
+.gk-h button{width:40px;height:40px;border:0;border-radius:12px;background:transparent;color:inherit;display:grid;place-items:center;cursor:pointer}
+.gk-h h1{flex:1;margin:0;font:800 1.15rem/1.2 var(--f-body)}.gk-h small{color:var(--muted);font:700 .85rem/1 var(--f-mono)}
+.gk-b{flex:1;overflow:auto;padding:4px 10px calc(12px + env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:center;gap:12px}
+.gk-msg{min-height:30px;padding:6px 14px;border-radius:10px;font:800 .95rem/1.2 var(--f-body);opacity:0}
+.gk-msg.on{opacity:1;background:var(--fg);color:var(--bg);animation:gkMsg 2.2s ease forwards}
+.gk-grid{display:grid;gap:6px;width:min(320px,82vw)}
+.gk-r{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.gk-r.sh{animation:gkSh .35s ease}
+.gk-t{aspect-ratio:1;display:grid;place-items:center;border:2px solid var(--line);border-radius:8px;font:800 clamp(1.3rem,6.5vw,1.9rem)/1 var(--f-body);text-transform:uppercase;background:var(--surface)}
+.gk-t.dol{border-color:var(--muted);animation:gkPop .12s ease}
+.gk-t.ok,.gk-k.ok,.gk-ic .ok{background:#16A34A;border-color:#16A34A;color:#fff}
+.gk-t.yer,.gk-k.yer,.gk-ic .yer{background:#EAB308;border-color:#EAB308;color:#fff}
+.gk-t.no,.gk-k.no,.gk-ic .no{background:#52525B;border-color:#52525B;color:#fff}
+.gk-t.fl{animation:gkFl .5s ease both;animation-delay:calc(var(--i) * .18s)}
+.gk-kb{display:grid;gap:6px;width:100%;max-width:500px;margin-top:auto}
+.gk-kr{display:flex;gap:4px;justify-content:center}
+.gk-k{flex:1;min-width:0;max-width:44px;height:52px;border:0;border-radius:8px;background:var(--surface-2);color:var(--fg);font:800 1rem/1 var(--f-body);cursor:pointer;padding:0;display:grid;place-items:center}
+.gk-k.w{flex:1.6;max-width:72px;font-size:.78rem}.gk-k svg{width:20px;height:20px}
+.gk-end{width:100%;max-width:420px}
+.gk-res{display:grid;gap:12px;text-align:center}
+.gk-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.gk-sum b{display:block;font:800 1.6rem/1.1 var(--f-body)}.gk-sum span{font-size:.75rem;color:var(--muted)}
+.gk-dist{display:grid;gap:4px;text-align:left}.gk-dist div{display:flex;align-items:center;gap:6px;font:700 .85rem/1 var(--f-mono)}
+.gk-dist i{display:block;font-style:normal;padding:4px 6px;border-radius:4px;background:var(--surface-2);text-align:right;color:var(--fg);min-width:22px}.gk-dist i.on{background:#16A34A;color:#fff}
+.gk-fr{display:grid;gap:6px;text-align:left}.gk-fr h3{margin:4px 0 0;font:800 .95rem/1.2 var(--f-body)}
+.gk-fl{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;background:var(--surface-2)}.gk-fl b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.gk-fl span{font:800 .88rem/1 var(--f-mono)}
+.gk-f{text-align:center;font-size:.86rem}
+#main .gkk{margin-top:-6px}
+.gk-ic{display:grid!important;grid-template-columns:repeat(3,1fr);gap:1px;padding:8px 3px;background:var(--surface-2)}.gk-ic i{display:grid;place-items:center;font:800 .7rem/1 var(--f-body);font-style:normal;border-radius:3px;aspect-ratio:1}
+@keyframes gkIn{from{opacity:0;transform:translateY(12px)}}@keyframes gkPop{50%{transform:scale(1.08)}}
+@keyframes gkFl{0%{transform:rotateX(0)}50%{transform:rotateX(90deg);background:var(--surface);color:var(--fg);border-color:var(--line)}100%{transform:rotateX(0)}}
+@keyframes gkSh{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}@keyframes gkMsg{0%,80%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.gk,.gk *{animation:none!important}.gk-msg.on{opacity:1}}
+:root.reduce-motion .gk,:root.reduce-motion .gk *{animation:none!important}
+/*}@css:7131*/
