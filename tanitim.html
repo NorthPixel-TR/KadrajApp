@@ -5,276 +5,163 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Kadraj Tanıtım</title>
 <meta name="description" content="Kadraj: fotoğraf, Klaket, sohbet, hikâye ve oyunlar bir arada. Arkadaşlarınla kendi sosyal ağın.">
-<meta name="theme-color" content="#0A110F">
+<meta name="theme-color" content="#0F0D1F">
 <meta property="og:title" content="Kadraj">
 <meta property="og:description" content="Fotoğraf, Klaket, sohbet, hikâye ve oyunlar bir arada.">
 <meta property="og:image" content="tanitim/akis.jpg">
-<link rel="icon" href="icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&family=Unbounded:wght@600;800&display=swap" media="print" onload="this.media='all'">
+<link rel="icon" href="icon-192.png?v=7110">
 <style>
-:root{--bg:#0A110F;--bg2:#0F1A17;--card:#13211D;--line:rgba(255,255,255,.09);--fg:#EEF5F2;--muted:#9DB3AB;--acc:#18A383;--acc2:#0C7A63;--sun:#FF9F43;--red:#E30A17;
- --fd:"Unbounded",system-ui,sans-serif;--fb:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif}
+/* 7.3.0 tanıtım sayfası: yeni görünüm (çivit + turuncu odak noktası, Plus Jakarta Sans), uygulamanın gerçek ekran görüntüleri (tanitim/*.jpg,
+   üretici testler/betikler/tanitim/shots.js). Bağımsız sayfa: app.js/app.css kullanmaz. Animasyonlar bir kez; hareket azaltılmışsa yok. */
+@font-face{font-family:"Plus Jakarta Sans";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/pjs-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+20A0-20C0,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Plus Jakarta Sans";font-style:normal;font-display:swap;font-weight:200 800;src:url(fonts/pjs-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212,U+FEFF,U+FFFD}
+:root{--bg:#0F0D1F;--bg2:#17143A;--card:#1E1A47;--line:rgba(255,255,255,.1);--fg:#F4F3FF;--muted:#B6B2DA;--acc:#7C74FF;--acc2:#4F46E5;--sun:#FF8A4C;--f:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--fg);font-family:var(--fb);line-height:1.5;overflow-x:hidden}
-a{color:inherit}
+body{background:var(--bg);color:var(--fg);font-family:var(--f);line-height:1.55;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
-
-/* üst */
-.top{position:fixed;inset:0 0 auto;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;transition:background .3s}
-.top.s{background:rgba(10,17,15,.86);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:10px;font-family:var(--fd);font-weight:800;font-size:20px;letter-spacing:-.02em;text-decoration:none}
-.brand img{width:32px;height:32px;border-radius:9px}
-.btn{display:inline-flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:12px 22px;font:700 15px var(--fb);text-decoration:none;cursor:pointer;background:var(--acc);color:#fff;box-shadow:0 8px 24px rgba(24,163,131,.35);transition:transform .2s}
-.btn:hover{transform:translateY(-2px)}
-.btn.sm{padding:9px 16px;font-size:14px;box-shadow:none}
-.btn.gh{background:rgba(255,255,255,.08);box-shadow:none;border:1px solid var(--line)}
-.btn svg{width:18px;height:18px}
-
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 24px;border-radius:14px;font:800 1rem/1 var(--f);transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--sun);color:#1F1A14}.btn.sec{background:rgba(255,255,255,.1);border:1px solid var(--line)}
+.btn svg{width:20px;height:20px}
+/* üst çubuk */
+.top{position:sticky;top:0;z-index:10;background:rgba(15,13,31,.92);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:10px;height:58px}
+.brand{display:flex;align-items:center;gap:8px;font:800 1.2rem/1 var(--f);letter-spacing:-.02em}
+.brand svg{width:30px;height:30px;color:#fff}
+.top .sp{flex:1}.top .btn{min-height:40px;padding:0 16px;font-size:.92rem}
 /* giriş */
-.hero{position:relative;min-height:100svh;display:grid;align-items:center;padding:96px 0 40px;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:-20%;background:radial-gradient(40% 40% at 70% 40%,rgba(24,163,131,.35),transparent 70%),radial-gradient(30% 30% at 20% 75%,rgba(255,159,67,.16),transparent 70%);pointer-events:none}
-.hgrid{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
-.kick{display:inline-flex;gap:8px;align-items:center;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:18px}
-.kick i{width:8px;height:8px;border-radius:50%;background:var(--sun);display:block}
-h1{font-family:var(--fd);font-weight:800;font-size:clamp(38px,6.4vw,74px);line-height:1.02;letter-spacing:-.035em}
-h1 .w{display:inline-block;opacity:0;transform:translateY(.5em) rotate(4deg);animation:wIn .8s cubic-bezier(.2,.8,.2,1) forwards}
-h1 em{font-style:normal;color:var(--acc)}
-.lead{margin:22px 0 30px;font-size:clamp(17px,2vw,20px);color:var(--muted);max-width:30em;opacity:0;animation:fIn .8s .9s forwards}
-.cta{display:flex;gap:12px;flex-wrap:wrap;opacity:0;animation:fIn .8s 1.1s forwards}
-@keyframes wIn{to{opacity:1;transform:none}}
-@keyframes fIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-
-/* telefon */
-.phone{position:relative;width:min(300px,72vw);aspect-ratio:585/1266;border-radius:44px;padding:11px;background:linear-gradient(145deg,#2A3A35,#0D1512);box-shadow:0 40px 80px rgba(0,0,0,.55),inset 0 0 0 1.5px rgba(255,255,255,.12);margin:0 auto}
-.phone::after{content:"";position:absolute;top:17px;left:50%;width:76px;height:20px;border-radius:12px;background:#000;transform:translateX(-50%);z-index:3}
-.scr{position:relative;width:100%;height:100%;border-radius:34px;overflow:hidden;background:#000}
-.scr::before{content:"9:41";position:absolute;top:7px;left:24px;color:#fff;font:700 12px var(--fb);letter-spacing:.02em}
-.scr::after{content:"";position:absolute;top:10px;right:22px;width:22px;height:10px;border-radius:3px;border:1.5px solid rgba(255,255,255,.85);box-shadow:inset -6px 0 0 #000,inset 0 0 0 1.5px #000;background:#fff}
-.scr img{position:absolute;inset:30px 0 0;height:calc(100% - 30px);width:100%;height:100%;object-fit:cover;object-position:top}
-.hp{opacity:0;animation:pIn 1.1s .4s cubic-bezier(.2,.8,.2,1) forwards}
-@keyframes pIn{from{opacity:0;transform:translateY(60px) rotate(6deg) scale(.92)}to{opacity:1;transform:rotate(-3deg)}}
-.hs img{opacity:0;transform:scale(1.06);transition:opacity .8s,transform 3.4s ease-out}
-.hs img.on{opacity:1;transform:none}
-.dots{display:flex;gap:6px;justify-content:center;margin-top:22px}
-.dots b{width:7px;height:7px;border-radius:9px;background:rgba(255,255,255,.2);transition:width .4s,background .4s}
-.dots b.on{width:22px;background:var(--acc)}
-.chip{position:absolute;z-index:4;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:16px;background:#fff;color:#0A110F;font-weight:700;font-size:14px;box-shadow:0 14px 30px rgba(0,0,0,.35);white-space:nowrap;animation:bob 5s ease-in-out infinite}
-.chip svg{width:18px;height:18px;flex:none}
-.chip.c1{top:16%;left:-18%}
-.chip.c2{top:52%;right:-16%;animation-delay:-1.6s}
-.chip.c3{bottom:9%;left:-12%;animation-delay:-3.2s}
-.chip .fl{width:26px;height:17px;border-radius:3px;flex:none}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-
-/* bölümler */
-section.f{padding:90px 0;border-top:1px solid var(--line)}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
-.row.rev .txt{order:2}
-.tag{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--acc);margin-bottom:12px}
-.tag svg{width:18px;height:18px}
-h2{font-family:var(--fd);font-weight:800;font-size:clamp(28px,4vw,44px);line-height:1.08;letter-spacing:-.03em;margin-bottom:16px}
-.txt p{color:var(--muted);font-size:18px;max-width:28em}
-.pts{list-style:none;margin-top:22px;display:grid;gap:12px}
-.pts li{display:flex;gap:12px;align-items:flex-start;font-size:16px}
-.pts li svg{width:22px;height:22px;flex:none;color:var(--acc);margin-top:1px}
-.vis{position:relative;display:grid;place-items:center}
-.vis::before{content:"";position:absolute;width:78%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,var(--g,rgba(24,163,131,.3)),transparent 68%)}
-.vis .phone{width:min(280px,70vw)}
-.rv{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
-.rv.in{opacity:1;transform:none}
-.vis.rv{transform:translateY(60px) rotate(5deg) scale(.94)}
-.row.rev .vis.rv{transform:translateY(60px) rotate(-5deg) scale(.94)}
-.vis.rv.in{transform:rotate(-2deg)}
-.row.rev .vis.rv.in{transform:rotate(2deg)}
-.txt.rv{transition-delay:.12s}
-
-/* 29 Ekim */
-.bay{--g:rgba(227,10,23,.42)}
-.bay .tag{color:#FF5A63}
-.flagw{display:inline-block;width:64px;height:43px;margin-bottom:16px;border-radius:5px;box-shadow:0 8px 20px rgba(227,10,23,.4);transform-origin:left center;animation:wave 2.6s ease-in-out infinite}
-@keyframes wave{0%,100%{transform:skewY(0) scaleX(1)}50%{transform:skewY(-3deg) scaleX(.96)}}
-
-/* galeri şeridi */
-.strip{padding:80px 0 30px;border-top:1px solid var(--line);overflow:hidden}
-.strip h2{text-align:center;margin-bottom:34px}
-.track{display:flex;gap:22px;width:max-content;animation:slide 48s linear infinite}
-.track img{width:190px;border-radius:24px;box-shadow:0 18px 40px rgba(0,0,0,.45);border:1px solid var(--line)}
-@keyframes slide{to{transform:translateX(calc(-50% - 11px))}}
-.strip:hover .track{animation-play-state:paused}
-
+.hero{position:relative;overflow:hidden;padding:56px 0 30px;background:radial-gradient(120% 70% at 50% 0%,#2A2470 0%,var(--bg) 70%)}
+.hero .grid3{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent calc(33.33% - .5px),rgba(255,255,255,.05) 0,rgba(255,255,255,.05) calc(33.33% + .5px),transparent 0,transparent calc(66.66% - .5px),rgba(255,255,255,.05) 0,rgba(255,255,255,.05) calc(66.66% + .5px),transparent 0)}
+.hero .wrap{position:relative;display:grid;gap:36px;align-items:center}
+.logo{width:96px;height:96px;border-radius:26px;background:linear-gradient(140deg,#4F46E5,#7C3AED);display:grid;place-items:center;box-shadow:0 20px 50px -18px rgba(124,116,255,.8)}
+.logo svg{width:64px;height:64px;color:#fff;overflow:visible}
+.logo path{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .7s .15s cubic-bezier(.6,0,.3,1) forwards}
+.logo .ring{fill:none;stroke:var(--sun);stroke-width:1.2;transform-origin:16px 8px;transform-box:view-box;opacity:0;animation:lock .7s .75s cubic-bezier(.2,.8,.2,1) forwards}
+.logo .dot{fill:var(--sun);opacity:0;animation:pop .35s 1.25s ease forwards;transform-origin:16px 8px;transform-box:view-box}
+@keyframes draw{to{stroke-dashoffset:0}}@keyframes lock{0%{opacity:0;transform:scale(3)}60%{opacity:1}100%{opacity:0;transform:scale(1)}}@keyframes pop{0%{opacity:0;transform:scale(.2)}70%{transform:scale(1.25)}100%{opacity:1;transform:scale(1)}}
+.hero h1{font:800 clamp(2.6rem,9vw,4.6rem)/1.02 var(--f);letter-spacing:-.04em;margin:22px 0 14px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--sun),#FF5C8A 50%,var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{font-size:1.12rem;color:var(--muted);max-width:34ch}
+.hero .bts{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.ver{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:6px 12px;border-radius:999px;background:rgba(255,138,76,.14);color:#FFC9A8;font:700 .82rem/1 var(--f)}
+.ver i{width:8px;height:8px;border-radius:2px;background:var(--sun)}
+.phones{position:relative;height:540px;display:flex;justify-content:center;align-items:flex-end}
+.ph{position:relative;width:250px;aspect-ratio:585/1266;border-radius:34px;padding:7px;background:#05040D;box-shadow:0 0 0 1.5px rgba(255,255,255,.14),0 40px 80px -30px rgba(0,0,0,.9)}
+.ph img{width:100%;height:100%;object-fit:cover;border-radius:27px}
+.phones .ph.m{z-index:2;animation:rise .9s .2s cubic-bezier(.2,.8,.2,1) both}
+.phones .ph.l,.phones .ph.r{position:absolute;bottom:26px;width:210px;opacity:.95}
+.phones .ph.l{left:calc(50% - 250px);transform:rotate(-8deg);animation:riseL 1s .35s cubic-bezier(.2,.8,.2,1) both}
+.phones .ph.r{right:calc(50% - 250px);transform:rotate(8deg);animation:riseR 1s .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(60px)}}@keyframes riseL{from{opacity:0;transform:translate(40px,60px) rotate(0)}}@keyframes riseR{from{opacity:0;transform:translate(-40px,60px) rotate(0)}}
+@media (max-width:560px){.phones{height:430px}.ph{width:200px}.phones .ph.l,.phones .ph.r{width:150px;bottom:18px}.phones .ph.l{left:calc(50% - 175px)}.phones .ph.r{right:calc(50% - 175px)}}
+@media (min-width:900px){.hero .wrap{grid-template-columns:1.05fr 1fr}.hero{padding:80px 0 50px}}
+/* sayılar */
+.nums{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:26px 0 10px}
+.nums div{padding:16px;border-radius:18px;background:var(--card);border:1px solid var(--line)}
+.nums b{display:block;font:800 1.9rem/1 var(--f);color:var(--sun)}.nums span{color:var(--muted);font-size:.9rem}
+@media (min-width:760px){.nums{grid-template-columns:repeat(4,minmax(0,1fr))}}
+/* özellikler */
+.f{padding:60px 0;border-top:1px solid var(--line)}
+.f .wrap{display:grid;gap:30px;align-items:center}
+.f .ph{width:min(270px,72vw);margin:0 auto}
+.tag{display:inline-flex;align-items:center;gap:6px;font:800 .76rem/1 var(--f);letter-spacing:.12em;text-transform:uppercase;color:var(--c,var(--sun))}
+.tag i{width:8px;height:8px;border-radius:2px;background:currentColor}
+.f h2{font:800 clamp(1.8rem,5.5vw,2.6rem)/1.08 var(--f);letter-spacing:-.03em;margin:12px 0}
+.f p{color:var(--muted);font-size:1.05rem;max-width:42ch}
+.f ul{list-style:none;display:grid;gap:8px;margin-top:18px}
+.f li{display:flex;gap:10px;align-items:flex-start}
+.f li::before{content:"";flex:none;width:8px;height:8px;margin-top:9px;border-radius:2px;background:var(--c,var(--sun))}
+@media (min-width:860px){.f .wrap{grid-template-columns:1fr 1fr}.f:nth-of-type(even) .tx{order:2}}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.on{opacity:1;transform:none}
+/* şerit */
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:50px 0;border-top:1px solid var(--line)}
+.chips span{padding:9px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-weight:700;font-size:.92rem}
+/* Zirve */
+.zr{padding:70px 0;text-align:center;background:linear-gradient(180deg,var(--bg),#1A1446 60%,#2B1B5A)}
+.zr h2{font:800 clamp(2rem,7vw,3.2rem)/1.05 var(--f);letter-spacing:-.03em;margin:10px 0}
+.zr p{color:var(--muted);max-width:44ch;margin:0 auto}
+.cd{display:flex;justify-content:center;gap:10px;margin:28px 0 20px}
+.cd div{min-width:74px;padding:14px 8px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid var(--line)}
+.cd b{display:block;font:800 2rem/1 var(--f);font-variant-numeric:tabular-nums}.cd span{font-size:.8rem;color:var(--muted)}
+.mtn{display:block;width:min(560px,100%);height:auto;margin:20px auto 0}
 /* son */
-.end{padding:100px 0 120px;text-align:center;position:relative;overflow:hidden}
-.end::before{content:"";position:absolute;left:50%;top:40%;width:620px;height:620px;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(24,163,131,.3),transparent 65%)}
-.end>*{position:relative}
-.end img.lg{width:88px;height:88px;border-radius:24px;margin:0 auto 24px;box-shadow:0 20px 50px rgba(24,163,131,.4)}
-.end p{color:var(--muted);font-size:18px;margin:0 auto 30px;max-width:30em}
-.end .cta{justify-content:center;opacity:1;animation:none}
-footer{padding:26px 20px 40px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
-
-@media (max-width:860px){
- .hgrid,.row{grid-template-columns:1fr;gap:40px}
- .row.rev .txt{order:0}
- .hero{padding-top:90px;text-align:left}
- .hvis{margin-top:10px}
- .chip.c1{left:-4%}.chip.c2{right:-4%}.chip.c3{left:0}
- section.f{padding:64px 0}
- .txt p{font-size:17px}
-}
-@media (max-width:420px){.chip{font-size:12.5px;padding:8px 11px}.btn{padding:11px 18px}}
-@media (prefers-reduced-motion:reduce){
- *,*::before,*::after{animation:none!important;transition:none!important}
- h1 .w,.lead,.cta,.hp{opacity:1;transform:none}
- .rv,.vis.rv,.row.rev .vis.rv{opacity:1;transform:none}
- .track{flex-wrap:wrap;justify-content:center;width:auto}
- .track img:nth-child(n+10){display:none}
-}
+.end{padding:70px 0 40px;text-align:center}
+.end h2{font:800 clamp(1.9rem,6vw,2.8rem)/1.1 var(--f);letter-spacing:-.03em}
+.end p{color:var(--muted);margin:12px auto 24px;max-width:40ch}
+.end .bts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.np{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:46px;color:var(--muted);font-size:.85rem}
+.np svg{width:22px;height:22px}.np b{color:var(--fg)}
+@media (prefers-reduced-motion:reduce){*,*::before{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.logo path{stroke-dashoffset:0}.logo .dot{opacity:1}}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
- <symbol id="i-chk" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
- <symbol id="i-arr" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6"/></symbol>
- <symbol id="i-img" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M4 18l5-5 4 4 3-3 4 4"/></g></symbol>
- <symbol id="i-film" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M10 9.5v5l4-2.5z" fill="currentColor"/></g></symbol>
- <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.5V17A2.5 2.5 0 0 1 4 14.5z"/></symbol>
- <symbol id="i-music" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="17" r="3"/><circle cx="17" cy="15" r="3"/><path d="M10 17V6l10-2v11"/></g></symbol>
- <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.8.7 3 2.4 3.5 5.2"/></g></symbol>
- <symbol id="i-ring" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" stroke-dasharray="4 2.5"/><circle cx="12" cy="12" r="5"/></g></symbol>
- <symbol id="i-cake" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16v-7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"/><path d="M4 15c2 1.5 4 1.5 5.3 0 1.4 1.5 4 1.5 5.4 0 1.3 1.5 3.3 1.5 5.3 0M12 11V7.5"/><path d="M12 3.5c.9 1 .9 2 0 3-.9-1-.9-2 0-3z"/></g></symbol>
- <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></g></symbol>
- <symbol id="i-knight" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21h11v-2.2c0-4.3-1.2-7.6-3.3-10.2L16 5.5 13.6 6 12.5 3.6 9 7.4 5.6 11c-.9 1-.7 2.3.4 2.8l1.2.6 3.3-1.8c.2 1.8-.6 3.4-2.1 4.7L7 18.6z"/></symbol>
- <symbol id="i-moon" viewBox="0 0 30 20"><rect width="30" height="20" fill="#E30A17"/><circle cx="10.6" cy="10" r="5" fill="#fff"/><circle cx="11.9" cy="10" r="4" fill="#E30A17"/><polygon fill="#fff" points="14.6,10 19.1,11.5 16.3,7.6 16.3,12.4 19.1,8.5"/></symbol>
-</svg>
+<header class="top"><div class="wrap"><a class="brand" href="./"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5.2v13.6M8 14.6 16 8M11.3 11.9 16.8 18.8"/><rect x="13.85" y="5.85" width="4.3" height="4.3" rx="2.15" fill="#FF8A4C" stroke="none"/></svg>kadraj</a><span class="sp"></span><a class="btn pri" href="./">Kadraj'ı aç</a></div></header>
 
-<header class="top" id="top">
- <a class="brand" href="./"><img src="icon-192.png" alt="">kadraj</a>
- <a class="btn sm" href="./">Kadraj'ı aç</a>
-</header>
-
-<section class="hero">
- <div class="wrap hgrid">
-  <div>
-   <div class="kick"><i></i>Arkadaşlarınla kendi sosyal ağın</div>
-   <h1><span class="w" style="animation-delay:.1s">Anı</span> <span class="w" style="animation-delay:.22s">yakala,</span><br><span class="w" style="animation-delay:.34s"><em>kadrajla,</em></span><br><span class="w" style="animation-delay:.46s">paylaş.</span></h1>
-   <p class="lead">Fotoğraf, Klaket, sohbet, hikâye ve oyunlar tek uygulamada. Reklam yok, kalabalık yok; yalnızca sen ve arkadaşların.</p>
-   <div class="cta"><a class="btn" href="./">Hemen başla <svg><use href="#i-arr"/></svg></a><a class="btn gh" href="#ozellik">Neler var?</a></div>
-  </div>
-  <div class="hvis">
-   <div class="phone hp">
-    <div class="scr hs" id="hs">
-     <img class="on" src="tanitim/akis.jpg" alt="Kadraj Akış ekranı">
-     <img src="tanitim/klaket.jpg" alt="Klaket ekranı" loading="lazy">
-     <img src="tanitim/sohbet.jpg" alt="Sohbet ekranı" loading="lazy">
-     <img src="tanitim/hikaye.jpg" alt="Hikâye ekranı" loading="lazy">
-     <img src="tanitim/profil.jpg" alt="Profil ekranı" loading="lazy">
-    </div>
-    <div class="chip c1"><svg style="color:#18A383"><use href="#i-music"/></svg>Sohbette şarkı gönder</div>
-    <div class="chip c2"><svg class="fl"><use href="#i-moon"/></svg>29 Ekim kutlu olsun</div>
-    <div class="chip c3"><svg style="color:#FF9F43"><use href="#i-film"/></svg>Klaket'ini paylaş</div>
-   </div>
-   <div class="dots" id="dots"><b class="on"></b><b></b><b></b><b></b><b></b></div>
-  </div>
+<section class="hero"><div class="grid3" aria-hidden="true"></div><div class="wrap">
+ <div>
+  <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path pathLength="1" d="M8 5.2v13.6"/><path pathLength="1" d="M8 14.6 16 8"/><path pathLength="1" d="M11.3 11.9 16.8 18.8"/><circle class="ring" cx="16" cy="8" r="2.6"/><circle class="dot" cx="16" cy="8" r="2.15"/></svg></div>
+  <h1>Arkadaşlarınla<br><em>kendi kadrajın.</em></h1>
+  <p class="lead">Fotoğraf, Klaket, sohbet, hikâye ve bir sürü oyun. Reklam yok, yabancı yok: yalnızca sen ve arkadaşların.</p>
+  <div class="bts"><a class="btn pri" href="./">Kadraj'ı aç</a><a class="btn sec" href="kadraj.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Android uygulaması</a></div>
+  <span class="ver" id="ver" hidden><i></i><span></span></span>
  </div>
-</section>
+ <div class="phones" aria-hidden="true"><div class="ph l"><img src="tanitim/profil.jpg" alt="" loading="eager"></div><div class="ph m"><img src="tanitim/akis.jpg" alt="Kadraj Akış ekranı"></div><div class="ph r"><img src="tanitim/sohbet.jpg" alt="" loading="eager"></div></div>
+</div></section>
 
-<main id="ozellik">
- <section class="f"><div class="wrap row">
-  <div class="txt rv"><div class="tag"><svg><use href="#i-img"/></svg>Akış</div><h2>Arkadaşların ne yapıyor, hepsi burada.</h2>
-   <p>Fotoğraflar, notlar ve anketler sırayla akar. Beğen, yorum yaz, yoruma yanıt ver.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Bir paylaşımda 10 fotoğrafa kadar, 7 filtre</li><li><svg><use href="#i-chk"/></svg>Anılar: geçen yıl bugün ne paylaştın?</li><li><svg><use href="#i-chk"/></svg>Doğum günlerini Kadraj hatırlatır</li></ul></div>
-  <div class="vis rv"><div class="phone"><div class="scr"><img src="tanitim/akis.jpg" alt="Akış" loading="lazy"></div></div></div>
- </div></section>
+<div class="wrap"><div class="nums rv"><div><b>10+</b><span>oyun</span></div><div><b>84</b><span>satranç bulmacası</span></div><div><b>30</b><span>piksel başarım</span></div><div><b>193</b><span>Çiz Bil kelimesi</span></div></div></div>
 
- <section class="f"><div class="wrap row rev">
-  <div class="txt rv"><div class="tag" style="color:#FF9F43"><svg><use href="#i-film"/></svg>Klaket</div><h2>Kısa video, büyük an.</h2>
-   <p>Videonu çek ya da seç, üstüne şarkını koy. Kaydır, sıradakine geç.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Klakete şarkı ekle, istediğin saniyeden başlasın</li><li><svg><use href="#i-chk"/></svg>Basılı tut, 2 kat hızlı izle</li><li><svg><use href="#i-chk"/></svg>Video hiç kırpılmaz</li></ul></div>
-  <div class="vis rv" style="--g:rgba(255,159,67,.3)"><div class="phone"><div class="scr"><img src="tanitim/klaket.jpg" alt="Klaket" loading="lazy"></div></div></div>
- </div></section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#FF8A4C"><span class="tag"><i></i>Akış ve hikâyeler</span><h2>Günün en güzel karesi burada.</h2><p>Çoklu fotoğraf, anket, not ve 24 saatlik hikâyeler. Clawd hikâye şeridinde kendi piksel odasında yaşıyor; gece uyur, sabah gitar çalar.</p>
+<ul><li>Hikâyede anket, soru ve şarkı çıkartması</li><li>Yakın arkadaşlara özel hikâyeler</li><li>Günün sorusu ve 31 Mart 2027 Zirve geri sayımı</li></ul></div><div class="rv"><div class="ph"><img src="tanitim/akis.jpg" alt="Akış" loading="lazy"></div></div></div></section>
 
- <section class="f"><div class="wrap row">
-  <div class="txt rv"><div class="tag"><svg><use href="#i-chat"/></svg>Sohbet</div><h2>Konuşmak hiç bu kadar eğlenceli olmamıştı.</h2>
-   <p>Mesaj, fotoğraf, sesli mesaj ve şarkı gönder. Her gün yazışınca kamp ateşin büyür.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Sohbette şarkı: 30 saniyelik önizleme</li><li><svg><use href="#i-chk"/></svg>Tepkiler, yanıtla, ilet, sabit mesaj</li><li><svg><use href="#i-chk"/></svg>Sesli ve görüntülü arama</li></ul></div>
-  <div class="vis rv"><div class="phone"><div class="scr"><img src="tanitim/sohbet.jpg" alt="Sohbet" loading="lazy"></div></div></div>
- </div></section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#7C74FF"><span class="tag"><i></i>Sohbet</span><h2>"İyi ki doğdun" yaz, balonlar uçsun.</h2><p>Birebir ve grup sohbetleri, sesli mesaj, görüntülü arama, tepkiler ve kamp ateşi serisi. Bazı sözler ekranda küçük bir şenlik başlatır.</p>
+<ul><li>"Yaşasın" havai fişek, "günaydın" güneş, "iyi geceler" yıldızlar</li><li>Gönder tuşuna basılı tut: mesajı ileri bir saate zamanla</li><li>Grupta ortak albüm ve anket</li></ul></div><div class="rv"><div class="ph"><img src="tanitim/sohbet.jpg" alt="Sohbet" loading="lazy"></div></div></div></section>
 
- <section class="f"><div class="wrap row rev">
-  <div class="txt rv"><div class="tag" style="color:#8C7CFF"><svg><use href="#i-users"/></svg>Gruplar</div><h2>Hafta sonu planı tek ankette.</h2>
-   <p>Arkadaş grubunu kur, anket aç, herkes oyunu versin. Sonuç anında görünür.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Grupta anket, 2-4 seçenek</li><li><svg><use href="#i-chk"/></svg>XOX, 4'lü Bağla ve Kelime oyunları</li><li><svg><use href="#i-chk"/></svg>Takma adlar ve sohbet temaları</li></ul></div>
-  <div class="vis rv" style="--g:rgba(140,124,255,.3)"><div class="phone"><div class="scr"><img src="tanitim/grup.jpg" alt="Grup" loading="lazy"></div></div></div>
- </div></section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#FF5C8A"><span class="tag"><i></i>Profil</span><h2>Profilin, senin dünyan.</h2><p>Profilinin üstüne piksel bir sahne koy: Erciyes, İstanbul, Uzay, Lale bahçesi… Kazandığın başarım rozetleri adının altında vitrinde durur.</p>
+<ul><li>30 piksel başarım: ilk kare, gece kuşu, satranç ustası, koşucu…</li><li>Birden çok profil fotoğrafı, profil şarkısı</li><li>Kadraj kodu ile profilini paylaş</li></ul></div><div class="rv"><div class="ph"><img src="tanitim/profil.jpg" alt="Profil" loading="lazy"></div></div></div></section>
 
- <section class="f"><div class="wrap row">
-  <div class="txt rv"><div class="tag" style="color:#FF6FA8"><svg><use href="#i-ring"/></svg>Hikâyeler</div><h2>24 saatlik anlar, çıkartmalarla.</h2>
-   <p>Hikâyene anket, soru, saat ve şarkı ekle. Yalnızca Yakın Arkadaşlar'ın görsün istersen yeşil halka.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Hikâyede müzik ve çıkartmalar</li><li><svg><use href="#i-chk"/></svg>Öne çıkanlar profilinde kalır</li><li><svg><use href="#i-chk"/></svg>Hızlı tepkiyle yanıtla</li></ul></div>
-  <div class="vis rv" style="--g:rgba(255,111,168,.3)"><div class="phone"><div class="scr"><img src="tanitim/hikaye.jpg" alt="Hikâye" loading="lazy"></div></div></div>
- </div></section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#22D3EE"><span class="tag"><i></i>Oyunlar</span><h2>Ders arası tek dokunuş.</h2><p>Arkadaşlarınla canlı oynanan oyunlar: biri çizer diğerleri bilir, 160 soruluk Bilgi Yarışması, Okey, Dörtrenk, Pişti, Amiral Battı ve piksel savaşı Cephe.</p>
+<ul><li>Çiz Bil: 2-6 kişi, hızlı bilen kazanır</li><li>5 harfli oda koduyla ya da sohbetten davetle katıl</li><li>Boş koltukta bot oynar</li></ul></div><div class="rv"><div class="ph"><img src="tanitim/oyunlar.jpg" alt="Oyunlar" loading="lazy"></div></div></div></section>
 
- <section class="f bay"><div class="wrap row rev">
-  <div class="txt rv"><svg class="flagw"><use href="#i-moon"/></svg><div class="tag">Özel günler</div><h2>Bayramlarımızı birlikte kutlayalım.</h2>
-   <p>Kadraj önemli günleri bilir. 29 Ekim'e kaç gün kaldığını söyler, o gün dalgalanan bayrak ve konfetiyle kutlar. Tek dokunuşla hikâyende paylaş.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>23 Nisan, 19 Mayıs, 30 Ağustos, 29 Ekim</li><li><svg><use href="#i-chk"/></svg>10 Kasım'da saygıyla anma</li><li><svg><use href="#i-chk"/></svg>Bayramlar, Anneler ve Öğretmenler Günü</li></ul></div>
-  <div class="vis rv"><div class="phone"><div class="scr"><img src="tanitim/bayram.jpg" alt="29 Ekim kartı" loading="lazy"></div></div></div>
- </div></section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#D97757"><span class="tag"><i></i>Clawd Koşu</span><h2>Clawd koşuyor, sen zıplatıyorsun.</h2><p>Kameralardan, kitap yığınlarından ve trafik konilerinden kaç, turuncu pikselleri topla. 700 puanda gece olur; rekorun arkadaşlarının tablosunda görünür.</p></div><div class="rv"><div class="ph"><img src="tanitim/kosu.jpg" alt="Clawd Koşu" loading="lazy"></div></div></div></section>
 
- <section class="f"><div class="wrap row">
-  <div class="txt rv"><div class="tag" style="color:#FF9F43"><svg><use href="#i-cake"/></svg>Profil</div><h2>Seni anlatan sayfa.</h2>
-   <p>Paylaşımların, Klaketlerin, notun ve profil şarkın. Doğum gününde arkadaşların kutlasın.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Profil müziği ve notta şarkı</li><li><svg><use href="#i-chk"/></svg>En sevdiğin 3 paylaşımı sabitle</li><li><svg><use href="#i-chk"/></svg>Gizli hesap ve engelleme</li></ul></div>
-  <div class="vis rv" style="--g:rgba(255,159,67,.28)"><div class="phone"><div class="scr"><img src="tanitim/profil.jpg" alt="Profil" loading="lazy"></div></div></div>
- </div></section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#16A34A"><span class="tag"><i></i>Satranç</span><h2>Rota'ya karşı oyna, ustalaş.</h2><p>Beş seviye bot, arkadaşınla çevrim içi maç, oyun incelemesi, 84 doğrulanmış mat bulmacası ve motorun en iyi hamleyi gösterdiği analiz tahtası.</p></div><div class="rv"><div class="ph"><img src="tanitim/satranc.jpg" alt="Satranç" loading="lazy"></div></div></div></section>
 
- <section class="f"><div class="wrap row rev">
-  <div class="txt rv"><div class="tag"><svg><use href="#i-search"/></svg>Keşfet</div><h2>Yeni insanlar, yeni etiketler.</h2>
-   <p>Kişileri ve #etiketleri ara. Tatile, okulun kapanmasına ve LGS'ye kaç gün kaldığı da burada.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Gündemdeki etiketler</li><li><svg><use href="#i-chk"/></svg>Okul sayacı</li><li><svg><use href="#i-chk"/></svg>Rota: soru sor, resim çizdir</li></ul></div>
-  <div class="vis rv"><div class="phone"><div class="scr"><img src="tanitim/kesfet.jpg" alt="Keşfet" loading="lazy"></div></div></div>
- </div></section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#0EA5E9"><span class="tag"><i></i>Haftalık meydan okuma</span><h2>Her pazartesi yeni bir tema.</h2><p>Yansıma, Gölge, Kahvaltı, Üçte bir kuralı… Keşfet'te Katıl'a bas, fotoğrafını seç; etiket kendiliğinden eklenir. Kimlerin katıldığını hemen görürsün.</p></div><div class="rv"><div class="ph"><img src="tanitim/kesfet.jpg" alt="Keşfet ve meydan okuma" loading="lazy"></div></div></div></section>
 
- <section class="f"><div class="wrap row">
-  <div class="txt rv"><div class="tag" style="color:#C9D36A"><svg><use href="#i-knight"/></svg>Satranç</div><h2>Rota'ya karşı oyna, arkadaşına meydan oku.</h2>
-   <p>5 seviyeli bot, çevrim içi maç ve 24 bulmaca. Oyun bitince her hamlen incelenir.</p>
-   <ul class="pts"><li><svg><use href="#i-chk"/></svg>Hamle incelemesi ve doğruluk</li><li><svg><use href="#i-chk"/></svg>Taş setleri ve tahta temaları</li><li><svg><use href="#i-chk"/></svg>Cephe: piksel savaşı oyunu</li></ul></div>
-  <div class="vis rv" style="--g:rgba(201,211,106,.25)"><div class="phone"><div class="scr"><img src="tanitim/satranc.jpg" alt="Satranç" loading="lazy"></div></div></div>
- </div></section>
-</main>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#FACC15"><span class="tag"><i></i>Klaketler</span><h2>Kısa videolar, kesintisiz.</h2><p>Telefonundan video yükle, Kurgu ile kes, hızlandır, yazı ve filtre ekle. Klaketler hiç kırpılmadan, olduğu gibi oynar.</p></div><div class="rv"><div class="ph"><img src="tanitim/klaket.jpg" alt="Klaketler" loading="lazy"></div></div></div></section>
 
-<section class="strip">
- <h2 class="rv">Hepsi bir arada.</h2>
- <div class="track" id="track"></div>
-</section>
+<section class="f"><div class="wrap"><div class="tx rv" style="--c:#FF8A4C"><span class="tag"><i></i>Kadraj yolculuğun</span><h2>Günlerine hikâye gibi bak.</h2><p>Kaç gündür Kadraj'dasın, en çok beğenilen karen, en büyük hayranın, oyunların ve rozetlerin. Sonunda tek dokunuşla hikâyende paylaş.</p></div><div class="rv"><div class="ph"><img src="tanitim/yolculuk.jpg" alt="Kadraj yolculuğun" loading="lazy"></div></div></div></section>
 
-<section class="end">
- <img class="lg rv" src="icon-512.png" alt="Kadraj">
- <h2 class="rv">Arkadaşların seni bekliyor.</h2>
- <p class="rv">Bağlantıyı aç, e-postanla hesap oluştur, arkadaşlarını bul. Ana ekrana ekleyince uygulama gibi çalışır.</p>
- <div class="cta rv"><a class="btn" href="./">Kadraj'ı aç <svg><use href="#i-arr"/></svg></a></div>
-</section>
-<footer>Kadraj · Türkiye'de, arkadaşlar için yapıldı.</footer>
+<div class="wrap"><div class="chips rv"><span>Rota yapay zekâ</span><span>Çocuk modu</span><span>İstiklal Marşı töreni</span><span>Özel gün kutlamaları</span><span>Zaman kapsülü</span><span>Notlar ve şarkı</span><span>GIF ve çıkartma</span><span>Görüntülü arama</span><span>Çoklu hesap</span><span>Anılar</span></div></div>
+
+<section class="zr"><div class="wrap rv">
+ <span class="tag" style="--c:#FFC9A8"><i></i>31 Mart 2027</span>
+ <h2 id="zrT">Zirve'ye geri sayım</h2>
+ <p>Kadraj o gün Zirve'ye ulaşıyor: kutlama, rozet ve şimdiden yazıp mühürlediğin "Zirve'ye mesaj" mektupların açılıyor.</p>
+ <div class="cd" id="cd"><div><b id="cdD">-</b><span>gün</span></div><div><b id="cdH">-</b><span>saat</span></div><div><b id="cdM">-</b><span>dakika</span></div><div><b id="cdS">-</b><span>saniye</span></div></div>
+ <svg class="mtn" viewBox="0 0 160 40" shape-rendering="crispEdges" aria-hidden="true"><path fill="#5A3F7A" d="M90 40 128 16 160 34V40z"/><path fill="#3A2C5C" d="M0 40 68 9 140 40z"/><path fill="#F4F1FF" d="M61 12h14l3 2H58z"/><path fill="#FF8A4C" d="M67 3h2v7h-2z"/><path fill="#FF8A4C" d="M69 3h5v3h-5z"/></svg>
+</div></section>
+
+<section class="end"><div class="wrap rv"><h2>Hazır mısın?</h2><p>Kadraj tarayıcıda açılır; Android'de uygulama olarak da kurabilirsin.</p>
+<div class="bts"><a class="btn pri" href="./">Kadraj'ı aç</a><a class="btn sec" href="kadraj.apk">Android uygulaması</a></div>
+<div class="np"><svg viewBox="0 0 17 17" shape-rendering="crispEdges" aria-hidden="true"><rect x="8" y="0" width="1" height="3" fill="#FF8A4C"/><g fill="#7C74FF"><rect x="8" y="3" width="1" height="11"/><rect x="3" y="8" width="11" height="1"/><rect x="7" y="7" width="3" height="3"/><rect x="5" y="5" width="1" height="1"/><rect x="11" y="5" width="1" height="1"/><rect x="5" y="11" width="1" height="1"/><rect x="11" y="11" width="1" height="1"/></g></svg>from <b>NorthPixel</b></div></div></section>
 
 <script>
-"use strict";
-(()=>{
- const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
- const top=document.getElementById("top");
- const onS=()=>top.classList.toggle("s",scrollY>20);addEventListener("scroll",onS,{passive:true});onS();
- // giriş telefonu: ekranlar sırayla
- const ims=[...document.querySelectorAll("#hs img")],dots=[...document.querySelectorAll("#dots b")];let k=0;
- if(!RM)setInterval(()=>{if(document.hidden)return;ims[k].classList.remove("on");dots[k].classList.remove("on");k=(k+1)%ims.length;ims[k].classList.add("on");dots[k].classList.add("on")},2800);
- // kaydırınca görünme
- const els=document.querySelectorAll(".rv");
- if(RM||!("IntersectionObserver" in window))els.forEach(e=>e.classList.add("in"));
- else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.18,rootMargin:"0px 0px -6% 0px"});els.forEach(e=>io.observe(e))}
- // galeri şeridi (iki kez, kesintisiz döngü)
- const L=["akis","klaket","sohbet","grup","hikaye","bayram","profil","kesfet","satranc"];
- document.getElementById("track").innerHTML=[...L,...L].map((n,i)=>`<img src="tanitim/${n}.jpg" alt="" loading="lazy"${i>=L.length?' aria-hidden="true"':""}>`).join("");
+(()=>{"use strict";
+/* sürüm etiketi: index.html'deki meta (iç sürüm − 3 = görünen) */
+fetch("index.html",{cache:"no-store"}).then(r=>r.text()).then(t=>{const m=t.match(/kadraj-version" content="(\d+)"/);if(!m)return;const v=+m[1],a=Math.floor(v/10000)-3,b=Math.floor(v/100)%100,c=v%100;const e=document.getElementById("ver");e.querySelector("span").textContent="Şimdi: Kadraj "+a+"."+b+"."+c;e.hidden=false}).catch(()=>{});
+/* kaydırınca bir kez belirme */
+const els=document.querySelectorAll(".rv");if("IntersectionObserver"in window){const io=new IntersectionObserver(es=>{for(const x of es)if(x.isIntersecting){x.target.classList.add("on");io.unobserve(x.target)}},{rootMargin:"0px 0px -10% 0px"});els.forEach(e=>io.observe(e))}else els.forEach(e=>e.classList.add("on"));
+/* Zirve geri sayımı (31 Mart 2027 00:00 Türkiye saati); sekme gizliyken durur */
+const Z=Date.UTC(2027,2,30,21,0,0),p=n=>String(n).padStart(2,"0");let iv=0;
+function tick(){const d=Z-Date.now();if(d<=0){document.getElementById("zrT").textContent="Zirve'deyiz!";document.getElementById("cd").hidden=true;clearInterval(iv);return}
+ const s=Math.floor(d/1000);document.getElementById("cdD").textContent=Math.floor(s/86400);document.getElementById("cdH").textContent=p(Math.floor(s%86400/3600));document.getElementById("cdM").textContent=p(Math.floor(s%3600/60));document.getElementById("cdS").textContent=p(s%60)}
+function run(){clearInterval(iv);if(document.hidden)return;tick();iv=setInterval(tick,1000)}
+document.addEventListener("visibilitychange",run);run();
 })();
 </script>
 </body>
